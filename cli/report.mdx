@@ -1,107 +1,107 @@
 ---
 title: "panguard report"
-description: "產生符合主要安全框架的合規與稽核報告。"
+description: "Generate compliance and audit reports aligned with major security frameworks."
 icon: "file-chart-column"
 ---
 
-`report` 指令從您的掃描和 Guard 資料產生專業的合規報告。報告可對應 ISO 27001、SOC 2、NIST CSF 和 Taiwan TCSA 等框架，讓稽核準備變得簡單直接。
+The `report` command generates professional compliance reports from your scan and Guard data. Reports can be aligned to frameworks like ISO 27001, SOC 2, NIST CSF, and Taiwan TCSA, making audit preparation straightforward.
 
-## 使用方式
+## Usage
 
 ```bash
 panguard report <subcommand> [options]
 ```
 
-## 子指令
+## Subcommands
 
-| 子指令 | 說明 |
+| Subcommand | Description |
 | --- | --- |
-| `generate` | 產生合規報告 |
-| `summary` | 顯示簡要的合規摘要，不產生完整報告 |
-| `list-frameworks` | 列出所有支援的合規框架 |
-| `validate` | 驗證現有報告的完整性和準確性 |
-| `config` | 檢視或修改報告設定 |
+| `generate` | Generate a compliance report |
+| `summary` | Show a brief compliance summary without generating a full report |
+| `list-frameworks` | List all supported compliance frameworks |
+| `validate` | Validate an existing report for completeness and accuracy |
+| `config` | View or modify report configuration |
 
-## 選項
+## Options
 
 <ParamField path="--framework" type="string">
-  目標合規框架。執行 `panguard report list-frameworks` 查看所有選項。
+  Target compliance framework. Run `panguard report list-frameworks` to see all options.
 </ParamField>
 
 <ParamField path="--language" type="string" default="en">
-  報告內容語言（例如 `en`、`zh-TW`）。
+  Report content language (e.g., `en`, `zh-TW`).
 </ParamField>
 
 <ParamField path="--format" type="string" default="pdf">
-  輸出格式：`pdf`、`html`、`json` 或 `csv`。
+  Output format: `pdf`, `html`, `json`, or `csv`.
 </ParamField>
 
 <ParamField path="--output-dir" type="string">
-  寫入產生報告的目錄。預設為目前工作目錄。
+  Directory to write the generated report. Defaults to the current working directory.
 </ParamField>
 
 <ParamField path="--org" type="string">
-  要包含在報告標頭和中繼資料中的組織名稱。
+  Organization name to include in the report header and metadata.
 </ParamField>
 
-## 範例
+## Examples
 
 <CodeGroup>
-```bash 產生 ISO 27001 報告
+```bash Generate ISO 27001 report
 panguard report generate --framework iso27001 --org "Acme Corp"
 ```
 
-```bash 以中文產生 SOC 2 報告
+```bash Generate SOC 2 report in Chinese
 panguard report generate --framework soc2 --language zh-TW
 ```
 
-```bash 列出可用框架
+```bash List available frameworks
 panguard report list-frameworks
 ```
 
-```bash 快速合規摘要
+```bash Quick compliance summary
 panguard report summary --framework nist-csf
 ```
 
-```bash 匯出為 HTML
+```bash Export as HTML
 panguard report generate --framework tcsa --format html --output-dir ./reports
 ```
 
-```bash 驗證現有報告
+```bash Validate an existing report
 panguard report validate --output-dir ./reports
 ```
 </CodeGroup>
 
-## 支援的框架
+## Supported Frameworks
 
-| 框架 | 識別碼 | 說明 |
+| Framework | Identifier | Description |
 | --- | --- | --- |
-| ISO 27001 | `iso27001` | 國際資訊安全標準 |
-| SOC 2 | `soc2` | 服務組織信任準則 |
-| NIST CSF | `nist-csf` | NIST 網路安全框架 |
-| CIS Controls | `cis` | 網際網路安全中心關鍵控制措施 |
-| Taiwan TCSA | `tcsa` | 台灣企業安全聯盟標準 |
-| PCI DSS | `pci-dss` | 支付卡產業資料安全標準 |
+| ISO 27001 | `iso27001` | International information security standard |
+| SOC 2 | `soc2` | Service organization trust criteria |
+| NIST CSF | `nist-csf` | NIST Cybersecurity Framework |
+| CIS Controls | `cis` | Center for Internet Security critical controls |
+| Taiwan TCSA | `tcsa` | Taiwan Corporate Security Alliance standard |
+| PCI DSS | `pci-dss` | Payment card industry data security |
 
-## 方案要求
+## Plan Requirements
 
 <Info>
-  報告產生需要 **Pro**（$29/月）方案或更高。`list-frameworks` 和 `summary` 適用於所有方案。
+  Report generation requires the **Pro** ($29/mo) plan or higher. `list-frameworks` and `summary` are available on all plans.
 </Info>
 
-## 相關資源
+## Related
 
 <CardGroup cols={2}>
-  <Card title="合規報告指南" icon="book-open" href="/guides/compliance-reports">
-    產生您第一份合規報告的逐步指南。
+  <Card title="Compliance Reports Guide" icon="book-open" href="/guides/compliance-reports">
+    Step-by-step guide for generating your first compliance report.
   </Card>
-  <Card title="Report 產品概覽" icon="file-lines" href="/products/report/overview">
-    Report 系統的完整文件。
+  <Card title="Report Product Overview" icon="file-lines" href="/products/report/overview">
+    Full documentation of the Report system.
   </Card>
-  <Card title="支援的框架" icon="scale-balanced" href="/products/report/frameworks">
-    各框架的詳細控制對應。
+  <Card title="Supported Frameworks" icon="scale-balanced" href="/products/report/frameworks">
+    Detailed control mappings for each framework.
   </Card>
   <Card title="panguard scan" icon="magnifying-glass" href="/cli/scan">
-    報告從掃描資料產生 -- 請先執行掃描。
+    Reports are generated from scan data -- run a scan first.
   </Card>
 </CardGroup>

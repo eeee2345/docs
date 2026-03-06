@@ -1,146 +1,146 @@
 ---
-title: "代理生命週期"
-description: "Panguard 代理如何向 Manager 伺服器註冊、維護心跳、報告威脅、輪詢策略及取消註冊。"
+title: "Agent Lifecycle"
+description: "How Panguard agents register, maintain heartbeats, report threats, poll policies, and deregister from the Manager server."
 icon: "rotate"
 ---
 
-每個連接至 Manager 伺服器的 Panguard Guard 代理都遵循一個定義好的生命週期，包含 5 個階段：註冊、心跳維護、威脅報告、策略輪詢和取消註冊。
+Every Panguard Guard agent connected to a Manager server follows a defined lifecycle with 5 phases: registration, heartbeat maintenance, threat reporting, policy polling, and deregistration.
 
-## 生命週期概覽
+## Lifecycle Overview
 
 ```
 Register ──> Heartbeat Loop ──> Threat Reports ──> Policy Polls ──> Deregister
-  (一次)       (每 30 秒)       (即時)           (每 5 分鐘)       (停止時)
+  (once)       (every 30s)       (real-time)       (every 5min)     (on stop)
 ```
 
 ---
 
-## 階段 1：註冊
+## Phase 1: Registration
 
-當 Guard 代理使用 `--manager` 旗標啟動時，它會發送 `POST /api/agents/register` 請求：
+When a Guard agent starts with the `--manager` flag, it sends a `POST /api/agents/register` request:
 
 ```bash
 panguard guard start --manager http://manager-host:8443
 ```
 
-### 註冊載荷
+### Registration Payload
 
-| 欄位 | 描述 |
+| Field | Description |
 |-------|-------------|
-| `hostname` | 系統主機名稱 |
-| `os` | 作業系統類型和版本 |
-| `arch` | 系統架構（x64, arm64） |
-| `version` | Panguard CLI 版本 |
-| `organizationId` | 可選的組織識別碼 |
+| `hostname` | System hostname |
+| `os` | Operating system type and version |
+| `arch` | System architecture (x64, arm64) |
+| `version` | Panguard CLI version |
+| `organizationId` | Optional organization identifier |
 
-### 註冊回應
+### Registration Response
 
-Manager 指定一個唯一的 `agentId` 並回傳給代理。如果具有相同主機名稱和組織的代理已存在，該註冊會被視為重新連線。
+The Manager assigns a unique `agentId` and returns it to the agent. If an agent with the same hostname and organization already exists, the registration is treated as a reconnection.
 
 ---
 
-## 階段 2：心跳
+## Phase 2: Heartbeat
 
-代理每 30 秒透過 `POST /api/agents/:id/heartbeat` 發送心跳信號，以確認它們存活且運作正常。
+Agents send heartbeat signals every 30 seconds via `POST /api/agents/:id/heartbeat` to confirm they are alive and operational.
 
-| 參數 | 值 |
+| Parameter | Value |
 |-----------|-------|
-| **間隔** | 每 30 秒 |
-| **過期門檻** | 90 秒（3 次錯過心跳） |
-| **檢查頻率** | Manager 每 30 秒檢查一次 |
+| **Interval** | Every 30 seconds |
+| **Stale threshold** | 90 seconds (3 missed heartbeats) |
+| **Check frequency** | Manager checks every 30 seconds |
 
-### 心跳載荷
+### Heartbeat Payload
 
-| 欄位 | 描述 |
+| Field | Description |
 |-------|-------------|
-| `cpu` | 目前 CPU 使用百分比 |
-| `memory` | 目前記憶體使用百分比 |
-| `eventsProcessed` | 自上次心跳以來處理的事件數 |
-| `mode` | 目前運作模式（learning / protection） |
-| `uptime` | 代理運行時間（秒） |
+| `cpu` | Current CPU usage percentage |
+| `memory` | Current memory usage percentage |
+| `eventsProcessed` | Events processed since last heartbeat |
+| `mode` | Current operating mode (learning / protection) |
+| `uptime` | Agent uptime in seconds |
 
-### 過期偵測
+### Stale Detection
 
-Manager 每 30 秒執行一次過期檢查：
+The Manager runs a stale-check every 30 seconds:
 
 ```
-正常：  30 秒內收到心跳
-過期：  90 秒無心跳（3 次錯過）
+Normal:  heartbeat received within 30s
+Stale:   no heartbeat for 90s (3 missed)
 ```
 
-過期的代理在註冊表中被標記，但不會被移除。這允許暫時失去網路連線的代理重新連線而無需重新註冊。
+Stale agents are flagged in the registry but not removed. This allows agents that temporarily lose network connectivity to reconnect without re-registration.
 
 ---
 
-## 階段 3：威脅報告
+## Phase 3: Threat Reporting
 
-當 Guard 代理透過 DARE 管線偵測到威脅時，它會透過 `POST /api/agents/:id/events` 發送威脅資料。
+When a Guard agent detects threats through the DARE pipeline, it sends `POST /api/agents/:id/events` with threat data.
 
-| 欄位 | 描述 |
+| Field | Description |
 |-------|-------------|
-| `agentId` | 報告代理的識別碼 |
-| `threat` | 完整的威脅裁決（類型、信心值、證據） |
-| `response` | 採取的動作（block_ip、kill_process 等） |
-| `timestamp` | 偵測時間 |
+| `agentId` | Reporting agent identifier |
+| `threat` | Full threat verdict (type, confidence, evidence) |
+| `response` | Action taken (block_ip, kill_process, etc.) |
+| `timestamp` | Detection time |
 
-### 跨代理關聯
+### Cross-Agent Correlation
 
-`ThreatAggregator` 在 5 分鐘滑動視窗內跨所有代理關聯傳入的威脅，資料保留 24 小時：
+The `ThreatAggregator` correlates incoming threats across all agents within a 5-minute sliding window with 24-hour data retention:
 
-| 關聯類型 | 偵測邏輯 |
+| Correlation Type | Detection Logic |
 |-----------------|----------------|
-| **來源 IP** | 同一 IP 針對 2+ 個代理表示橫向移動或大規模掃描 |
-| **惡意軟體雜湊** | 同一檔案雜湊出現在 2+ 個代理表示蠕蟲傳播 |
-| **攻擊模式** | 同一 MITRE 技術出現在 2+ 個代理表示協調攻擊活動 |
+| **Source IP** | Same IP targeting 2+ agents indicates lateral movement or mass scanning |
+| **Malware hash** | Same file hash on 2+ agents indicates worm propagation |
+| **Attack pattern** | Same MITRE technique on 2+ agents indicates coordinated campaign |
 
-當偵測到跨代理模式時，Manager 向所有受影響的代理推送緊急策略。
+When a cross-agent pattern is detected, the Manager pushes emergency policies to all affected agents.
 
 ---
 
-## 階段 4：策略輪詢
+## Phase 4: Policy Polling
 
-代理每 5 分鐘輪詢 `GET /api/policy/agent/:id` 以檢查策略更新。
+Agents poll `GET /api/policy/agent/:id` every 5 minutes to check for policy updates.
 
-| 參數 | 值 |
+| Parameter | Value |
 |-----------|-------|
-| **輪詢間隔** | 每 5 分鐘 |
-| **機制** | 代理發送其目前策略版本，Manager 回傳新策略或 304（無變更） |
+| **Poll interval** | Every 5 minutes |
+| **Mechanism** | Agent sends its current policy version, Manager responds with new policy or 304 (no change) |
 
 ```
 Agent (v2) ──> GET /api/policy/agent/:id ──> Manager
                                                |
-                               version=3? ──> 回傳新策略
-                               version=2? ──> 回傳 304（無變更）
+                               version=3? ──> Return new policy
+                               version=2? ──> Return 304 (no change)
 ```
 
-策略變更可以調整：
-- 動作門檻（自動回應信心等級）
-- IP 封鎖清單（全設備群組封鎖）
-- 警報規則和通知偏好
-- 監控器設定
+Policy changes can adjust:
+- Action thresholds (auto-respond confidence level)
+- IP blocklists (fleet-wide blocks)
+- Alerting rules and notification preferences
+- Monitor configuration
 
-請參閱[策略引擎](/products/manager/policy-engine)了解策略格式和分發詳情。
+See [Policy Engine](/products/manager/policy-engine) for policy format and distribution details.
 
 ---
 
-## 階段 5：取消註冊
+## Phase 5: Deregistration
 
-當 Guard 代理正常停止時，它會發送 `DELETE /api/agents/:id`：
+When a Guard agent is stopped cleanly, it sends `DELETE /api/agents/:id`:
 
 ```bash
 panguard guard stop
 ```
 
-Manager 將代理標記為離線並保留其註冊資料。如果代理稍後重新連線，它會使用現有的身份恢復。
+The Manager marks the agent as offline and retains its registration data. If the agent reconnects later, it resumes with its existing identity.
 
-### 強制移除
+### Forced Removal
 
-要從註冊表中永久移除代理：
+To permanently remove an agent from the registry:
 
 ```bash
 panguard manager agents remove --machine-id srv-01
 ```
 
 <Warning>
-  如果代理當機或失去網路連線，它無法發送取消註冊請求。Manager 透過錯過的心跳偵測此情況，並在 90 秒後將代理標記為過期。
+  If an agent crashes or loses network connectivity, it cannot send a deregistration request. The Manager detects this through missed heartbeats and marks the agent as stale after 90 seconds.
 </Warning>

@@ -1,94 +1,94 @@
 ---
 title: "panguard guard"
-description: "管理即時端點防護代理。"
+description: "Manage the real-time endpoint protection agent."
 icon: "shield"
 ---
 
-`guard` 指令控制 Panguard 的即時防護代理 -- 一個三層 AI 管線，持續監控您的系統、偵測威脅並自動回應。Guard 以背景服務運行，並透過您設定的通知頻道回報事件。
+The `guard` command controls Panguard's real-time protection agent -- a three-layer AI pipeline that monitors your system continuously, detects threats, and responds automatically. Guard runs as a background service and reports events through your configured notification channels.
 
-## 使用方式
+## Usage
 
 ```bash
 panguard guard <subcommand> [options]
 ```
 
-## 子指令
+## Subcommands
 
-| 子指令 | 說明 | 所需方案 |
+| Subcommand | Description | Plan Required |
 | --- | --- | --- |
-| `start` | 啟動 Guard 代理 | Solo 以上 |
-| `stop` | 停止運行中的 Guard 代理 | Solo 以上 |
-| `status` | 顯示目前 Guard 狀態和統計資料 | Community（免費） |
-| `install` | 將 Guard 安裝為系統服務（systemd / launchd） | Solo 以上 |
-| `uninstall` | 移除 Guard 系統服務 | Solo 以上 |
-| `config` | 檢視或修改 Guard 設定 | Solo 以上 |
-| `help` | 顯示 Guard 子指令說明 | 全部 |
+| `start` | Start the Guard agent | Solo+ |
+| `stop` | Stop the running Guard agent | Solo+ |
+| `status` | Show current Guard status and statistics | Community (Free) |
+| `install` | Install Guard as a system service (systemd / launchd) | Solo+ |
+| `uninstall` | Remove the Guard system service | Solo+ |
+| `config` | View or modify Guard configuration | Solo+ |
+| `help` | Show Guard subcommand help | All |
 
-## 選項
+## Options
 
 <ParamField path="--data-dir" type="string">
-  覆寫 Guard 儲存日誌、基線和狀態檔案的預設資料目錄。預設為 `~/.panguard/guard/`。
+  Override the default data directory where Guard stores logs, baselines, and state files. Defaults to `~/.panguard/guard/`.
 </ParamField>
 
-## 範例
+## Examples
 
 <CodeGroup>
-```bash 啟動 Guard 防護
+```bash Start Guard protection
 panguard guard start
 ```
 
-```bash 檢查 Guard 狀態
+```bash Check Guard status
 panguard guard status
 ```
 
-```bash 安裝為系統服務
+```bash Install as system service
 panguard guard install
 ```
 
-```bash 使用自訂資料目錄
+```bash Use custom data directory
 panguard guard start --data-dir /opt/panguard/data
 ```
 
-```bash 停止 Guard
+```bash Stop Guard
 panguard guard stop
 ```
 
-```bash 檢視 Guard 設定
+```bash View Guard configuration
 panguard guard config
 ```
 </CodeGroup>
 
-## 運作原理
+## How It Works
 
-Guard 透過三層 AI 處理運作：
+Guard operates through three layers of AI processing:
 
-1. **第一層 -- 規則引擎** -- Sigma 規則和 YARA 簽章，用於已知威脅模式（Community 方案僅提供狀態檢視）
-2. **第二層 -- 行為 AI** -- 機器學習基線偵測異常的程序、網路和檔案活動
-3. **第三層 -- LLM 判斷** -- 大型語言模型關聯事件、判斷嚴重程度，並產生白話警報
+1. **Layer 1 -- Rule Engine** -- Sigma rules and YARA signatures for known threat patterns (available on Community plan as status-only)
+2. **Layer 2 -- Behavioral AI** -- Machine learning baselines detect anomalous process, network, and file activity
+3. **Layer 3 -- LLM Judgment** -- Large language model correlates events, judges severity, and generates plain-language alerts
 
 <Tip>
-  啟動 Guard 後，會在前 24 小時進入**學習模式**以建立行為基線。在此期間，您可能會看到較多的資訊性警報。
+  After starting Guard, it enters a **learning mode** for the first 24 hours to establish behavioral baselines. During this period, you may see more informational alerts than usual.
 </Tip>
 
-## 方案要求
+## Plan Requirements
 
 <Info>
-  `guard status` 適用於 **Community（免費）** 方案。啟動、停止、安裝和設定 Guard 需要 **Solo**（$9/月）或更高方案。
+  `guard status` is available on the **Community (Free)** plan. Starting, stopping, installing, and configuring Guard requires **Solo** ($9/mo) or higher.
 </Info>
 
-## 相關資源
+## Related
 
 <CardGroup cols={2}>
-  <Card title="Guard 產品概覽" icon="shield-check" href="/products/guard/overview">
-    Guard 代理的架構和設計。
+  <Card title="Guard Product Overview" icon="shield-check" href="/products/guard/overview">
+    Architecture and design of the Guard agent.
   </Card>
-  <Card title="代理管線" icon="diagram-project" href="/products/guard/agent-pipeline">
-    三層 AI 處理管線的深入介紹。
+  <Card title="Agent Pipeline" icon="diagram-project" href="/products/guard/agent-pipeline">
+    Deep dive into the three-layer AI processing pipeline.
   </Card>
-  <Card title="Guard 設定" icon="gear" href="/configuration/guard-config">
-    自訂監控器、閾值和自動回應規則。
+  <Card title="Guard Configuration" icon="gear" href="/configuration/guard-config">
+    Customize monitors, thresholds, and auto-response rules.
   </Card>
   <Card title="panguard chat" icon="message-bot" href="/cli/chat">
-    設定 Guard 警報的通知頻道。
+    Set up notification channels for Guard alerts.
   </Card>
 </CardGroup>

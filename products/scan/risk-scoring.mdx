@@ -1,34 +1,34 @@
 ---
-title: "風險評分"
-description: "Panguard Scan 如何計算 0-100 風險評分及 A-F 字母等級。"
+title: "Risk Scoring"
+description: "How Panguard Scan calculates the 0-100 risk score and A-F letter grade."
 icon: "chart-bar"
 ---
 
-每次 Panguard Scan 都會產生一個 0 到 100 的單一風險評分，以及一個從 A 到 F 的對應字母等級。本頁說明評分的計算方式及每個等級的含義。
+Every Panguard Scan produces a single risk score from 0 to 100 and an associated letter grade from A to F. This page explains how the score is calculated and what each grade means.
 
-## 評分顯示
+## Score Display
 
 ```
 Score: 62/100 [████████████░░░░░░░░] Grade: C
 ```
 
-該評分代表一個**安全分數**：分數越高越好。計算方式為 `100 - totalRiskPoints`，限制在 0--100 的範圍內。
+The score represents a **safety score**: higher is better. It is calculated as `100 - totalRiskPoints`, clamped to the 0--100 range.
 
-## 等級門檻
+## Grade Thresholds
 
-| 等級 | 分數範圍 | 解讀 |
+| Grade | Score Range | Interpretation |
 |-------|------------|----------------|
-| **A** | 90 -- 100 | 優秀。風險極低。所有嚴重和高等級問題已解決。 |
-| **B** | 75 -- 89 | 良好。尚有少數中等嚴重度項目。 |
-| **C** | 60 -- 74 | 普通。多個發現項目需要關注。 |
-| **D** | 40 -- 59 | 較差。存在顯著的安全缺口。 |
-| **F** | 0 -- 39 | 危急。需要立即修復。 |
+| **A** | 90 -- 100 | Excellent. Minimal risk. All critical and high issues resolved. |
+| **B** | 75 -- 89 | Good. A few medium-severity items remain. |
+| **C** | 60 -- 74 | Fair. Multiple findings need attention. |
+| **D** | 40 -- 59 | Poor. Significant security gaps present. |
+| **F** | 0 -- 39 | Critical. Immediate remediation required. |
 
-## 評分因素
+## Scoring Factors
 
-風險評分源自所有掃描器中發現項目的嚴重性和數量。每個發現項目根據其嚴重性貢獻扣分點數：
+The risk score is derived from the severity and quantity of findings across all scanners. Each finding contributes penalty points based on its severity:
 
-| 嚴重性 | 每項發現的點數 |
+| Severity | Points per Finding |
 |----------|--------------------|
 | CRITICAL | 15 |
 | HIGH | 10 |
@@ -36,53 +36,53 @@ Score: 62/100 [████████████░░░░░░░░] Gra
 | LOW | 2 |
 | INFO | 0 |
 
-點數加總後從 100 中扣除。結果值的最低限制為 0。
+Points are summed and subtracted from 100. The resulting value is clamped to a minimum of 0.
 
-### 計算範例
+### Example Calculation
 
-| 發現項目 | 嚴重性 | 點數 |
+| Finding | Severity | Points |
 |---------|----------|--------|
-| SSH 綁定至 0.0.0.0 | HIGH | 10 |
-| 弱密碼策略 | MEDIUM | 5 |
-| 已過期的 SSL 憑證 | CRITICAL | 15 |
-| 無防火牆 | HIGH | 10 |
-| 過時的核心（CVE） | MEDIUM | 5 |
-| | **合計** | **45** |
+| SSH on 0.0.0.0 | HIGH | 10 |
+| Weak password policy | MEDIUM | 5 |
+| Expired SSL cert | CRITICAL | 15 |
+| No firewall | HIGH | 10 |
+| Outdated kernel (CVE) | MEDIUM | 5 |
+| | **Total** | **45** |
 
-**安全分數** = 100 - 45 = **55**（等級：**D**）
+**Safety Score** = 100 - 45 = **55** (Grade: **D**)
 
-## 評分類別
+## Score Categories
 
-除了單一數字外，評分還在 8 個類別中進行情境化：
+Beyond the single number, the score is contextualized across 8 categories:
 
-| 類別 | 衡量內容 |
+| Category | What It Measures |
 |----------|-----------------|
-| **系統** | 作業系統修補等級、核心版本、架構 |
-| **網路** | 開放埠、綁定位址、防火牆狀態 |
-| **認證** | 密碼策略強度、帳戶鎖定 |
-| **加密** | SSL/TLS 憑證、加密套件、金鑰強度 |
-| **存取控制** | 共享資料夾、檔案權限、匿名存取 |
-| **服務** | 執行中的服務、不必要的常駐程式 |
-| **排程任務** | Cron 工作、可疑腳本、持久化手段 |
-| **安全工具** | 防毒軟體、IDS、防火牆、稽核常駐程式的存在 |
+| **System** | OS patch level, kernel version, architecture |
+| **Network** | Open ports, binding addresses, firewall status |
+| **Authentication** | Password policy strength, account lockout |
+| **Encryption** | SSL/TLS certificates, cipher suites, key strength |
+| **Access Control** | Shared folders, file permissions, anonymous access |
+| **Services** | Running services, unnecessary daemons |
+| **Scheduled Tasks** | Cron jobs, suspicious scripts, persistence vectors |
+| **Security Tools** | Presence of AV, IDS, firewall, audit daemon |
 
-## 改善您的評分
+## Improving Your Score
 
 <Steps>
-  <Step title="優先修復 CRITICAL 發現項目">
-    每個嚴重發現項目扣 15 分。僅解決一個就可能使您的等級提升一個字母。
+  <Step title="Fix CRITICAL findings first">
+    Each critical finding costs 15 points. Resolving just one can move your grade up a full letter.
   </Step>
-  <Step title="處理 HIGH 發現項目">
-    高嚴重性項目是下一個優先事項，每項扣 10 分。
+  <Step title="Address HIGH findings">
+    High-severity items are the next priority at 10 points each.
   </Step>
-  <Step title="檢視 MEDIUM 發現項目">
-    這些通常是會累積的設定改善項目。
+  <Step title="Review MEDIUM findings">
+    These are typically configuration improvements that accumulate.
   </Step>
-  <Step title="重新掃描以驗證">
-    在進行變更後再次執行 `panguard scan` 以確認您的新評分。
+  <Step title="Re-scan to verify">
+    Run `panguard scan` again after making changes to confirm your new score.
   </Step>
 </Steps>
 
 <Tip>
-  執行 `panguard scan --json` 以取得機器可讀的輸出，其中包含每項發現的評分，方便整合至 CI/CD 管線。
+  Run `panguard scan --json` to get machine-readable output that includes per-finding scores, making it easy to integrate into CI/CD pipelines.
 </Tip>

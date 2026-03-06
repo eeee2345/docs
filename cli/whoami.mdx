@@ -1,43 +1,43 @@
 ---
 title: "panguard whoami"
-description: "顯示目前已認證的使用者和帳號詳細資訊。"
+description: "Display the currently authenticated user and account details."
 icon: "id-card"
 ---
 
-`whoami` 指令顯示目前登入使用者的資訊，包括 email、方案層級、組織和 token 到期時間。
+The `whoami` command shows information about the currently logged-in user, including email, plan tier, organization, and token expiry.
 
-## 使用方式
+## Usage
 
 ```bash
 panguard whoami [options]
 ```
 
-## 選項
+## Options
 
 <ParamField path="--json" type="flag">
-  以結構化 JSON 輸出使用者資訊，用於腳本和自動化。
+  Output user information as structured JSON for scripting and automation.
 </ParamField>
 
 <ParamField path="--lang" type="string" default="en">
-  設定輸出語言。
+  Set the output language.
 </ParamField>
 
-## 範例
+## Examples
 
 <CodeGroup>
-```bash 顯示目前使用者
+```bash Show current user
 panguard whoami
 ```
 
-```bash 用於腳本的 JSON 輸出
+```bash JSON output for scripting
 panguard whoami --json
 ```
 </CodeGroup>
 
-## 範例輸出
+## Sample Output
 
 <Tabs>
-  <Tab title="人類可讀">
+  <Tab title="Human-readable">
     ```
     Email:   user@example.com
     Plan:    Pro ($29/mo)
@@ -60,25 +60,25 @@ panguard whoami --json
   </Tab>
 </Tabs>
 
-## 方案要求
+## Plan Requirements
 
 <Info>
-  適用於所有方案，包括 **Community（免費）**。
+  Available on all plans including **Community (Free)**.
 </Info>
 
-## 相關資源
+## Related
 
 <CardGroup cols={2}>
   <Card title="panguard login" icon="right-to-bracket" href="/cli/login">
-    如果 whoami 顯示沒有活躍工作階段，請進行身份驗證。
+    Authenticate if whoami shows no active session.
   </Card>
   <Card title="panguard logout" icon="right-from-bracket" href="/cli/logout">
-    結束目前的工作階段。
+    End the current session.
   </Card>
-  <Card title="帳號設定" icon="user-plus" href="/account-setup">
-    建立或管理您的 Panguard 帳號。
+  <Card title="Account Setup" icon="user-plus" href="/account-setup">
+    Create or manage your Panguard account.
   </Card>
   <Card title="panguard status" icon="circle-info" href="/cli/status">
-    完整的系統健康狀態，包括身份驗證狀態。
+    Full system health including authentication state.
   </Card>
 </CardGroup>

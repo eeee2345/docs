@@ -1,32 +1,32 @@
 ---
-title: "Sigma 規則"
-description: "使用 Sigma 格式的偵測規則，用於基於日誌的威脅偵測。"
+title: "Sigma Rules"
+description: "Detection rules using the Sigma format for log-based threat detection."
 icon: "list-check"
 ---
 
-Panguard Guard 使用 [Sigma 規則](https://sigmahq.io/)作為其主要偵測引擎之一。Sigma 是一種開放的通用簽章格式，適用於 SIEM 系統，讓您能以結構化的方式描述日誌事件。
+Panguard Guard uses [Sigma rules](https://sigmahq.io/) as one of its primary detection engines. Sigma is an open, generic signature format for SIEM systems that allows you to describe log events in a structured way.
 
-## 什麼是 Sigma 規則？
+## What Are Sigma Rules?
 
-Sigma 規則是基於 YAML 的偵測簽章，描述可疑的日誌模式。它們與廠商無關 -- 單一規則可以跨不同的日誌來源和平台應用。Panguard Guard 的代理管線根據即時日誌串流評估 Sigma 規則以偵測威脅。
+Sigma rules are YAML-based detection signatures that describe suspicious log patterns. They are vendor-agnostic -- a single rule can be applied across different log sources and platforms. Panguard Guard's agent pipeline evaluates Sigma rules against real-time log streams to detect threats.
 
-## 內建規則
+## Bundled Rules
 
-Panguard Guard 附帶來自 [SigmaHQ](https://github.com/SigmaHQ/sigma) 社群儲存庫的 **3,000+ Sigma 規則**，涵蓋：
+Panguard Guard ships with **3,000+ Sigma rules** from the [SigmaHQ](https://github.com/SigmaHQ/sigma) community repository, covering:
 
-- 身份驗證攻擊（暴力破解、憑證填充）
-- 權限提升技術
-- 橫向移動模式
-- 惡意軟體執行指標
-- 持久化機制
-- 資料外洩行為
-- 利用系統內建工具的技術
+- Authentication attacks (brute force, credential stuffing)
+- Privilege escalation techniques
+- Lateral movement patterns
+- Malware execution indicators
+- Persistence mechanisms
+- Data exfiltration behaviors
+- Living-off-the-land techniques
 
-當 Guard 設定中啟用 `autoUpdate` 時，規則會從 Threat Cloud 自動更新。
+Rules are automatically updated from Threat Cloud when `autoUpdate` is enabled in the Guard configuration.
 
-## 規則格式
+## Rule Format
 
-Sigma 規則遵循標準化的 YAML 結構：
+Sigma rules follow a standardized YAML structure:
 
 ```yaml
 title: SSH Brute Force Detection
@@ -57,37 +57,37 @@ fields:
   - Service
 ```
 
-### 規則欄位
+### Rule Fields
 
-| 欄位 | 必填 | 說明 |
+| Field | Required | Description |
 |-------|----------|-------------|
-| `title` | 是 | 人類可讀的規則名稱 |
-| `id` | 是 | 唯一識別碼 |
-| `status` | 是 | `experimental`、`test` 或 `stable` |
-| `level` | 是 | 嚴重程度：`informational`、`low`、`medium`、`high`、`critical` |
-| `description` | 是 | 規則偵測的內容 |
-| `logsource` | 是 | 日誌來源規格（category、product、service） |
-| `detection` | 是 | 包含選擇和條件的偵測邏輯 |
-| `falsepositives` | 否 | 已知的誤報情境 |
-| `tags` | 否 | MITRE ATT&CK 標籤和自訂標籤 |
-| `fields` | 否 | 要包含在警報輸出中的欄位 |
+| `title` | Yes | Human-readable rule name |
+| `id` | Yes | Unique identifier |
+| `status` | Yes | `experimental`, `test`, or `stable` |
+| `level` | Yes | Severity: `informational`, `low`, `medium`, `high`, `critical` |
+| `description` | Yes | What the rule detects |
+| `logsource` | Yes | Log source specification (category, product, service) |
+| `detection` | Yes | Detection logic with selections and conditions |
+| `falsepositives` | No | Known false positive scenarios |
+| `tags` | No | MITRE ATT&CK tags and custom tags |
+| `fields` | No | Fields to include in alert output |
 
-## 自訂規則
+## Custom Rules
 
-將 `.yml` 檔案放在自訂規則目錄中即可新增自訂 Sigma 規則：
+Add custom Sigma rules by placing `.yml` files in the custom rules directory:
 
 ```
 {dataDir}/rules/*.yml
 ```
 
-其中 `{dataDir}` 預設為 `~/.panguard-guard`。自訂規則與內建規則一起載入，並在同一管線中評估。
+Where `{dataDir}` defaults to `~/.panguard-guard`. Custom rules are loaded alongside bundled rules and evaluated in the same pipeline.
 
 <CodeGroup>
-```bash 建立自訂規則目錄
+```bash Create custom rules directory
 mkdir -p ~/.panguard-guard/rules
 ```
 
-```bash 新增自訂規則
+```bash Add a custom rule
 cat > ~/.panguard-guard/rules/detect-cryptominer.yml << 'EOF'
 title: Cryptominer Process Detection
 id: custom-cryptominer-001
@@ -122,14 +122,14 @@ EOF
 </CodeGroup>
 
 <Info>
-自訂規則在下一個偵測週期（通常在 60 秒內）立即生效。無需重新啟動。
+Custom rules take effect immediately on the next detection cycle (typically within 60 seconds). No restart is required.
 </Info>
 
-## 支援的功能
+## Supported Features
 
-Panguard 的 Sigma 引擎支援以下偵測功能：
+Panguard's Sigma engine supports the following detection features:
 
-### 布林邏輯
+### Boolean Logic
 
 ```yaml
 detection:
@@ -140,7 +140,7 @@ detection:
   condition: selection1 and not selection2
 ```
 
-### 彙總
+### Aggregation
 
 ```yaml
 detection:
@@ -150,20 +150,20 @@ detection:
   timeframe: 5m
 ```
 
-支援的彙總函式：`count`、`min`、`max`、`avg`、`sum`。
+Supported aggregation functions: `count`, `min`, `max`, `avg`, `sum`.
 
-### 修飾符
+### Modifiers
 
-| 修飾符 | 說明 | 範例 |
+| Modifier | Description | Example |
 |----------|-------------|---------|
-| `contains` | 子字串比對 | `CommandLine\|contains: 'wget'` |
-| `startswith` | 前綴比對 | `FilePath\|startswith: '/tmp'` |
-| `endswith` | 後綴比對 | `FileName\|endswith: '.sh'` |
-| `re` | 正規表達式 | `CommandLine\|re: '(curl\|wget).*\|.*sh'` |
-| `all` | 所有值都必須匹配 | `Tags\|all: ['malware', 'dropper']` |
-| `base64` | Base64 解碼比對 | `CommandLine\|base64contains: 'password'` |
+| `contains` | Substring match | `CommandLine\|contains: 'wget'` |
+| `startswith` | Prefix match | `FilePath\|startswith: '/tmp'` |
+| `endswith` | Suffix match | `FileName\|endswith: '.sh'` |
+| `re` | Regular expression | `CommandLine\|re: '(curl\|wget).*\|.*sh'` |
+| `all` | All values must match | `Tags\|all: ['malware', 'dropper']` |
+| `base64` | Base64-decoded match | `CommandLine\|base64contains: 'password'` |
 
-### 萬用字元
+### Wildcards
 
 ```yaml
 detection:
@@ -172,30 +172,30 @@ detection:
     FilePath: '/tmp/*.sh'
 ```
 
-使用 `*` 代表任意數量的字元，`?` 代表單一字元。
+Use `*` for any number of characters and `?` for a single character.
 
-## 效能考量
+## Performance Considerations
 
 <Tip>
-擁有 3,000+ 規則時，Panguard 使用預編譯的規則索引以進行快速評估。自訂規則在載入時被索引。保持個別規則條件聚焦和具體以維持偵測速度。
+With 3,000+ rules, Panguard uses a pre-compiled rule index for fast evaluation. Custom rules are indexed upon load. Keep individual rule conditions focused and specific to maintain detection speed.
 </Tip>
 
-| 指標 | 典型值 |
+| Metric | Typical Value |
 |--------|--------------|
-| 規則載入時間 | 3,000 條規則不到 2 秒 |
-| 每事件評估 | 不到 5 ms |
-| 記憶體開銷 | 完整規則集約 50 MB |
-| 自訂規則限制 | 無硬性限制（建議少於 500） |
+| Rule loading time | < 2 seconds for 3,000 rules |
+| Per-event evaluation | < 5 ms |
+| Memory overhead | ~50 MB for full rule set |
+| Custom rule limit | No hard limit (recommend < 500) |
 
-## 停用規則
+## Disabling Rules
 
-若要停用特定的內建規則而不刪除它，請將其 ID 加入排除清單：
+To disable a specific bundled rule without deleting it, add its ID to the exclusion list:
 
 ```bash
 panguard config set rules.excludeIds '["sigma-fp-001", "sigma-noisy-002"]'
 ```
 
-或在 `config.json` 中：
+Or in `config.json`:
 
 ```json
 {

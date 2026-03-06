@@ -1,33 +1,33 @@
 ---
-title: "登入"
-description: "使用 email 和密碼進行身份驗證，支援可選的 TOTP 雙因素驗證。"
+title: "Login"
+description: "Authenticate with email and password, with optional TOTP two-factor authentication."
 icon: "right-to-bracket"
 ---
 
 ## POST /api/auth/login
 
-驗證使用者身份並回傳 JWT token。支援基於 TOTP 的雙因素驗證。
+Authenticates a user and returns a JWT token. Supports TOTP-based two-factor authentication.
 
-### 請求
+### Request
 
 <ParamField body="email" type="string" required>
-  已註冊的 email 地址。
+  Registered email address.
 </ParamField>
 
 <ParamField body="password" type="string" required>
-  帳號密碼。
+  Account password.
 </ParamField>
 
 <ParamField body="totpCode" type="string">
-  來自驗證器 app 的六位數 TOTP 代碼。如果帳號已啟用 2FA 則為必填。
+  Six-digit TOTP code from an authenticator app. Required if 2FA is enabled on the account.
 </ParamField>
 
 <ParamField body="backupCode" type="string">
-  一次性備用代碼。當驗證器 app 無法使用時，可替代 `totpCode` 使用。
+  One-time backup code. Use this instead of `totpCode` if the authenticator app is unavailable.
 </ParamField>
 
 <CodeGroup>
-```bash cURL（無 2FA）
+```bash cURL (without 2FA)
 curl -X POST https://auth.panguard.ai/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
@@ -36,7 +36,7 @@ curl -X POST https://auth.panguard.ai/api/auth/login \
   }'
 ```
 
-```bash cURL（有 2FA）
+```bash cURL (with 2FA)
 curl -X POST https://auth.panguard.ai/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
@@ -46,7 +46,7 @@ curl -X POST https://auth.panguard.ai/api/auth/login \
   }'
 ```
 
-```bash cURL（使用備用代碼）
+```bash cURL (with backup code)
 curl -X POST https://auth.panguard.ai/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
@@ -57,10 +57,10 @@ curl -X POST https://auth.panguard.ai/api/auth/login \
 ```
 </CodeGroup>
 
-### 回應
+### Response
 
 <Tabs>
-  <Tab title="200 成功">
+  <Tab title="200 Success">
     ```json
     {
       "ok": true,
@@ -78,8 +78,8 @@ curl -X POST https://auth.panguard.ai/api/auth/login \
     }
     ```
   </Tab>
-  <Tab title="200 需要 2FA">
-    當帳號已啟用 TOTP 但未提供代碼時：
+  <Tab title="200 2FA Required">
+    When the account has TOTP enabled but no code was provided:
 
     ```json
     {
@@ -89,9 +89,9 @@ curl -X POST https://auth.panguard.ai/api/auth/login \
     }
     ```
 
-    請重新提交請求，包含 `totpCode` 或 `backupCode` 欄位。
+    Resubmit the request with the `totpCode` or `backupCode` field included.
   </Tab>
-  <Tab title="401 無效的憑證">
+  <Tab title="401 Invalid Credentials">
     ```json
     {
       "ok": false,
@@ -101,9 +101,9 @@ curl -X POST https://auth.panguard.ai/api/auth/login \
   </Tab>
 </Tabs>
 
-### 雙因素驗證流程
+### Two-Factor Authentication Flow
 
-當帳號啟用 2FA 時，登入過程需要兩個步驟：
+When 2FA is enabled on an account, the login process requires two steps:
 
 ```mermaid
 sequenceDiagram
@@ -116,13 +116,13 @@ sequenceDiagram
 ```
 
 <Info>
-`totpCode` 和 `backupCode` 欄位互斥。請提供其中一個，而非兩個都提供。備用代碼為一次性使用，成功驗證後即被消耗。
+The `totpCode` and `backupCode` fields are mutually exclusive. Provide one or the other, not both. Backup codes are single-use and are consumed upon successful authentication.
 </Info>
 
-### Token 有效期
+### Token Lifetime
 
-JWT token 預設在 **24 小時**後到期。`expiresAt` 欄位指示確切的到期時間戳。若要維持工作階段，請在 token 到期前重新驗證。
+JWT tokens expire after **24 hours** by default. The `expiresAt` field indicates the exact expiration timestamp. To maintain a session, re-authenticate before the token expires.
 
 <Tip>
-CLI（`panguard login`）會自動處理完整的登入流程，包括 2FA 提示和安全 token 儲存於 `~/.panguard/credentials.json`。
+The CLI (`panguard login`) handles the full login flow automatically, including 2FA prompts and secure token storage in `~/.panguard/credentials.json`.
 </Tip>

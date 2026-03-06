@@ -1,65 +1,65 @@
 ---
-title: "系統服務"
-description: "將 Panguard Guard 安裝為 systemd、launchd 或 Windows 服務，實現自動啟動與持續防護。"
+title: "System Service"
+description: "Install Panguard Guard as a systemd, launchd, or Windows service for automatic startup and continuous protection."
 icon: "gear"
 ---
 
-# 系統服務安裝
+# System Service Installation
 
-將 Guard 安裝為系統服務，使其在開機時自動啟動、故障時自動重啟，並持續運行而無需手動介入。
+Install Guard as a system service so it starts automatically on boot, restarts on failure, and runs continuously without manual intervention.
 
 ---
 
-## 快速安裝
+## Quick Install
 
 ```bash
-# 安裝為系統服務
+# Install as system service
 panguard guard install
 
-# 移除系統服務
+# Remove system service
 panguard guard uninstall
 ```
 
-`install` 指令會偵測您的作業系統並自動建立相應的服務設定。
+The `install` command detects your operating system and creates the appropriate service configuration automatically.
 
 ---
 
-## 各平台詳細說明
+## Platform-Specific Details
 
 <Tabs>
   <Tab title="macOS (launchd)">
-    Guard 會建立 LaunchDaemon plist 檔案：
+    Guard creates a LaunchDaemon plist file:
 
     ```
     /Library/LaunchDaemons/ai.panguard.guard.plist
     ```
 
-    **安裝後行為：**
-    - 開機時自動啟動
-    - 異常退出時自動重啟
-    - 日誌寫入 `/var/log/panguard-guard.log`
+    **Behavior after installation:**
+    - Starts automatically on boot
+    - Restarts automatically on abnormal exit
+    - Logs written to `/var/log/panguard-guard.log`
 
-    **手動管理：**
+    **Manual management:**
 
     ```bash
-    # 查看服務狀態
+    # Check service status
     sudo launchctl list | grep panguard
 
-    # 手動啟動
+    # Start manually
     sudo launchctl load /Library/LaunchDaemons/ai.panguard.guard.plist
 
-    # 手動停止
+    # Stop manually
     sudo launchctl unload /Library/LaunchDaemons/ai.panguard.guard.plist
     ```
   </Tab>
   <Tab title="Linux (systemd)">
-    Guard 會建立 systemd unit 檔案：
+    Guard creates a systemd unit file:
 
     ```
     /etc/systemd/system/panguard-guard.service
     ```
 
-    **Unit 檔案範例：**
+    **Example unit file:**
 
     ```ini
     [Unit]
@@ -97,48 +97,48 @@ panguard guard uninstall
     WantedBy=multi-user.target
     ```
 
-    **手動管理：**
+    **Manual management:**
 
     ```bash
-    # 查看服務狀態
+    # Check service status
     systemctl status panguard-guard
 
-    # 啟動 / 停止
+    # Start / stop
     sudo systemctl start panguard-guard
     sudo systemctl stop panguard-guard
 
-    # 查看日誌
+    # View logs
     journalctl -u panguard-guard -f
     ```
 
-    **所需 Linux 權限：**
+    **Required Linux capabilities:**
 
-    | 權限 | 用途 |
+    | Capability | Purpose |
     | --- | --- |
-    | `CAP_NET_ADMIN` | 透過 iptables 封鎖 IP |
-    | `CAP_KILL` | 終止惡意行程 |
-    | `CAP_SYS_PTRACE` | 記憶體掃描以偵測無檔案惡意軟體 |
+    | `CAP_NET_ADMIN` | Block IPs via iptables |
+    | `CAP_KILL` | Terminate malicious processes |
+    | `CAP_SYS_PTRACE` | Memory scanning for fileless malware |
   </Tab>
   <Tab title="Windows (Services)">
-    Guard 註冊為 Windows 服務：
+    Guard registers as a Windows service:
 
     ```
     Service Name:    PanguardGuard
     Display Name:    Panguard Guard AI
     ```
 
-    **安裝後行為：**
-    - 開機時自動啟動
-    - 異常退出時自動重啟
-    - 日誌寫入 Windows Event Log
+    **Behavior after installation:**
+    - Starts automatically on boot
+    - Restarts automatically on abnormal exit
+    - Logs written to Windows Event Log
 
-    **手動管理：**
+    **Manual management:**
 
     ```powershell
-    # 查看服務狀態
+    # Check service status
     sc.exe query PanguardGuard
 
-    # 啟動 / 停止
+    # Start / stop
     sc.exe start PanguardGuard
     sc.exe stop PanguardGuard
     ```
@@ -147,29 +147,29 @@ panguard guard uninstall
 
 ---
 
-## 手動 systemd 設定（進階）
+## Manual systemd Setup (Advanced)
 
-若需完全控制服務設定，請依照以下步驟：
+For full control over the service configuration, follow these steps:
 
 <Steps>
-  <Step title="建立系統使用者">
+  <Step title="Create a System User">
     ```bash
     sudo useradd --system --home-dir /opt/panguard --shell /usr/sbin/nologin panguard
     ```
   </Step>
-  <Step title="建立目錄">
+  <Step title="Create Directories">
     ```bash
     sudo mkdir -p /opt/panguard /var/panguard-guard /etc/panguard
     sudo chown -R panguard:panguard /opt/panguard /var/panguard-guard
     ```
   </Step>
-  <Step title="部署應用程式">
+  <Step title="Deploy the Application">
     ```bash
     sudo cp -r dist/ /opt/panguard/dist/
     sudo cp -r node_modules/ /opt/panguard/node_modules/
     ```
   </Step>
-  <Step title="建立環境檔案">
+  <Step title="Create Environment File">
     ```bash
     sudo tee /etc/panguard/guard.env << 'EOF'
     PANGUARD_DATA_DIR=/var/panguard-guard
@@ -181,10 +181,10 @@ panguard guard uninstall
     ```
 
     <Warning>
-    環境檔案包含密鑰。請務必將權限設為 `600` 並限制所有權歸服務使用者。
+    Environment files contain secrets. Always set permissions to `600` and restrict ownership to the service user.
     </Warning>
   </Step>
-  <Step title="啟用並啟動">
+  <Step title="Enable and Start">
     ```bash
     sudo systemctl daemon-reload
     sudo systemctl enable panguard-guard
@@ -196,9 +196,9 @@ panguard guard uninstall
 
 ---
 
-## Manager 服務
+## Manager Service
 
-Manager 也可以安裝為 systemd 服務，適用於分散式部署：
+The Manager can also be installed as a systemd service for distributed deployments:
 
 ```ini
 [Unit]
@@ -229,80 +229,80 @@ WantedBy=multi-user.target
 
 ---
 
-## Watchdog 健康監控
+## Watchdog Health Monitoring
 
-系統服務內建 watchdog 機制：
+The system service includes a built-in watchdog mechanism:
 
-- 每 60 秒檢查 Guard 行程健康狀態
-- 記憶體使用異常時重啟
-- CPU 使用異常時降級
-- 重啟次數超過門檻時停止並通知
+- Checks Guard process health every 60 seconds
+- Restarts on abnormal memory usage
+- Degrades on abnormal CPU usage
+- Stops and notifies if restart count exceeds threshold
 
 ---
 
-## 批次部署腳本
+## Batch Deployment Script
 
-產生一行安裝腳本，用於跨多台設備部署：
+Generate a one-line installation script for deploying across multiple machines:
 
 ```bash
 panguard guard install-script
 ```
 
-產生的腳本會：
-1. 下載 Panguard AI
-2. 安裝依賴
-3. 安裝為系統服務
-4. 啟動 Guard（使用者需另外完成 `panguard login`）
+The generated script will:
+1. Download Panguard AI
+2. Install dependencies
+3. Install as a system service
+4. Start Guard (user must complete `panguard login` separately)
 
 ---
 
-## 資料目錄
+## Data Directory
 
-| 平台 | 預設路徑 |
+| Platform | Default Path |
 | --- | --- |
 | macOS | `~/.panguard-guard/` |
 | Linux | `~/.panguard-guard/` |
 | Windows | `%APPDATA%\panguard-guard\` |
 
-使用 `--data-dir` 覆蓋：
+Override with `--data-dir`:
 
 ```bash
 panguard guard start --data-dir /opt/panguard/data
 ```
 
-**內容：**
-- `guard.pid` -- PID 檔（防止重複執行個體）
-- `baseline/` -- 行為基線資料
-- `rules/` -- 自訂 Sigma 與 YARA 規則
-- `logs/` -- 事件日誌（JSONL 搭配輪替）
-- `config.json` -- Guard 設定
+**Contents:**
+- `guard.pid` -- PID file (prevents duplicate instances)
+- `baseline/` -- Behavioral baseline data
+- `rules/` -- Custom Sigma and YARA rules
+- `logs/` -- Event logs (JSONL with rotation)
+- `config.json` -- Guard configuration
 
 ---
 
-## PID 管理
+## PID Management
 
-Guard 使用 PID 檔管理行程狀態：
+Guard uses PID files to manage process state:
 
-- 啟動時寫入 PID
-- 正常關閉時移除 PID 檔
-- 防止多個執行個體同時運行
-- 支援透過 SIGTERM 與 SIGINT 的優雅關閉
+- PID written on startup
+- PID file removed on clean shutdown
+- Prevents multiple instances from running simultaneously
+- Supports graceful shutdown via SIGTERM and SIGINT
 
 ---
 
-## 相關內容
+## Related
 
 <CardGroup cols={2}>
-  <Card title="即時防護" icon="shield" href="/guides/real-time-protection">
-    設定 Guard 進行持續監控與回應。
+  <Card title="Real-Time Protection" icon="shield" href="/guides/real-time-protection">
+    Configure Guard for continuous monitoring and response.
   </Card>
-  <Card title="Docker 部署" icon="docker" href="/guides/docker-deployment">
-    在容器化環境中運行 Guard。
+  <Card title="Docker Deployment" icon="docker" href="/guides/docker-deployment">
+    Run Guard in a containerized environment.
   </Card>
-  <Card title="多端點設定" icon="server" href="/guides/multi-endpoint">
-    將 Guard 代理程式連線至集中式 Manager。
+  <Card title="Multi-Endpoint Setup" icon="server" href="/guides/multi-endpoint">
+    Connect Guard agents to a centralized Manager.
   </Card>
-  <Card title="環境變數" icon="sliders" href="/configuration/environment-variables">
-    完整的環境變數參考。
+  <Card title="Environment Variables" icon="sliders" href="/configuration/environment-variables">
+    Complete environment variable reference.
   </Card>
 </CardGroup>

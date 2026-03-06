@@ -1,37 +1,37 @@
 ---
-title: "代理管理"
-description: "在您的機群中註冊、監控和管理 Panguard Guard 代理。"
+title: "Agent Management"
+description: "Register, monitor, and manage Panguard Guard agents across your fleet."
 icon: "server"
 ---
 
-代理管理端點處理 Guard 代理的完整生命週期：註冊、心跳監控、查詢和取消註冊。
+The Agent Management endpoints handle the full lifecycle of Guard agents: registration, heartbeat monitoring, querying, and deregistration.
 
 ## POST /api/agents/register
 
-向 Manager 註冊新的代理。通常在 `panguard guard start` 運行時自動呼叫。
+Registers a new agent with the Manager. Typically called automatically when `panguard guard start` runs.
 
 <ParamField body="hostname" type="string" required>
-  機器主機名稱。
+  The machine hostname.
 </ParamField>
 
 <ParamField body="os" type="string" required>
-  作業系統識別碼（例如 `linux`、`darwin`、`win32`）。
+  Operating system identifier (e.g., `linux`, `darwin`, `win32`).
 </ParamField>
 
 <ParamField body="version" type="string" required>
-  在代理上運行的 Panguard Guard 版本。
+  Panguard Guard version running on the agent.
 </ParamField>
 
 <ParamField body="ip" type="string">
-  代理的 IP 位址。如果未提供，會從請求中自動偵測。
+  The agent's IP address. Auto-detected from the request if not provided.
 </ParamField>
 
 <ParamField body="org_id" type="string">
-  用於多租戶部署的組織 ID。
+  Organization ID for multi-tenant deployments.
 </ParamField>
 
 <ParamField body="tags" type="string[]">
-  用於分組和篩選的選用標籤（例如 `["production", "web-tier"]`）。
+  Optional tags for grouping and filtering (e.g., `["production", "web-tier"]`).
 </ParamField>
 
 <CodeGroup>
@@ -70,26 +70,26 @@ curl -X POST https://localhost:8443/api/agents/register \
 
 ## POST /api/agents/:id/heartbeat
 
-發送心跳以確認代理存活。超過設定逾時未發送心跳的代理會被標記為 `stale`。
+Sends a heartbeat to confirm the agent is alive. Agents that miss heartbeats beyond the configured timeout are marked as `stale`.
 
 <ParamField path="id" type="string" required>
-  註冊時回傳的代理 ID。
+  The agent ID returned from registration.
 </ParamField>
 
 <ParamField body="uptime" type="number">
-  代理運行時間（秒）。
+  Agent uptime in seconds.
 </ParamField>
 
 <ParamField body="cpu" type="number">
-  目前 CPU 使用率百分比（0--100）。
+  Current CPU usage percentage (0--100).
 </ParamField>
 
 <ParamField body="memory" type="number">
-  目前記憶體使用率百分比（0--100）。
+  Current memory usage percentage (0--100).
 </ParamField>
 
 <ParamField body="version" type="string">
-  目前 Panguard Guard 版本（用於追蹤升級）。
+  Current Panguard Guard version (for tracking upgrades).
 </ParamField>
 
 <CodeGroup>
@@ -121,17 +121,17 @@ curl -X POST https://localhost:8443/api/agents/agent-a1b2c3d4/heartbeat \
 </ResponseExample>
 
 <Info>
-回應包含 `pendingPolicies` 計數，讓代理知道何時需要取得新的策略規則。心跳間隔預設為 60 秒，可透過 `MANAGER_HEARTBEAT_TIMEOUT_MS` 設定。
+The response includes a `pendingPolicies` count, allowing the agent to know when to fetch new policy rules. The heartbeat interval defaults to 60 seconds and is configurable via `MANAGER_HEARTBEAT_TIMEOUT_MS`.
 </Info>
 
 ---
 
 ## DELETE /api/agents/:id
 
-取消註冊代理並將其從機群中移除。歷史威脅資料會被保留。
+Deregisters an agent and removes it from the fleet. Historical threat data is retained.
 
 <ParamField path="id" type="string" required>
-  要取消註冊的代理 ID。
+  The agent ID to deregister.
 </ParamField>
 
 <CodeGroup>
@@ -142,7 +142,7 @@ curl -X DELETE https://localhost:8443/api/agents/agent-a1b2c3d4 \
 </CodeGroup>
 
 <Tabs>
-  <Tab title="200 成功">
+  <Tab title="200 Success">
     ```json
     {
       "ok": true,
@@ -152,7 +152,7 @@ curl -X DELETE https://localhost:8443/api/agents/agent-a1b2c3d4 \
     }
     ```
   </Tab>
-  <Tab title="404 未找到">
+  <Tab title="404 Not Found">
     ```json
     {
       "ok": false,
@@ -166,18 +166,18 @@ curl -X DELETE https://localhost:8443/api/agents/agent-a1b2c3d4 \
 
 ## GET /api/agents
 
-列出所有已註冊的代理及其目前狀態。
+Lists all registered agents with their current status.
 
 <ParamField query="status" type="string">
-  依狀態篩選：`online`、`stale` 或 `offline`。
+  Filter by status: `online`, `stale`, or `offline`.
 </ParamField>
 
 <ParamField query="org_id" type="string">
-  依組織 ID 篩選。
+  Filter by organization ID.
 </ParamField>
 
 <ParamField query="tag" type="string">
-  依標籤篩選。可指定多次。
+  Filter by tag. Can be specified multiple times.
 </ParamField>
 
 <CodeGroup>
@@ -223,10 +223,10 @@ curl -X GET "https://localhost:8443/api/agents?status=online" \
 
 ## GET /api/agents/:id
 
-回傳特定代理的詳細資訊。
+Returns detailed information about a specific agent.
 
 <ParamField path="id" type="string" required>
-  代理 ID。
+  The agent ID.
 </ParamField>
 
 <CodeGroup>
@@ -237,7 +237,7 @@ curl -X GET https://localhost:8443/api/agents/agent-a1b2c3d4 \
 </CodeGroup>
 
 <Tabs>
-  <Tab title="200 成功">
+  <Tab title="200 Success">
     ```json
     {
       "ok": true,
@@ -260,7 +260,7 @@ curl -X GET https://localhost:8443/api/agents/agent-a1b2c3d4 \
     }
     ```
   </Tab>
-  <Tab title="404 未找到">
+  <Tab title="404 Not Found">
     ```json
     {
       "ok": false,

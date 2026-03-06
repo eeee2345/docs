@@ -1,114 +1,114 @@
 ---
-title: "Telegram 整合"
-description: "使用 BotFather 設定 Panguard Chat 搭配 Telegram 的逐步指南。"
+title: "Telegram Integration"
+description: "Step-by-step guide to setting up Panguard Chat with Telegram using BotFather."
 icon: "paper-plane"
 ---
 
-Telegram 是建議個人開發者和個人伺服器監控使用的管道。Panguard 透過您建立和控制的 Telegram Bot 發送通知。
+Telegram is the recommended channel for individual developers and personal server monitoring. Panguard sends notifications via a Telegram Bot that you create and control.
 
-## 設定概覽
+## Setup Overview
 
 <Steps>
-  <Step title="建立 Telegram Bot">
-    向 BotFather 註冊一個新的 Bot 以取得 Bot Token。
+  <Step title="Create a Telegram Bot">
+    Register a new bot with BotFather to get a Bot Token.
   </Step>
-  <Step title="取得您的 Chat ID">
-    找到您的個人或群組 Chat ID。
+  <Step title="Get your Chat ID">
+    Find your personal or group Chat ID.
   </Step>
-  <Step title="設定 Panguard">
-    執行設定精靈並提供您的憑證。
+  <Step title="Configure Panguard">
+    Run the setup wizard and provide your credentials.
   </Step>
-  <Step title="測試連線">
-    發送測試通知以驗證一切正常運作。
+  <Step title="Test the connection">
+    Send a test notification to verify everything works.
   </Step>
 </Steps>
 
-## 步驟 1：建立 Telegram Bot
+## Step 1: Create a Telegram Bot
 
-1. 開啟 Telegram 並搜尋 **@BotFather**
-2. 開始對話並發送 `/newbot`
-3. 為您的 Bot 選擇一個顯示名稱（例如 `My Panguard Security`）
-4. 選擇一個以 `bot` 結尾的使用者名稱（例如 `my_panguard_bot`）
-5. BotFather 會回覆一個 **Bot Token**，格式如下：
+1. Open Telegram and search for **@BotFather**
+2. Start a conversation and send `/newbot`
+3. Choose a display name for your bot (e.g., `My Panguard Security`)
+4. Choose a username ending in `bot` (e.g., `my_panguard_bot`)
+5. BotFather will reply with a **Bot Token** in this format:
 
 ```
 7123456789:AAHxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 <Warning>
-  請保密您的 Bot Token。任何人擁有此權杖都可以以您的 Bot 身份發送訊息。如果洩露，請在 BotFather 中使用 `/revoke` 重新產生。
+  Keep your Bot Token secret. Anyone with the token can send messages as your bot. If compromised, use `/revoke` in BotFather to regenerate it.
 </Warning>
 
-## 步驟 2：取得您的 Chat ID
+## Step 2: Get Your Chat ID
 
-### 方法 A：使用 @userinfobot（推薦）
+### Method A: Using @userinfobot (recommended)
 
-1. 在 Telegram 中搜尋 **@userinfobot** 並開始對話
-2. 發送任何訊息（例如 `/start`）
-3. 它會回覆您的 **Chat ID**（如 `123456789` 的數值）
+1. Search for **@userinfobot** in Telegram and start a conversation
+2. Send any message (e.g., `/start`)
+3. It replies with your **Chat ID** (a numeric value like `123456789`)
 
-### 方法 B：使用 Bot API
+### Method B: Using the Bot API
 
-1. 在 Telegram 中向您新建立的 Bot 發送任何訊息
-2. 在瀏覽器中開啟此 URL（將 `<YOUR_TOKEN>` 替換為您的實際權杖）：
+1. Send any message to your newly created bot in Telegram
+2. Open this URL in your browser (replace `<YOUR_TOKEN>` with your actual token):
 
 ```
 https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates
 ```
 
-3. 在 JSON 回應中找到 `"chat":{"id": 123456789}` 下的 Chat ID
+3. Find the Chat ID in the JSON response under `"chat":{"id": 123456789}`
 
-## 步驟 3：設定 Panguard Chat
+## Step 3: Configure Panguard Chat
 
-### 互動式設定
+### Interactive Setup
 
 ```bash
 panguard chat setup --channel telegram
 ```
 
-精靈會詢問：
-- **Bot Token** -- 貼上步驟 1 中的權杖
-- **Chat ID** -- 貼上步驟 2 中的 Chat ID
+The wizard will ask for:
+- **Bot Token** -- paste the token from Step 1
+- **Chat ID** -- paste the Chat ID from Step 2
 
-### 非互動式設定
+### Non-Interactive Setup
 
 ```bash
 panguard chat setup --channel telegram --user-type developer --lang zh-TW
 ```
 
-## 步驟 4：測試
+## Step 4: Test
 
 ```bash
 panguard chat test --channel telegram
 ```
 
-您應該會在 Telegram 中收到一則測試訊息。如果未收到：
+You should receive a test message in Telegram. If you do not:
 
 <AccordionGroup>
-  <Accordion title="Bot 無回應">
-    您必須先向您的 Bot 發送一則訊息。Telegram Bot 無法主動向從未互動過的使用者發起對話。
+  <Accordion title="Bot not responding">
+    You must send a message to your bot first. Telegram bots cannot initiate conversations with users they have never interacted with.
   </Accordion>
-  <Accordion title="Chat ID 錯誤">
-    使用 @userinfobot 驗證您的 Chat ID。群組 ID 是負數（例如 `-1001234567890`）。
+  <Accordion title="Wrong Chat ID">
+    Use @userinfobot to verify your Chat ID. Group IDs are negative numbers (e.g., `-1001234567890`).
   </Accordion>
-  <Accordion title="網路問題">
-    確保您的系統可以透過 443 埠連接到 `api.telegram.org`。
+  <Accordion title="Network issues">
+    Ensure your system can reach `api.telegram.org` on port 443.
   </Accordion>
 </AccordionGroup>
 
-## 群組通知（可選）
+## Group Notifications (Optional)
 
-若要將通知發送至 Telegram 群組而非私訊：
+To send notifications to a Telegram group instead of a direct message:
 
-1. 建立一個 Telegram 群組
-2. 將您的 Bot 加入群組
-3. 在群組中發送一則訊息
-4. 使用 `getUpdates` API 方法找到群組 Chat ID（群組 ID 是負數，例如 `-1001234567890`）
-5. 設定 Panguard Chat 時使用群組 Chat ID
+1. Create a Telegram group
+2. Add your bot to the group
+3. Send a message in the group
+4. Use the `getUpdates` API method to find the group Chat ID (group IDs are negative, e.g., `-1001234567890`)
+5. Use the group Chat ID when configuring Panguard Chat
 
-## 訊息格式
+## Message Format
 
-Telegram 通知使用 Markdown 格式搭配結構化章節：
+Telegram notifications use Markdown formatting with structured sections:
 
 ```
 [Panguard AI Alert]
@@ -123,4 +123,4 @@ Timeline:
   14:23:02 - Auto-response: IP blocked
 ```
 
-確切格式會根據您設定的[使用者角色](/products/chat/user-roles)而有所不同。
+The exact format varies by your configured [user role](/products/chat/user-roles).

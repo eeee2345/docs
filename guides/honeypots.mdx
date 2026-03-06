@@ -1,18 +1,18 @@
 ---
-title: "部署智慧蜜罐"
-description: "設置誘餌服務，在攻擊者接觸真實資產前偵測並分析他們。"
+title: "Deploy Smart Honeypots"
+description: "Set up decoy services to detect and profile attackers before they reach real assets."
 icon: "honey-pot"
 ---
 
-Panguard Trap 部署輕量級蜜罐，模擬真實服務。當攻擊者與這些誘餌互動時，Panguard 會捕捉他們的技術、工具與意圖 -- 為您提供預警與威脅情報。
+Panguard Trap deploys lightweight honeypots that mimic real services. When attackers interact with these decoys, Panguard captures their techniques, tools, and intent -- giving you early warning and threat intelligence.
 
 <Note>
-  蜜罐功能需要 **Pro 方案**或更高。Community 與 Solo 方案不包含 Trap 功能。
+  Honeypots require a **Pro plan** or higher. Community and Solo plans do not include Trap functionality.
 </Note>
 
 <Steps>
-  <Step title="啟動蜜罐">
-    使用一行指令部署一個或多個誘餌服務：
+  <Step title="Start honeypots">
+    Deploy one or more decoy services with a single command:
 
     ```bash
     panguard trap start --services ssh,http
@@ -33,37 +33,37 @@ Panguard Trap 部署輕量級蜜罐，模擬真實服務。當攻擊者與這些
     ```
 
     <Info>
-      蜜罐預設綁定非標準連接埠以避免與真實服務衝突。使用 `--port-map` 自訂：`panguard trap start --services ssh --port-map ssh:22`。
+      Honeypots bind to non-standard ports by default to avoid conflicts with real services. Use `--port-map` to customize: `panguard trap start --services ssh --port-map ssh:22`.
     </Info>
   </Step>
 
-  <Step title="選擇服務類型">
-    Panguard 支援 8 種蜜罐服務類型：
+  <Step title="Choose service types">
+    Panguard supports 8 honeypot service types:
 
-    | 服務 | 預設連接埠 | 模擬對象 |
+    | Service | Default Port | Emulates |
     | --- | --- | --- |
-    | `ssh` | 2222 | OpenSSH 伺服器，含假冒驗證 |
-    | `http` | 8080 | Apache/Nginx 網頁伺服器，含誘餌頁面 |
-    | `ftp` | 2121 | FTP 伺服器，含假冒檔案清單 |
-    | `smb` | 4450 | Windows 檔案共享 (SMB/CIFS) |
-    | `mysql` | 3307 | MySQL 資料庫，含假冒憑證 |
-    | `rdp` | 3390 | 遠端桌面協定交握 |
-    | `telnet` | 2323 | Telnet 登入提示 |
-    | `redis` | 6380 | Redis 記憶體儲存 |
+    | `ssh` | 2222 | OpenSSH server with fake authentication |
+    | `http` | 8080 | Apache/Nginx web server with decoy pages |
+    | `ftp` | 2121 | FTP server with fake file listings |
+    | `smb` | 4450 | Windows file share (SMB/CIFS) |
+    | `mysql` | 3307 | MySQL database with fake credentials |
+    | `rdp` | 3390 | Remote Desktop Protocol handshake |
+    | `telnet` | 2323 | Telnet login prompt |
+    | `redis` | 6380 | Redis in-memory store |
 
-    一次部署全部 8 種：
+    Deploy all 8 at once:
 
     ```bash
     panguard trap start --services ssh,http,ftp,smb,mysql,rdp,telnet,redis
     ```
 
     <Tip>
-      建議從 `ssh` 與 `http` 開始 -- 這兩種吸引最多攻擊流量。根據您的環境新增其他服務（例如，若您運行資料庫則加 `mysql`，若您有 Windows 網路則加 `smb`）。
+      Start with `ssh` and `http` -- these attract the most attacker traffic. Add additional services based on your environment (e.g., `mysql` if you run databases, `smb` if you run Windows networks).
     </Tip>
   </Step>
 
-  <Step title="查看攻擊者分析">
-    Panguard 根據攻擊者的互動自動建立分析檔案：
+  <Step title="View attacker profiles">
+    Panguard automatically builds profiles of attackers based on their interactions:
 
     ```bash
     panguard trap profiles
@@ -98,8 +98,8 @@ Panguard Trap 部署輕量級蜜罐，模擬真實服務。當攻擊者與這些
     ```
   </Step>
 
-  <Step title="存取威脅情報">
-    將攻擊者資料彙總為可操作的威脅情報：
+  <Step title="Access threat intelligence">
+    Aggregate attacker data into actionable threat intelligence:
 
     ```bash
     panguard trap intel
@@ -123,27 +123,27 @@ Panguard Trap 部署輕量級蜜罐，模擬真實服務。當攻擊者與這些
       192.0.2.88      LOW     port-scan       logged
     ```
 
-    匯出 IoC 供其他安全工具使用：
+    Export IoCs for use in other security tools:
 
     ```bash
     panguard trap intel --output iocs.json
     ```
   </Step>
 
-  <Step title="查看蜜罐狀態">
-    查看所有已部署蜜罐的狀態：
+  <Step title="Check trap status">
+    View the state of all deployed honeypots:
 
     ```bash
     panguard trap status
     ```
 
-    停止所有蜜罐：
+    Stop all honeypots:
 
     ```bash
     panguard trap stop
     ```
 
-    停止特定服務：
+    Stop a specific service:
 
     ```bash
     panguard trap stop --services ssh
@@ -151,19 +151,19 @@ Panguard Trap 部署輕量級蜜罐，模擬真實服務。當攻擊者與這些
   </Step>
 </Steps>
 
-## 接下來做什麼
+## What to do next
 
 <CardGroup cols={2}>
-  <Card title="蜜罐類型參考" icon="list" href="/products/trap/honeypot-types">
-    8 種服務模擬器的詳細文件。
+  <Card title="Honeypot types reference" icon="list" href="/products/trap/honeypot-types">
+    Detailed documentation for each of the 8 service emulators.
   </Card>
-  <Card title="攻擊者分析" icon="user-secret" href="/products/trap/attacker-profiling">
-    Panguard 如何從蜜罐互動建立行為分析。
+  <Card title="Attacker profiling" icon="user-secret" href="/products/trap/attacker-profiling">
+    How Panguard builds behavioral profiles from honeypot interactions.
   </Card>
-  <Card title="部署 Threat Cloud" icon="cloud" href="/guides/threat-cloud-deployment">
-    透過集中式 Threat Cloud 伺服器在機群間分享威脅情報。
+  <Card title="Deploy Threat Cloud" icon="cloud" href="/guides/threat-cloud-deployment">
+    Share threat intelligence across your fleet with a centralized Threat Cloud server.
   </Card>
-  <Card title="設定通知" icon="bell" href="/guides/notifications-setup">
-    當攻擊者與蜜罐互動時收到警報。
+  <Card title="Configure notifications" icon="bell" href="/guides/notifications-setup">
+    Get alerted when attackers interact with your honeypots.
   </Card>
 </CardGroup>

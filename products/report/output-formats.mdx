@@ -1,20 +1,20 @@
 ---
-title: "輸出格式"
-description: "Panguard 合規報告的 JSON、PDF 和文字輸出格式，支援雙語。"
+title: "Output Formats"
+description: "JSON, PDF, and text output formats for Panguard compliance reports with bilingual support."
 icon: "file-export"
 ---
 
-Panguard Report 支援多種輸出格式以適應不同的工作流程：供自動化使用的機器可讀 JSON、供稽核人員使用的專業 PDF，以及供快速檢查的主控台文字。
+Panguard Report supports multiple output formats to fit different workflows: machine-readable JSON for automation, professional PDF for auditors, and console text for quick checks.
 
-## JSON 格式
+## JSON Format
 
-JSON 是預設輸出格式。它設計用於程式化消費、CI/CD 整合和資料管線攝入。
+JSON is the default output format. It is designed for programmatic consumption, CI/CD integration, and data pipeline ingestion.
 
 ```bash
 panguard report generate --framework iso27001 --format json --output-dir ./reports
 ```
 
-### JSON 結構
+### JSON Structure
 
 ```json
 {
@@ -51,46 +51,46 @@ panguard report generate --framework iso27001 --format json --output-dir ./repor
 }
 ```
 
-### 使用案例
+### Use Cases
 
-- 饋入儀表板和監控系統
-- CI/CD 管線合規閘口
-- 多次報告執行的趨勢分析
-- 與 GRC（治理、風險、合規）平台整合
+- Feeding into dashboards and monitoring systems
+- CI/CD pipeline compliance gates
+- Trend analysis across multiple report runs
+- Integration with GRC (Governance, Risk, Compliance) platforms
 
 ---
 
-## PDF 格式
+## PDF Format
 
-PDF 輸出產生專業的、可列印的文件，適合稽核人員審閱和法規提交。
+PDF output produces a professional, print-ready document suitable for auditor review and regulatory submission.
 
 ```bash
 panguard report generate --framework iso27001 --format pdf --output-dir ./reports
 ```
 
-### PDF 章節
+### PDF Sections
 
-| 章節 | 內容 |
+| Section | Contents |
 |---------|----------|
-| **封面頁** | 組織名稱、框架、日期、Panguard 品牌 |
-| **執行摘要** | 整體合規百分比、控制措施狀態分佈 |
-| **控制措施評估** | 每項控制措施的評估搭配狀態指示器 |
-| **發現明細** | 不合規項目搭配證據和嚴重性 |
-| **修復計畫** | 每項發現的優先修復步驟 |
-| **附錄** | 原始掃描資料、方法說明 |
+| **Cover Page** | Organization name, framework, date, Panguard branding |
+| **Executive Summary** | Overall compliance percentage, control status breakdown |
+| **Control Assessment** | Per-control evaluation with status indicators |
+| **Findings Detail** | Non-compliant items with evidence and severity |
+| **Remediation Plan** | Prioritized remediation steps per finding |
+| **Appendix** | Raw scan data, methodology notes |
 
-### PDF 特色
+### PDF Features
 
-- 色彩編碼的合規狀態指示器
-- 嚴重性標記的發現項目搭配視覺層次
-- 附帶頁碼參考的目錄
-- 無需外部依賴（伺服器端渲染）
+- Color-coded compliance status indicators
+- Severity-tagged findings with visual hierarchy
+- Table of contents with page references
+- No external dependencies required (server-side rendering)
 
 ---
 
-## 文字輸出（主控台）
+## Text Output (Console)
 
-快速合規檢查而無需產生檔案：
+For quick compliance checks without generating files:
 
 ```bash
 panguard report summary --framework iso27001
@@ -111,23 +111,23 @@ Priority fixes:
 
 ---
 
-## 雙語支援
+## Bilingual Support
 
-所有輸出格式支援英文和繁體中文：
+All output formats support English and Traditional Chinese:
 
-| 旗標值 | 語言 | 使用案例 |
+| Flag Value | Language | Use Case |
 |-----------|----------|----------|
-| `--language en` | 英文 | 國際稽核、全球合規 |
-| `--language zh-TW` | 繁體中文 | 台灣 TCSA 報告、地方法規提交 |
+| `--language en` | English | International audits, global compliance |
+| `--language zh-TW` | Traditional Chinese | Taiwan TCSA reports, local regulatory submission |
 
-雙語支援包括：
-- 所有章節標題和標籤
-- 控制措施名稱和描述
-- 發現描述和修復步驟
-- PDF 封面頁和格式
+Bilingual support includes:
+- All section headers and labels
+- Control names and descriptions
+- Finding descriptions and remediation steps
+- PDF cover page and formatting
 
 ```bash
-# 繁體中文 PDF 報告
+# Traditional Chinese PDF report
 panguard report generate \
   --framework tw_cyber_security_act \
   --format pdf \
@@ -137,20 +137,20 @@ panguard report generate \
 
 ---
 
-## 輸入驗證
+## Input Validation
 
-在產生報告前，您可以驗證您的發現項目輸入檔案：
+Before generating a report, you can validate your findings input file:
 
 ```bash
 panguard report validate --input findings.json
 ```
 
-這會檢查：
-- JSON 結構描述合規性
-- 必填欄位是否存在
-- 嚴重性值是否有效
-- 控制措施參考是否匹配目標框架
+This checks:
+- JSON schema compliance
+- Required fields present
+- Severity values are valid
+- Control references match the target framework
 
 <Tip>
-  使用 `--format json` 進行自動化工作流程，使用 `--format pdf` 進行人工審閱交付。兩者都可以從相同的掃描資料產生。
+  Use `--format json` for automated workflows and `--format pdf` for human-reviewed deliverables. Both can be generated from the same scan data.
 </Tip>

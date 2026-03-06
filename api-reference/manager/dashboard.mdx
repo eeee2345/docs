@@ -1,12 +1,12 @@
 ---
-title: "儀表板 API"
-description: "用於儀表板和監控整合的機群概覽端點。"
+title: "Dashboard API"
+description: "Fleet overview endpoint for dashboards and monitoring integrations."
 icon: "chart-line"
 ---
 
 ## GET /api/overview
 
-回傳整個機群的高層摘要，包括代理數量、威脅統計和啟用的策略版本。專為儀表板 UI 和監控整合設計。
+Returns a high-level summary of the entire fleet, including agent counts, threat statistics, and the active policy version. Designed for dashboard UIs and monitoring integrations.
 
 <CodeGroup>
 ```bash cURL
@@ -65,41 +65,41 @@ console.log(`Fleet: ${data.onlineAgents}/${data.totalAgents} agents online`);
 ```
 </ResponseExample>
 
-### 回應欄位
+### Response Fields
 
-| 欄位 | 類型 | 說明 |
+| Field | Type | Description |
 |-------|------|-------------|
-| `totalAgents` | number | 已註冊的代理總數 |
-| `onlineAgents` | number | 有最近心跳的代理 |
-| `staleAgents` | number | 錯過心跳窗口但尚未離線的代理 |
-| `offlineAgents` | number | 超過逾時仍無法連線的代理 |
-| `threatSummary` | object | 過去 24 小時和 7 天依嚴重程度的威脅計數 |
-| `activePolicyVersion` | string | 目前啟用的策略版本（例如 `v3`） |
-| `topThreats` | array | 機群中最頻繁的威脅類型 |
-| `agentsByOs` | object | 依作業系統分組的代理數量 |
-| `updatedAt` | string | 最後資料更新的 ISO 8601 時間戳 |
+| `totalAgents` | number | Total registered agents |
+| `onlineAgents` | number | Agents with a recent heartbeat |
+| `staleAgents` | number | Agents that missed their heartbeat window but are not yet offline |
+| `offlineAgents` | number | Agents that have been unreachable beyond the timeout |
+| `threatSummary` | object | Threat counts by severity for the last 24 hours and 7 days |
+| `activePolicyVersion` | string | Currently active policy version (e.g., `v3`) |
+| `topThreats` | array | Most frequent threat types across the fleet |
+| `agentsByOs` | object | Agent count grouped by operating system |
+| `updatedAt` | string | ISO 8601 timestamp of the last data refresh |
 
-### 代理狀態定義
+### Agent Status Definitions
 
 <AccordionGroup>
   <Accordion title="Online">
-    代理在設定的逾時窗口內（預設：120 秒）已發送心跳。代理正常運作。
+    The agent has sent a heartbeat within the configured timeout window (default: 120 seconds). The agent is functioning normally.
   </Accordion>
   <Accordion title="Stale">
-    代理錯過了預期的心跳，但尚未超過離線閾值（預設：5 分鐘）。這可能表示網路問題或高負載。
+    The agent missed its expected heartbeat but has not exceeded the offline threshold (default: 5 minutes). This may indicate network issues or high load.
   </Accordion>
   <Accordion title="Offline">
-    代理在超過離線閾值後仍未發送心跳。它可能已停止、當機或機器無法連線。
+    The agent has not sent a heartbeat beyond the offline threshold. It may be stopped, crashed, or the machine is unreachable.
   </Accordion>
 </AccordionGroup>
 
 <Tip>
-使用此端點建立自訂儀表板或整合 Grafana 等監控工具。以合理的間隔（每 30--60 秒）進行輪詢以保持資料更新，而不會過度載入 API。
+Use this endpoint to build custom dashboards or integrate with monitoring tools like Grafana. Poll at a reasonable interval (every 30--60 seconds) to keep data fresh without overloading the API.
 </Tip>
 
-### 整合範例
+### Integration Example
 
-以下是一個最小化的儀表板輪詢腳本：
+Here is a minimal dashboard polling script:
 
 ```javascript
 async function pollDashboard() {
@@ -125,5 +125,5 @@ pollDashboard();
 ```
 
 <Info>
-如需無需輪詢的即時更新，請改用 [SSE 事件串流](/api-reference/manager/events#get-apieventsstream)。
+For real-time updates without polling, use the [SSE event stream](/api-reference/manager/events#get-apieventsstream) instead.
 </Info>

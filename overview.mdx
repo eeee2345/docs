@@ -1,115 +1,115 @@
 ---
-title: "產品總覽"
-description: "全面了解 Panguard AI 產品套件、架構、技術堆疊與訂閱方案。"
+title: "Product Overview"
+description: "A complete look at the Panguard AI product suite, architecture, technology stack, and subscription tiers."
 icon: "shield-check"
 ---
 
-## 什麼是 Panguard AI？
+## What is Panguard AI?
 
-Panguard AI 是一個為沒有安全團隊的開發者與中小企業設計的開源網路安全平台。它將規則式偵測、本地 AI 與雲端 AI 整合為單一 CLI 工具，自動保護端點。
+Panguard AI is an open-source cybersecurity platform designed for developers and small businesses who do not have a security team. It combines rule-based detection, local AI, and cloud AI into a single CLI tool that protects endpoints automatically.
 
-使用體驗類似 Claude Code 等工具：
+The user experience mirrors tools like Claude Code:
 
-1. **網站** -- 在 [panguard.ai](https://panguard.ai) 瀏覽方案、註冊、管理訂閱
-2. **CLI** -- `panguard login` 會開啟瀏覽器進行驗證；Token 儲存於本地
-3. **使用** -- 功能依訂閱層級開放；日常操作零負擔
+1. **Website** -- Browse plans, sign up, manage subscriptions at [panguard.ai](https://panguard.ai)
+2. **CLI** -- `panguard login` opens the browser for authentication; the token is stored locally
+3. **Usage** -- Features are gated by subscription tier; daily operation is zero-effort
 
-## 產品套件
+## Product Suite
 
-Panguard AI 包含 8 項產品。每項可獨立運作，但組合起來便構成一行指令的完整安全營運中心。
+Panguard AI includes 8 products. Each works independently, but together they form a complete Security Operations Center in one command.
 
 <CardGroup cols={2}>
   <Card title="Panguard Scan" icon="magnifying-glass">
-    **60 秒安全稽核** -- 一次性掃描，產出風險分數（0-100，等級 A-F）與 PDF 報告。涵蓋連接埠、服務、防火牆、SSL/TLS、密碼策略等。
+    **60-Second Security Audit** -- One-time scan producing a risk score (0-100, grades A-F) and PDF report. Covers ports, services, firewall, SSL/TLS, password policy, and more.
   </Card>
   <Card title="Panguard Guard" icon="shield-halved">
-    **AI 即時監控** -- 全天候防護，搭載 4 代理 AI 流水線（偵測、分析、回應、報告）。7 天學習期、3,155 條 Sigma 規則、5,895 條 YARA 規則，以及自動回應功能。
+    **AI Real-Time Monitoring** -- Always-on protection with a 4-agent AI pipeline (Detect, Analyze, Respond, Report). 7-day learning period, 3,155 Sigma rules, 5,895 YARA rules, and auto-response capabilities.
   </Card>
   <Card title="Panguard Chat" icon="bell">
-    **AI 安全通知** -- 將技術警報翻譯成白話語言。透過 Telegram、Slack、Email、Webhook 或 LINE 傳送，支援三種語氣模式：boss、developer 與 it_admin。
+    **AI Security Notifications** -- Translates technical alerts into plain language. Delivers via Telegram, Slack, Email, Webhook, or LINE with three tone modes: boss, developer, and it_admin.
   </Card>
   <Card title="Panguard Trap" icon="honey-pot">
-    **智慧蜜罐** -- 8 種誘餌服務（SSH、HTTP、FTP、SMB、MySQL、RDP、Telnet、Redis），引誘攻擊者、收集情報並分析攻擊者技術等級。
+    **Smart Honeypots** -- 8 decoy services (SSH, HTTP, FTP, SMB, MySQL, RDP, Telnet, Redis) that lure attackers, collect intelligence, and profile attacker skill levels.
   </Card>
   <Card title="Panguard Report" icon="file-chart-column">
-    **合規報告** -- 60 秒內自動產生稽核等級報告，支援台灣資安法（10 項控制措施）、ISO 27001（30 項控制措施）與 SOC 2（10 項控制措施）。
+    **Compliance Reports** -- Auto-generate audit-ready reports for Taiwan TCSA (10 controls), ISO 27001 (30 controls), and SOC 2 (10 controls) in 60 seconds.
   </Card>
   <Card title="Panguard MCP" icon="plug">
-    **Model Context Protocol** -- 透過 MCP 伺服器將 Panguard 安全資料整合至 AI 助手與 LLM 工作流程。
+    **Model Context Protocol** -- Integrate Panguard security data with AI assistants and LLM-powered workflows through the MCP server.
   </Card>
   <Card title="Panguard Manager" icon="grid-2">
-    **多端點管理** -- 集中化儀表板，管理跨機群的多個 Panguard 代理程式，支援策略執行與生命週期管理。
+    **Multi-Endpoint Management** -- Centralized dashboard for managing multiple Panguard agents across a fleet with policy enforcement and lifecycle management.
   </Card>
   <Card title="Threat Cloud" icon="cloud">
-    **集體威脅情報** -- 在 Panguard 網路中匿名分享威脅特徵。RESTful API 搭配 SQLite 後端、自動 Sigma 規則產生，以及 IP/網域信譽評分。
+    **Collective Threat Intelligence** -- Anonymized threat signature sharing across the Panguard network. RESTful API with SQLite backend, automatic Sigma rule generation, and IP/domain reputation scoring.
   </Card>
 </CardGroup>
 
-## 三層式 AI 架構
+## Three-Layer AI Architecture
 
-Panguard 採用分層 AI 漏斗架構，平衡速度、成本與準確度。每一層處理越來越少但更複雜的事件。
+Panguard uses a layered AI funnel that balances speed, cost, and accuracy. Each layer handles progressively fewer -- but more complex -- events.
 
-| 層級 | 技術 | 處理比例 | 延遲 | 成本 |
+| Layer | Technology | Handles | Latency | Cost |
 | --- | --- | --- | --- | --- |
-| **Layer 1** | Sigma / YARA 規則引擎 | 90% 事件 | < 50ms | $0 |
-| **Layer 2** | 本地 AI (Ollama) | 7% 事件 | ~2s | $0 |
-| **Layer 3** | 雲端 AI (Claude / OpenAI) | 3% 事件 | ~5s | ~$0.008/次 |
+| **Layer 1** | Sigma / YARA rules engine | 90% of events | < 50ms | $0 |
+| **Layer 2** | Local AI (Ollama) | 7% of events | ~2s | $0 |
+| **Layer 3** | Cloud AI (Claude / OpenAI) | 3% of events | ~5s | ~$0.008/call |
 
 <Info>
-  **設計即韌性。** 雲端 AI 不可用時，本地 AI 接手。本地 AI 停止時，規則引擎持續運作。防護永不中斷。
+  **Resilient by design.** If Cloud AI is unavailable, Local AI takes over. If Local AI is down, the rules engine keeps running. Protection never stops.
 </Info>
 
-深入了解 AI 架構，請參閱[三層式 AI](/concepts/three-layer-ai)。
+For a deep dive into the AI architecture, see [Three-Layer AI](/concepts/three-layer-ai).
 
-## 技術堆疊
+## Technology Stack
 
-| 類別 | 技術 |
+| Category | Technology |
 | --- | --- |
-| 語言 | TypeScript 5.7（strict 模式） |
-| 執行環境 | Node.js 20+ |
+| Language | TypeScript 5.7 (strict mode) |
+| Runtime | Node.js 20+ |
 | Monorepo | pnpm 10 workspaces |
-| 測試 | Vitest 3（3,017 個測試 / 142 個檔案） |
-| 偵測規則 | Sigma (3,155) + YARA (5,895) + Suricata + Falco |
-| AI 供應商 | Ollama（本地）+ Claude / OpenAI（雲端） |
-| 驗證 | Google OAuth (PKCE) + scrypt 雜湊 |
-| 國際化 | 英文 + 繁體中文 |
-| 加密 | AES-256-GCM |
+| Testing | Vitest 3 (3,017 tests / 142 files) |
+| Detection Rules | Sigma (3,155) + YARA (5,895) + Suricata + Falco |
+| AI Providers | Ollama (local) + Claude / OpenAI (cloud) |
+| Authentication | Google OAuth (PKCE) + scrypt hashing |
+| Internationalization | English + Traditional Chinese |
+| Encryption | AES-256-GCM |
 
-## 訂閱方案
+## Subscription Tiers
 
-| 功能 | Community | Solo | Pro | Business |
+| Feature | Community | Solo | Pro | Business |
 | --- | --- | --- | --- | --- |
-| **價格** | 免費 | $9/月 | $29/月 | $79/月 |
-| **設備數** | 1 | 3 | 10 | 25 |
-| Scan（無限次） | 有 | 有 | 有 | 有 |
-| Guard（Layer 1 規則） | 有 | 有 | 有 | 有 |
-| Guard（完整三層 AI） | -- | 有 | 有 | 有 |
-| Chat 通知 | -- | 有 | 有 | 有 |
-| 本地 AI (Ollama) | -- | 有 | 有 | 有 |
-| 雲端 AI 分析 | -- | -- | 有 | 有 |
-| Trap（8 種蜜罐） | -- | -- | 有 | 有 |
-| 合規報告 | -- | -- | 有 | 有 |
-| SIEM 整合 | -- | -- | -- | 有 |
-| SSO 與 RBAC | -- | -- | -- | 有 |
-| 專屬支援 | -- | -- | -- | 有 |
+| **Price** | Free | $9/mo | $29/mo | $79/mo |
+| **Machines** | 1 | 3 | 10 | 25 |
+| Scan (unlimited) | Yes | Yes | Yes | Yes |
+| Guard (Layer 1 rules) | Yes | Yes | Yes | Yes |
+| Guard (Full 3-layer AI) | -- | Yes | Yes | Yes |
+| Chat notifications | -- | Yes | Yes | Yes |
+| Local AI (Ollama) | -- | Yes | Yes | Yes |
+| Cloud AI analysis | -- | -- | Yes | Yes |
+| Trap (8 honeypots) | -- | -- | Yes | Yes |
+| Compliance reports | -- | -- | Yes | Yes |
+| SIEM integration | -- | -- | -- | Yes |
+| SSO and RBAC | -- | -- | -- | Yes |
+| Dedicated support | -- | -- | -- | Yes |
 
-### 合規報告定價
+### Compliance Report Pricing
 
-合規報告可在 Pro 與 Business 方案上以單次購買方式取得：
+Compliance reports are available as one-time purchases on Pro and Business plans:
 
-| 報告 | 價格 | 控制措施數 |
+| Report | Price | Controls |
 | --- | --- | --- |
-| 台灣資安法 | $299 | 10 |
+| Taiwan TCSA | $299 | 10 |
 | ISO 27001 | $499 | 30 |
 | SOC 2 | $699 | 10 |
-| 組合包（全部 3 項） | $999 | 50 |
+| Bundle (all 3) | $999 | 50 |
 
-年繳方案享所有訂閱方案 8 折優惠。請至 [panguard.ai/pricing](https://panguard.ai/pricing) 管理您的訂閱。
+Annual billing receives a 20% discount on all subscription plans. Manage your subscription at [panguard.ai/pricing](https://panguard.ai/pricing).
 
-## 開源
+## Open Source
 
-Panguard AI 以 [MIT 授權條款](https://github.com/panguard-ai/panguard-ai/blob/main/LICENSE)發布。完整原始碼。零黑箱。每一行程式碼都可供審計。
+Panguard AI is released under the [MIT License](https://github.com/panguard-ai/panguard-ai/blob/main/LICENSE). Full source code. Zero black boxes. Every line is auditable.
 
-<Card title="在 GitHub 上查看" icon="github" href="https://github.com/panguard-ai/panguard-ai">
-  瀏覽原始碼、回報問題或為專案貢獻。
+<Card title="View on GitHub" icon="github" href="https://github.com/panguard-ai/panguard-ai">
+  Browse the source code, report issues, or contribute to the project.
 </Card>

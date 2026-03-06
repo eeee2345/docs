@@ -1,90 +1,90 @@
 ---
 title: "panguard scan"
-description: "在本機執行安全弱點掃描。"
+description: "Run security vulnerability scans on the local machine."
 icon: "magnifying-glass"
 ---
 
-`scan` 指令對您的端點執行全面的安全評估，檢查弱點、錯誤設定、過時軟體和已知威脅。結果由 AI 評分和排序，讓您專注於最重要的問題。
+The `scan` command performs a comprehensive security assessment of your endpoint, checking for vulnerabilities, misconfigurations, outdated software, and known threats. Results are scored and prioritized by AI so you can focus on what matters most.
 
-## 使用方式
+## Usage
 
 ```bash
 panguard scan [options]
 ```
 
-## 選項
+## Options
 
 <ParamField path="--quick" type="flag">
-  執行僅涵蓋關鍵檢查的快速掃描。適用於所有方案，包括 Community（免費）。
+  Run a fast scan covering only critical checks. Available on all plans including Community (Free).
 </ParamField>
 
 <ParamField path="--output" type="string">
-  將掃描結果寫入指定檔案路徑。根據副檔名支援 `.json`、`.html` 和 `.pdf` 格式。
+  Write the scan results to the specified file path. Supports `.json`, `.html`, and `.pdf` formats based on file extension.
 </ParamField>
 
 <ParamField path="--lang" type="string" default="en">
-  設定掃描結果的輸出語言（例如 `en`、`zh-TW`、`ja`）。
+  Set the output language for scan results (e.g., `en`, `zh-TW`, `ja`).
 </ParamField>
 
 <ParamField path="--verbose" type="flag">
-  顯示詳細輸出，包括個別檢查進度和除錯資訊。
+  Show detailed output including individual check progress and debug information.
 </ParamField>
 
-## 範例
+## Examples
 
 <CodeGroup>
-```bash 快速掃描（免費方案）
+```bash Quick Scan (Free tier)
 panguard scan --quick
 ```
 
-```bash 完整掃描並輸出 JSON
+```bash Full Scan with JSON output
 panguard scan --output ./results/scan-report.json
 ```
 
-```bash 以繁體中文進行完整掃描
+```bash Full Scan in Traditional Chinese
 panguard scan --lang zh-TW --verbose
 ```
 
-```bash 匯出 PDF 報告
+```bash Export PDF Report
 panguard scan --output ~/Desktop/security-audit.pdf
 ```
 </CodeGroup>
 
-## 掃描類型
+## Scan Types
 
-| 模式 | 檢查項目 | 持續時間 | 所需方案 |
+| Mode | Checks | Duration | Plan Required |
 | --- | --- | --- | --- |
-| `--quick` | 關鍵弱點、開放埠、root 存取 | 約 30 秒 | Community（免費） |
-| 完整（預設） | 所有掃描器，包括 CVE、CIS 基準、惡意軟體特徵、網路 | 2-5 分鐘 | Solo 以上 |
+| `--quick` | Critical vulnerabilities, open ports, root access | ~30 seconds | Community (Free) |
+| Full (default) | All scanners including CVE, CIS benchmarks, malware signatures, network | 2-5 minutes | Solo+ |
 
-## 掃描內容
+## What Gets Scanned
 
-- **系統弱點** -- 根據已安裝套件進行 CVE 資料庫比對
-- **設定稽核** -- CIS 基準檢查，用於作業系統強化
-- **網路暴露** -- 開放埠、監聽服務、防火牆規則
-- **惡意軟體偵測** -- YARA 規則比對和雜湊值查詢
-- **檔案完整性** -- 與已知良好基線進行比對
-- **使用者帳號** -- 權限提升風險、弱密碼
+- **System vulnerabilities** -- CVE database matching against installed packages
+- **Configuration audit** -- CIS benchmark checks for OS hardening
+- **Network exposure** -- Open ports, listening services, firewall rules
+- **Malware detection** -- YARA rule matching and hash lookups
+- **File integrity** -- Checks against known-good baselines
+- **User accounts** -- Privilege escalation risks, weak credentials
 
-## 方案要求
+## Plan Requirements
 
 <Info>
-  `scan --quick` 適用於 **Community（免費）** 方案。完整掃描需要 **Solo**（$9/月）或更高方案。
+  `scan --quick` is available on the **Community (Free)** plan. Full scans require **Solo** ($9/mo) or higher.
 </Info>
 
-## 相關資源
+## Related
 
 <CardGroup cols={2}>
-  <Card title="首次掃描指南" icon="book-open" href="/guides/first-scan">
-    首次安全掃描的逐步教學。
+  <Card title="First Scan Guide" icon="book-open" href="/guides/first-scan">
+    Step-by-step walkthrough of your first security scan.
   </Card>
-  <Card title="掃描器參考" icon="microscope" href="/products/scan/scanners">
-    各掃描器模組的詳細文件。
+  <Card title="Scanners Reference" icon="microscope" href="/products/scan/scanners">
+    Detailed documentation for each scanner module.
   </Card>
-  <Card title="風險評分" icon="chart-bar" href="/products/scan/risk-scoring">
-    Panguard AI 如何排序和評分發現的問題。
+  <Card title="Risk Scoring" icon="chart-bar" href="/products/scan/risk-scoring">
+    How Panguard AI prioritizes and scores findings.
   </Card>
   <Card title="panguard report" icon="file-chart-column" href="/cli/report">
-    從掃描資料產生合規報告。
+    Generate compliance reports from scan data.
   </Card>
 </CardGroup>

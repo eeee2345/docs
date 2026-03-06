@@ -1,37 +1,37 @@
 ---
-title: "常見問題"
-description: "系統需求、支援的平台、更新和解除安裝 Panguard AI。"
+title: "Common Issues"
+description: "System requirements, supported platforms, updating, and uninstalling Panguard AI."
 icon: "circle-question"
 ---
 
-## 支援的作業系統
+## Supported Operating Systems
 
-| 作業系統 | 最低版本 | 架構 | 備註 |
+| OS | Minimum Version | Architecture | Notes |
 |----|----------------|--------------|-------|
-| macOS | 12 (Monterey)+ | x64、ARM64 (Apple Silicon) | 完整支援，包括 Guard 和 Trap |
-| Ubuntu | 20.04 LTS+ | x64、ARM64 | 建議的 Linux 發行版 |
-| Debian | 11 (Bullseye)+ | x64、ARM64 | 完整支援 |
-| CentOS / RHEL | 8+ | x64 | 相容 SELinux |
-| Windows | 10 (build 1903)+ | x64 | Guard 需要系統管理員權限 |
+| macOS | 12 (Monterey)+ | x64, ARM64 (Apple Silicon) | Full support including Guard and Trap |
+| Ubuntu | 20.04 LTS+ | x64, ARM64 | Recommended Linux distribution |
+| Debian | 11 (Bullseye)+ | x64, ARM64 | Full support |
+| CentOS / RHEL | 8+ | x64 | SELinux compatible |
+| Windows | 10 (build 1903)+ | x64 | Guard requires Administrator |
 
-## 系統需求
+## System Requirements
 
 <AccordionGroup>
   <Accordion title="Node.js">
-    需要 **Node.js >= 20**。Panguard 使用現代 JavaScript 功能（top-level await、native fetch），需要 Node.js 20 或更高版本。
+    **Node.js >= 20** is required. Panguard uses modern JavaScript features (top-level await, native fetch) that require Node.js 20 or later.
 
-    檢查您的版本：
+    Check your version:
     ```bash
     node --version
     ```
 
-    透過 [nvm](https://github.com/nvm-sh/nvm) 安裝或更新：
+    Install or update via [nvm](https://github.com/nvm-sh/nvm):
     ```bash
     nvm install 20
     nvm use 20
     ```
 
-    或透過套件管理器：
+    Or via your package manager:
     ```bash
     # macOS
     brew install node@20
@@ -44,109 +44,109 @@ icon: "circle-question"
     winget install OpenJS.NodeJS.LTS
     ```
   </Accordion>
-  <Accordion title="Root / 系統管理員權限">
-    不同的 Panguard 模組有不同的權限需求：
+  <Accordion title="Root / Administrator Privileges">
+    Different Panguard modules have different privilege requirements:
 
-    | 模組 | 需要 Root/Admin | 原因 |
+    | Module | Root/Admin Required | Reason |
     |--------|-------------------|--------|
-    | `panguard scan` | 否 | 以使用者權限讀取檔案 |
-    | `panguard guard` | **是** | 監控系統日誌、管理防火牆規則 |
-    | `panguard trap` | **是** | 綁定到特權埠（< 1024） |
-    | `panguard chat` | 否 | 透過 HTTPS 發送通知 |
-    | `panguard report` | 否 | 從現有資料產生報告 |
-    | `panguard manager` | 否 | 作為一般 HTTP 伺服器運行 |
+    | `panguard scan` | No | Reads files with user permissions |
+    | `panguard guard` | **Yes** | Monitors system logs, manages firewall rules |
+    | `panguard trap` | **Yes** | Binds to privileged ports (< 1024) |
+    | `panguard chat` | No | Sends notifications over HTTPS |
+    | `panguard report` | No | Generates reports from existing data |
+    | `panguard manager` | No | Runs as a regular HTTP server |
 
-    使用 `sudo` 執行特權模組：
+    Run privileged modules with `sudo`:
     ```bash
     sudo panguard guard start
     sudo panguard trap start
     ```
   </Accordion>
-  <Accordion title="磁碟空間">
-    | 元件 | 大約大小 |
+  <Accordion title="Disk Space">
+    | Component | Approximate Size |
     |-----------|-----------------|
-    | Panguard CLI + 核心 | 約 50 MB |
-    | Sigma 規則（3,000+） | 約 15 MB |
-    | YARA 規則（900+） | 約 8 MB |
-    | Threat Cloud 資料庫（自架） | 100 MB -- 10 GB（視資料量而定） |
-    | Guard 日誌 + 資料 | 隨時間增長，建議至少 1 GB |
+    | Panguard CLI + core | ~50 MB |
+    | Sigma rules (3,000+) | ~15 MB |
+    | YARA rules (900+) | ~8 MB |
+    | Threat Cloud database (self-hosted) | 100 MB -- 10 GB (depends on data) |
+    | Guard logs + data | Grows over time, recommend 1 GB minimum |
   </Accordion>
-  <Accordion title="網路">
-    Panguard 需要對外的 HTTPS 存取：
+  <Accordion title="Network">
+    Panguard requires outbound HTTPS access to:
 
-    | 目的地 | 用途 |
+    | Destination | Purpose |
     |-------------|---------|
-    | `auth.panguard.ai` | 身份驗證和訂閱管理 |
-    | `tc.panguard.ai` | Threat Cloud 情報摘要 |
-    | `registry.npmjs.org` | 套件安裝和更新 |
-    | `api.anthropic.com` | AI 分析（如果使用 Anthropic） |
-    | `api.openai.com` | AI 分析（如果使用 OpenAI） |
-    | `localhost:11434` | Ollama 本機 AI（如果已設定） |
+    | `auth.panguard.ai` | Authentication and subscription management |
+    | `tc.panguard.ai` | Threat Cloud intelligence feeds |
+    | `registry.npmjs.org` | Package installation and updates |
+    | `api.anthropic.com` | AI analysis (if using Anthropic) |
+    | `api.openai.com` | AI analysis (if using OpenAI) |
+    | `localhost:11434` | Ollama local AI (if configured) |
 
-    所有連線可選擇性地透過 `HTTPS_PROXY` 環境變數經由 HTTP 代理。
+    All connections can optionally go through an HTTP proxy via the `HTTPS_PROXY` environment variable.
   </Accordion>
 </AccordionGroup>
 
-## 如何更新
+## How to Update
 
-將 Panguard 更新至最新版本：
+Update Panguard to the latest version:
 
 <CodeGroup>
-```bash npm（全域安裝）
+```bash npm (global install)
 npm update -g panguard
 ```
 
-```bash npx（免安裝）
+```bash npx (no install)
 npx panguard@latest doctor
 ```
 
-```bash 驗證版本
+```bash Verify version
 panguard --version
 ```
 </CodeGroup>
 
-更新後，重新啟動任何運行中的服務：
+After updating, restart any running services:
 
 ```bash
-# 重新啟動 Guard
+# Restart Guard
 sudo panguard guard stop
 sudo panguard guard start
 
-# 重新啟動 Chat
+# Restart Chat
 panguard chat stop
 panguard chat start
 ```
 
 <Info>
-Panguard 會自動檢查更新，並在有新版本時在 CLI 中顯示通知。偵測規則（Sigma + YARA）獨立於 CLI 工具進行更新。
+Panguard checks for updates automatically and displays a notification in the CLI when a new version is available. Detection rules (Sigma + YARA) update independently from the CLI tool.
 </Info>
 
-## 如何解除安裝
+## How to Uninstall
 
-若要從您的系統完全移除 Panguard：
+To completely remove Panguard from your system:
 
 <Tabs>
   <Tab title="macOS / Linux">
     ```bash
-    # 1. 停止所有運行中的服務
+    # 1. Stop all running services
     sudo panguard guard stop
     panguard chat stop
 
-    # 2. 移除系統服務（如果已安裝）
+    # 2. Remove the system service (if installed)
     sudo panguard guard uninstall-service
 
-    # 3. 解除安裝 npm 套件
+    # 3. Uninstall the npm package
     npm uninstall -g panguard
 
-    # 4. 移除資料目錄
+    # 4. Remove data directories
     rm -rf ~/.panguard
     rm -rf ~/.panguard-guard
     rm -rf ~/.panguard-chat
 
-    # 5. 移除憑證
+    # 5. Remove credentials
     rm -f ~/.panguard/credentials.json
 
-    # 6. 移除 Guard 新增的防火牆規則
+    # 6. Remove firewall rules added by Guard
     # macOS:
     sudo pfctl -F all
     # Linux:
@@ -156,59 +156,59 @@ Panguard 會自動檢查更新，並在有新版本時在 CLI 中顯示通知。
   </Tab>
   <Tab title="Windows">
     ```powershell
-    # 1. 停止所有運行中的服務
+    # 1. Stop all running services
     panguard guard stop
     panguard chat stop
 
-    # 2. 移除 Windows 服務（如果已安裝）
+    # 2. Remove the Windows service (if installed)
     panguard guard uninstall-service
 
-    # 3. 解除安裝 npm 套件
+    # 3. Uninstall the npm package
     npm uninstall -g panguard
 
-    # 4. 移除資料目錄
+    # 4. Remove data directories
     Remove-Item -Recurse -Force "$HOME\.panguard"
     Remove-Item -Recurse -Force "$HOME\.panguard-guard"
     Remove-Item -Recurse -Force "$HOME\.panguard-chat"
 
-    # 5. 移除防火牆規則
+    # 5. Remove firewall rules
     Remove-NetFirewallRule -DisplayName "Panguard*"
     ```
   </Tab>
 </Tabs>
 
 <Warning>
-解除安裝會移除所有本機資料，包括掃描歷史、威脅日誌和設定。如果您需要歷史記錄，請先使用 `panguard report generate` 匯出您的資料。
+Uninstalling removes all local data including scan history, threat logs, and configuration. Export your data first with `panguard report generate` if you need historical records.
 </Warning>
 
-## 常見錯誤訊息
+## Common Error Messages
 
 <AccordionGroup>
   <Accordion title="Error: Node.js version 20 or later is required">
-    您的 Node.js 版本太舊。更新至 Node.js 20+：
+    Your Node.js version is too old. Update to Node.js 20+:
     ```bash
     nvm install 20 && nvm use 20
     ```
   </Accordion>
   <Accordion title="Error: EACCES permission denied">
-    您在沒有 root 存取權限的情況下執行特權模組：
+    You are running a privileged module without root access:
     ```bash
     sudo panguard guard start
     ```
-    對於非 root 設定，請參閱[系統服務指南](/guides/system-service)。
+    For non-root setups, see the [system service guide](/guides/system-service).
   </Accordion>
   <Accordion title="Error: Cannot find module 'panguard'">
-    Panguard 未全域安裝，或您的 PATH 未包含 npm 全域 bin 目錄：
+    Panguard is not installed globally, or your PATH does not include the npm global bin directory:
     ```bash
     npm install -g panguard
-    # 或檢查您的 PATH：
+    # Or check your PATH:
     npm config get prefix
     ```
   </Accordion>
   <Accordion title="Error: ECONNREFUSED">
-    目標服務未運行或無法連線。請檢查：
-    - 服務是否已啟動？（`panguard status`）
-    - 埠是否正確？（檢查環境變數）
-    - 防火牆是否阻擋了連線？
+    The target service is not running or is unreachable. Check:
+    - Is the service started? (`panguard status`)
+    - Is the port correct? (check environment variables)
+    - Is a firewall blocking the connection?
   </Accordion>
 </AccordionGroup>

@@ -1,29 +1,29 @@
 ---
-title: "攻擊活動"
-description: "追蹤透過 IoC 關聯識別的協調攻擊活動。"
+title: "Campaigns"
+description: "Track coordinated attack campaigns identified through IoC correlation."
 icon: "flag"
 ---
 
-攻擊活動代表透過在 Panguard Threat Cloud 網路中關聯 IoC 而識別的協調攻擊模式。當多個指標共享行為模式、基礎設施或時間特徵時，它們會被分組為一個攻擊活動。
+Campaigns represent coordinated attack patterns identified by correlating IoCs across the Panguard Threat Cloud network. When multiple indicators share behavioral patterns, infrastructure, or timing, they are grouped into a campaign.
 
 ## GET /api/campaigns
 
-列出所有已識別的攻擊活動，支援分頁。
+Lists all identified campaigns with pagination.
 
 <ParamField query="status" type="string">
-  依狀態篩選：`active`、`dormant`、`resolved`。
+  Filter by status: `active`, `dormant`, `resolved`.
 </ParamField>
 
 <ParamField query="since" type="string">
-  ISO 8601 時間戳。回傳此時間之後更新的攻擊活動。
+  ISO 8601 timestamp. Returns campaigns updated after this time.
 </ParamField>
 
 <ParamField query="page" type="number" default="1">
-  頁碼。
+  Page number.
 </ParamField>
 
 <ParamField query="limit" type="number" default="20">
-  每頁結果數（最大 100）。
+  Results per page (max 100).
 </ParamField>
 
 <CodeGroup>
@@ -77,7 +77,7 @@ curl -X GET "https://tc.panguard.ai/api/campaigns?status=active&limit=10" \
 
 ## GET /api/campaigns/stats
 
-回傳整個 Threat Cloud 的攻擊活動彙總統計。
+Returns aggregate statistics about campaigns across the Threat Cloud.
 
 <CodeGroup>
 ```bash cURL
@@ -119,10 +119,10 @@ curl -X GET "https://tc.panguard.ai/api/campaigns/stats" \
 
 ## GET /api/campaigns/:id
 
-回傳特定攻擊活動的詳細資訊，包括所有相關 IoC 和活動時間軸。
+Returns detailed information about a specific campaign, including all associated IoCs and a timeline of activity.
 
 <ParamField path="id" type="string" required>
-  攻擊活動 ID。
+  The campaign ID.
 </ParamField>
 
 <CodeGroup>
@@ -196,14 +196,14 @@ curl -X GET "https://tc.panguard.ai/api/campaigns/campaign_botnet_xyz" \
 ```
 </ResponseExample>
 
-### 攻擊活動狀態
+### Campaign Statuses
 
-| 狀態 | 說明 |
+| Status | Description |
 |--------|-------------|
-| `active` | 在過去 7 天內觀測到新的 IoC 或觀測記錄 |
-| `dormant` | 7--30 天無新活動，但基礎設施可能仍在運作 |
-| `resolved` | 30 天以上無活動，相關基礎設施似乎已停用 |
+| `active` | New IoCs or sightings observed within the last 7 days |
+| `dormant` | No new activity for 7--30 days, but infrastructure may still be operational |
+| `resolved` | No activity for 30+ days, associated infrastructure appears decommissioned |
 
 <Tip>
-訂閱 [SSE 事件串流](/api-reference/manager/events#get-apieventsstream) 以在您的代理遇到與活躍攻擊活動相關的 IoC 時獲得即時通知。
+Subscribe to the [SSE event stream](/api-reference/manager/events#get-apieventsstream) for real-time notifications when your agents encounter IoCs linked to active campaigns.
 </Tip>

@@ -1,131 +1,131 @@
 ---
-title: "Slack 整合"
-description: "使用 Block Kit 豐富格式設定 Panguard Chat 搭配 Slack 的逐步指南。"
+title: "Slack Integration"
+description: "Step-by-step guide to setting up Panguard Chat with Slack using Block Kit rich formatting."
 icon: "hashtag"
 ---
 
-Slack 是建議團隊和組織使用的管道。Panguard 發送豐富的 Block Kit 通知至指定的 Slack 頻道，並可選擇性地提供互動按鈕進行威脅回應。
+Slack is the recommended channel for teams and organizations. Panguard sends rich Block Kit notifications to designated Slack channels with optional interactive buttons for threat response.
 
-## 設定概覽
+## Setup Overview
 
 <Steps>
-  <Step title="建立 Slack App">
-    在 Slack API 儀表板中註冊一個新的應用程式。
+  <Step title="Create a Slack App">
+    Register a new app in the Slack API dashboard.
   </Step>
-  <Step title="設定 Bot 權限">
-    新增所需的 OAuth 範圍。
+  <Step title="Configure Bot permissions">
+    Add the required OAuth scopes.
   </Step>
-  <Step title="安裝至您的 Workspace">
-    授權應用程式並取得 Bot Token。
+  <Step title="Install to your Workspace">
+    Authorize the app and get the Bot Token.
   </Step>
-  <Step title="取得 Signing Secret">
-    複製用於 webhook 驗證的 signing secret。
+  <Step title="Get the Signing Secret">
+    Copy the signing secret for webhook verification.
   </Step>
-  <Step title="建立通知頻道">
-    建立一個專用頻道，例如 #security-alerts。
+  <Step title="Create a notification channel">
+    Set up a dedicated channel like #security-alerts.
   </Step>
-  <Step title="設定 Panguard">
-    使用您的憑證執行設定精靈。
+  <Step title="Configure Panguard">
+    Run the setup wizard with your credentials.
   </Step>
 </Steps>
 
-## 步驟 1：建立 Slack App
+## Step 1: Create a Slack App
 
-1. 前往 [api.slack.com/apps](https://api.slack.com/apps)
-2. 點擊 **Create New App**
-3. 選擇 **From scratch**
-4. 輸入應用程式名稱：`Panguard Security`（或您偏好的名稱）
-5. 選擇您的 Workspace
-6. 點擊 **Create App**
+1. Go to [api.slack.com/apps](https://api.slack.com/apps)
+2. Click **Create New App**
+3. Select **From scratch**
+4. Enter app name: `Panguard Security` (or your preference)
+5. Select your Workspace
+6. Click **Create App**
 
-## 步驟 2：設定 Bot 權限
+## Step 2: Configure Bot Permissions
 
-1. 在左側邊欄中導航至 **OAuth & Permissions**
-2. 捲動至 **Scopes** 區段
-3. 在 **Bot Token Scopes** 下新增：
+1. Navigate to **OAuth & Permissions** in the left sidebar
+2. Scroll to the **Scopes** section
+3. Under **Bot Token Scopes**, add:
 
-| 範圍 | 用途 |
+| Scope | Purpose |
 |-------|---------|
-| `chat:write` | 發送訊息至頻道 |
-| `chat:write.public` | 發送至 Bot 尚未加入的公開頻道 |
-| `files:write` | 上傳 PDF 報告和附件 |
+| `chat:write` | Send messages to channels |
+| `chat:write.public` | Send to public channels the bot has not joined |
+| `files:write` | Upload PDF reports and attachments |
 
-4. 在頂部點擊 **Install to Workspace**
-5. 點擊 **Allow** 進行授權
+4. Click **Install to Workspace** at the top
+5. Click **Allow** to authorize
 
-## 步驟 3：取得 Bot Token
+## Step 3: Get the Bot Token
 
-安裝後，頁面會顯示您的 **Bot User OAuth Token**：
+After installation, the page displays your **Bot User OAuth Token**:
 
 ```
 xoxb-your-workspace-id-your-token-string
 ```
 
 <Warning>
-  權杖必須以 `xoxb-` 開頭（bot token）。請勿使用 `xoxp-`（user token）。
+  The token must start with `xoxb-` (bot token). Do not use `xoxp-` (user token).
 </Warning>
 
-## 步驟 4：取得 Signing Secret
+## Step 4: Get the Signing Secret
 
-1. 在左側邊欄中導航至 **Basic Information**
-2. 找到 **App Credentials** 區段
-3. 點擊 **Signing Secret** 旁的 **Show**
-4. 複製並儲存該值
+1. Navigate to **Basic Information** in the left sidebar
+2. Find the **App Credentials** section
+3. Click **Show** next to **Signing Secret**
+4. Copy and save the value
 
-## 步驟 5：建立通知頻道
+## Step 5: Create a Notification Channel
 
-1. 建立一個 Slack 頻道（例如 `#security-alerts`）
-2. 邀請 Bot：在頻道中輸入 `/invite @Panguard Security`
+1. Create a Slack channel (e.g., `#security-alerts`)
+2. Invite the bot: type `/invite @Panguard Security` in the channel
 
-## 步驟 6：設定 Panguard Chat
+## Step 6: Configure Panguard Chat
 
 ```bash
 panguard chat setup --channel slack
 ```
 
-精靈會詢問：
-- **Bot Token** -- 步驟 3 中的 `xoxb-...` 權杖
-- **Signing Secret** -- 來自步驟 4
-- **Default Channel** -- 例如 `#security-alerts`
+The wizard will ask for:
+- **Bot Token** -- the `xoxb-...` token from Step 3
+- **Signing Secret** -- from Step 4
+- **Default Channel** -- e.g., `#security-alerts`
 
-### 測試連線
+### Test the Connection
 
 ```bash
 panguard chat test --channel slack
 ```
 
 <AccordionGroup>
-  <Accordion title="Bot 未在頻道中發文">
-    確保 Bot 已透過 `/invite @Panguard Security` 被邀請至目標頻道。
+  <Accordion title="Bot not posting to channel">
+    Ensure the bot has been invited to the target channel with `/invite @Panguard Security`.
   </Accordion>
-  <Accordion title="權限錯誤">
-    驗證 Bot 是否擁有 `chat:write` 範圍。檢查應用程式的 **OAuth & Permissions** 頁面。
+  <Accordion title="Permission errors">
+    Verify the bot has `chat:write` scope. Check the app's **OAuth & Permissions** page.
   </Accordion>
-  <Accordion title="權杖格式無效">
-    權杖必須以 `xoxb-` 開頭。如果以 `xoxp-` 開頭，表示您使用的是 user token 而非 bot token。
+  <Accordion title="Invalid token format">
+    The token must start with `xoxb-`. If it starts with `xoxp-`, you are using a user token instead of a bot token.
   </Accordion>
 </AccordionGroup>
 
-## 互動按鈕（可選）
+## Interactive Buttons (Optional)
 
-在 Slack 通知中啟用互動式威脅回應按鈕（例如「封鎖來源」、「查看詳情」）：
+Enable interactive threat response buttons in Slack notifications (e.g., "Block Source", "View Details"):
 
-1. 在 Slack App 設定中，導航至 **Interactivity & Shortcuts**
-2. 啟用 **Interactivity**
-3. 將 Request URL 設定為：`https://your-server.com/webhook/slack`
-4. 點擊 **Save Changes**
+1. In Slack App settings, navigate to **Interactivity & Shortcuts**
+2. Enable **Interactivity**
+3. Set the Request URL to: `https://your-server.com/webhook/slack`
+4. Click **Save Changes**
 
 <Note>
-  互動按鈕需要您的 Panguard 實例擁有一個公開可存取的 URL。對於本地開發，可以使用 ngrok 等工具提供臨時的公開 URL。
+  Interactive buttons require your Panguard instance to have a publicly accessible URL. For local development, tools like ngrok can provide temporary public URLs.
 </Note>
 
-## Block Kit 訊息格式
+## Block Kit Message Format
 
-Slack 通知使用 Block Kit 進行豐富格式：
+Slack notifications use Block Kit for rich formatting:
 
-- **標題** -- 嚴重性色彩指示器搭配威脅標題
-- **上下文** -- 時間戳、來源 IP、信心評分
-- **詳情** -- 包含規則名稱、MITRE ATT&CK ID、受影響資源的結構化欄位
-- **動作** -- 互動按鈕（當互動功能啟用時）
+- **Header** -- severity-colored indicator with threat title
+- **Context** -- timestamp, source IP, confidence score
+- **Details** -- structured fields with rule name, MITRE ATT&CK ID, affected resource
+- **Actions** -- interactive buttons (when interactivity is enabled)
 
-確切內容會根據您設定的[使用者角色](/products/chat/user-roles)而有所不同。
+The exact content varies by your configured [user role](/products/chat/user-roles).

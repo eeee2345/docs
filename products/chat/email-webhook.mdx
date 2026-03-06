@@ -1,94 +1,94 @@
 ---
-title: "Email 與 Webhook"
-description: "設定 SMTP 電子郵件通知和自訂 webhook 整合，支援 mTLS。"
+title: "Email & Webhook"
+description: "Configure SMTP email notifications and custom webhook integrations with mTLS support."
 icon: "envelope"
 ---
 
-Email 和 Webhook 管道服務於不同的使用案例：Email 提供符合合規要求的稽核軌跡，而 Webhook 則能與自訂自動化系統整合。
+Email and Webhook channels serve different use cases: Email provides compliance-friendly audit trails, while Webhooks enable integration with custom automation systems.
 
-## Email（SMTP）
+## Email (SMTP)
 
-### 設定
+### Setup
 
 ```bash
 panguard chat setup --channel email
 ```
 
-精靈會詢問：
+The wizard will ask for:
 
-| 欄位 | 描述 | 範例 |
+| Field | Description | Example |
 |-------|-------------|---------|
-| **SMTP Host** | 郵件伺服器主機名稱 | `smtp.gmail.com` |
-| **SMTP Port** | TLS 使用 587，SSL 使用 465 | `587` |
-| **SMTP Username** | 認證使用者名稱 | `alerts@company.com` |
-| **SMTP Password** | 認證密碼 | （Gmail 使用應用程式密碼） |
-| **From Address** | 寄件者電子郵件地址 | `panguard@company.com` |
-| **To Address** | 收件者電子郵件地址 | `security-team@company.com` |
+| **SMTP Host** | Mail server hostname | `smtp.gmail.com` |
+| **SMTP Port** | 587 for TLS, 465 for SSL | `587` |
+| **SMTP Username** | Authentication username | `alerts@company.com` |
+| **SMTP Password** | Authentication password | (App Password for Gmail) |
+| **From Address** | Sender email address | `panguard@company.com` |
+| **To Address** | Recipient email address | `security-team@company.com` |
 
-### Gmail 設定
+### Gmail Configuration
 
-Gmail 需要使用應用程式密碼而非一般密碼：
+Gmail requires an App Password instead of your regular password:
 
 <Steps>
-  <Step title="啟用兩步驟驗證">
-    前往 Google 帳戶 > 安全性 > 兩步驟驗證並啟用。
+  <Step title="Enable 2-Step Verification">
+    Go to Google Account > Security > 2-Step Verification and enable it.
   </Step>
-  <Step title="產生應用程式密碼">
-    前往 Google 帳戶 > 安全性 > 兩步驟驗證 > 應用程式密碼。
+  <Step title="Generate App Password">
+    Go to Google Account > Security > 2-Step Verification > App passwords.
   </Step>
-  <Step title="建立新的應用程式密碼">
-    選擇「郵件」和您的裝置，然後點擊「產生」。
+  <Step title="Create a new App Password">
+    Select "Mail" and your device, then click Generate.
   </Step>
-  <Step title="使用產生的密碼">
-    當 Panguard 詢問 SMTP 密碼時，輸入 16 個字元的應用程式密碼。
+  <Step title="Use the generated password">
+    Enter the 16-character App Password when Panguard asks for the SMTP password.
   </Step>
 </Steps>
 
-### 電子郵件格式
+### Email Format
 
-電子郵件通知以 HTML 格式發送，包含：
+Email notifications are sent as HTML with:
 
-- 嚴重性色彩標題列
-- 結構化事件詳情表格
-- 修復步驟（`it_admin` 角色）
-- 取消訂閱連結
-- 純文字備用版本，供不支援 HTML 渲染的郵件客戶端使用
+- Severity-colored header bar
+- Structured event details table
+- Remediation steps (for `it_admin` role)
+- Unsubscribe link
+- Plain-text fallback for email clients that do not render HTML
 
-### 何時使用 Email
+### When to Use Email
 
-- 合規要求規定必須使用電子郵件稽核軌跡
-- 電子郵件為主要溝通工具的組織
-- 當您需要在收件匣中保有可搜尋的通知歷史
+- Compliance requirements that mandate email-based audit trails
+- Organizations where email is the primary communication tool
+- When you need searchable notification history in your inbox
 
 ---
 
 ## Webhook
 
-### 設定
+### Setup
 
 ```bash
 panguard chat setup --channel webhook
 ```
 
-精靈會詢問：
+The wizard will ask for:
 
-| 欄位 | 描述 |
+| Field | Description |
 |-------|-------------|
-| **Webhook URL** | 接收 POST 請求的端點 |
-| **Authentication** | Bearer Token、HMAC 或 mTLS |
-| **Secret/Token** | 認證憑證 |
+| **Webhook URL** | The endpoint to receive POST requests |
+| **Authentication** | Bearer Token, HMAC, or mTLS |
+| **Secret/Token** | Authentication credential |
 
-### 認證方法
+### Authentication Methods
 
-| 方法 | 標頭 | 使用案例 |
+| Method | Header | Use Case |
 |--------|--------|----------|
-| **Bearer Token** | `Authorization: Bearer <token>` | 簡單的 API 整合 |
-| **HMAC** | `X-Panguard-Signature: sha256=<hash>` | Webhook 驗證（GitHub 風格） |
-| **mTLS** | 客戶端憑證 | 企業級雙向認證 |
+| **Bearer Token** | `Authorization: Bearer <token>` | Simple API integrations |
+| **HMAC** | `X-Panguard-Signature: sha256=<hash>` | Webhook verification (GitHub-style) |
+| **mTLS** | Client certificate | Enterprise-grade mutual authentication |
 
-### 載荷格式
+### Payload Format
 
-Webhook 通知以 JSON POST 請求發送：
+Webhook notifications are sent as JSON POST requests:
 
 ```json
 {
@@ -108,9 +108,9 @@ Webhook 通知以 JSON POST 請求發送：
 }
 ```
 
-### HMAC 驗證範例
+### HMAC Verification Example
 
-在您的伺服器上驗證 webhook 簽名：
+To verify the webhook signature on your server:
 
 ```javascript
 const crypto = require('crypto');
@@ -124,19 +124,19 @@ function verifySignature(payload, signature, secret) {
 }
 ```
 
-### 何時使用 Webhook
+### When to Use Webhooks
 
-- 與 SIEM 系統整合（Splunk、Elastic 等）
-- 自訂儀表板和監控工具
-- 自動化事件回應工作流程
-- PagerDuty、Opsgenie 或其他警報平台
+- Integration with SIEM systems (Splunk, Elastic, etc.)
+- Custom dashboards and monitoring tools
+- Automated incident response workflows
+- PagerDuty, Opsgenie, or other alerting platforms
 
-### 測試
+### Test
 
 ```bash
 panguard chat test --channel webhook
 ```
 
 <Note>
-  Webhook 請求包含 10 秒逾時。如果您的端點未在 10 秒內回應，該通知會被記錄為失敗，並以指數退避重試最多 3 次。
+  Webhook requests include a 10-second timeout. If your endpoint does not respond within 10 seconds, the notification is logged as failed and retried up to 3 times with exponential backoff.
 </Note>

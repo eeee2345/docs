@@ -1,96 +1,96 @@
 ---
-title: "蜜罐類型"
-description: "所有 8 種蜜罐服務類型的參考，包含預設埠、模擬協定及擷取的資料。"
+title: "Honeypot Types"
+description: "Reference for all 8 honeypot service types with default ports, emulated protocols, and captured data."
 icon: "server"
 ---
 
-Panguard Trap 支援 8 種蜜罐服務類型，每種模擬一個攻擊者經常鎖定的常見網路服務。您可以同時部署任意組合的服務。
+Panguard Trap supports 8 honeypot service types, each emulating a common network service that attackers frequently target. You can deploy any combination of services simultaneously.
 
-## 服務參考
+## Service Reference
 
-### SSH 蜜罐
+### SSH Honeypot
 
-| 欄位 | 詳細資訊 |
+| Field | Details |
 |-------|---------|
-| **預設埠** | 2222 |
-| **模擬** | OpenSSH 伺服器 |
-| **協定** | SSH-2.0 |
-| **擷取內容** | 使用者名稱、密碼、登入後命令、客戶端版本字串 |
-| **使用案例** | 偵測暴力破解嘗試、憑證填充及後期利用命令 |
+| **Default Port** | 2222 |
+| **Emulates** | OpenSSH server |
+| **Protocol** | SSH-2.0 |
+| **Captures** | Usernames, passwords, post-login commands, client version strings |
+| **Use case** | Detects brute force attempts, credential stuffing, and post-exploitation commands |
 
-### HTTP 蜜罐
+### HTTP Honeypot
 
-| 欄位 | 詳細資訊 |
+| Field | Details |
 |-------|---------|
-| **預設埠** | 8080 |
-| **模擬** | 網頁伺服器（Apache/Nginx） |
-| **協定** | HTTP/1.1 |
-| **擷取內容** | 請求路徑、標頭、載荷、攻擊嘗試、Web Shell 上傳 |
-| **使用案例** | 偵測網頁應用程式攻擊、目錄遍歷、SQL 注入探測 |
+| **Default Port** | 8080 |
+| **Emulates** | Web server (Apache/Nginx) |
+| **Protocol** | HTTP/1.1 |
+| **Captures** | Request paths, headers, payloads, exploit attempts, web shell uploads |
+| **Use case** | Detects web application attacks, directory traversal, SQL injection probes |
 
-### FTP 蜜罐
+### FTP Honeypot
 
-| 欄位 | 詳細資訊 |
+| Field | Details |
 |-------|---------|
-| **預設埠** | 2121 |
-| **模擬** | FTP 伺服器 |
-| **協定** | FTP |
-| **擷取內容** | 登入憑證、檔案清單請求、上傳/下載嘗試 |
-| **使用案例** | 偵測匿名存取嘗試、憑證暴力破解 |
+| **Default Port** | 2121 |
+| **Emulates** | FTP server |
+| **Protocol** | FTP |
+| **Captures** | Login credentials, file listing requests, upload/download attempts |
+| **Use case** | Detects anonymous access attempts, credential brute force |
 
-### SMB 蜜罐
+### SMB Honeypot
 
-| 欄位 | 詳細資訊 |
+| Field | Details |
 |-------|---------|
-| **預設埠** | 4450 |
-| **模擬** | Windows 檔案共享（SMB） |
-| **協定** | SMB/CIFS |
-| **擷取內容** | 認證嘗試、共享列舉、檔案存取模式 |
-| **使用案例** | 偵測 EternalBlue 風格的攻擊、橫向移動、勒索軟體傳播 |
+| **Default Port** | 4450 |
+| **Emulates** | Windows file sharing (SMB) |
+| **Protocol** | SMB/CIFS |
+| **Captures** | Authentication attempts, share enumeration, file access patterns |
+| **Use case** | Detects EternalBlue-style exploits, lateral movement, ransomware propagation |
 
-### MySQL 蜜罐
+### MySQL Honeypot
 
-| 欄位 | 詳細資訊 |
+| Field | Details |
 |-------|---------|
-| **預設埠** | 3307 |
-| **模擬** | MySQL 資料庫伺服器 |
-| **協定** | MySQL wire protocol |
-| **擷取內容** | 登入憑證、SQL 查詢、資料庫列舉嘗試 |
-| **使用案例** | 偵測資料庫憑證攻擊、SQL 注入後續行動 |
+| **Default Port** | 3307 |
+| **Emulates** | MySQL database server |
+| **Protocol** | MySQL wire protocol |
+| **Captures** | Login credentials, SQL queries, database enumeration attempts |
+| **Use case** | Detects database credential attacks, SQL injection follow-through |
 
-### RDP 蜜罐
+### RDP Honeypot
 
-| 欄位 | 詳細資訊 |
+| Field | Details |
 |-------|---------|
-| **預設埠** | 3390 |
-| **模擬** | Windows 遠端桌面 |
-| **協定** | RDP |
-| **擷取內容** | 登入憑證、連線中繼資料、NLA 認證嘗試 |
-| **使用案例** | 偵測 RDP 暴力破解、BlueKeep 風格的攻擊 |
+| **Default Port** | 3390 |
+| **Emulates** | Windows Remote Desktop |
+| **Protocol** | RDP |
+| **Captures** | Login credentials, connection metadata, NLA authentication attempts |
+| **Use case** | Detects RDP brute force, BlueKeep-style exploits |
 
-### Telnet 蜜罐
+### Telnet Honeypot
 
-| 欄位 | 詳細資訊 |
+| Field | Details |
 |-------|---------|
-| **預設埠** | 2323 |
-| **模擬** | Telnet 伺服器 |
-| **協定** | Telnet |
-| **擷取內容** | 登入憑證、登入後命令、IoT 殭屍網路招募嘗試 |
-| **使用案例** | 偵測 Mirai 風格的 IoT 攻擊、舊系統利用 |
+| **Default Port** | 2323 |
+| **Emulates** | Telnet server |
+| **Protocol** | Telnet |
+| **Captures** | Login credentials, post-login commands, IoT botnet enrollment attempts |
+| **Use case** | Detects Mirai-style IoT attacks, legacy system exploitation |
 
-### Redis 蜜罐
+### Redis Honeypot
 
-| 欄位 | 詳細資訊 |
+| Field | Details |
 |-------|---------|
-| **預設埠** | 6380 |
-| **模擬** | Redis 快取伺服器 |
-| **協定** | RESP（Redis Serialization Protocol） |
-| **擷取內容** | 執行的命令、設定查詢、未經授權的資料存取 |
-| **使用案例** | 偵測未經認證的 Redis 利用、基於 cron 的持久化 |
+| **Default Port** | 6380 |
+| **Emulates** | Redis cache server |
+| **Protocol** | RESP (Redis Serialization Protocol) |
+| **Captures** | Commands executed, configuration queries, unauthorized data access |
+| **Use case** | Detects unauthenticated Redis exploitation, cron-based persistence |
 
-## 摘要表
+## Summary Table
 
-| 服務 | 預設埠 | 真實服務埠 | 協定 |
+| Service | Default Port | Real Service Port | Protocol |
 |---------|-------------|-------------------|----------|
 | SSH | 2222 | 22 | SSH-2.0 |
 | HTTP | 8080 | 80/443 | HTTP/1.1 |
@@ -101,19 +101,19 @@ Panguard Trap 支援 8 種蜜罐服務類型，每種模擬一個攻擊者經常
 | Telnet | 2323 | 23 | Telnet |
 | Redis | 6380 | 6379 | RESP |
 
-## 部署範例
+## Deployment Examples
 
 ```bash
-# 部署 SSH 和 HTTP（最常見）
+# Deploy SSH and HTTP (most common)
 panguard trap start --services ssh,http
 
-# 部署全部 8 種服務
+# Deploy all 8 services
 panguard trap start --services ssh,http,ftp,smb,mysql,rdp,telnet,redis
 
-# SSH 蜜罐自訂埠
+# Custom port for SSH honeypot
 panguard trap start --services ssh --port 22222
 ```
 
 <Warning>
-  蜜罐務必使用非標準埠。如果您的真實 SSH 在埠 22 上執行，SSH 蜜罐應在不同的埠上執行（預設：2222）。在與真實服務相同的埠上執行蜜罐會產生衝突。
+  Always use non-standard ports for honeypots. If your real SSH runs on port 22, the SSH honeypot should run on a different port (default: 2222). Running a honeypot on the same port as a real service will conflict.
 </Warning>

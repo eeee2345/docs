@@ -1,30 +1,30 @@
 ---
-title: "策略引擎"
-description: "搭配版本控制、個別代理覆蓋和廣播佇列的集中化策略分發，用於全設備群組設定管理。"
+title: "Policy Engine"
+description: "Centralized policy distribution with versioning, per-agent overrides, and broadcast queue for fleet-wide configuration management."
 icon: "scroll"
 ---
 
-策略引擎為您的 Guard 代理設備群組提供集中化設定管理。它支援適用於所有代理的全域策略、針對特定端點的個別代理覆蓋，以及搭配廣播佇列的版本控制分發。
+The Policy Engine provides centralized configuration management for your Guard agent fleet. It supports global policies that apply to all agents, per-agent overrides for specific endpoints, and version-controlled distribution with a broadcast queue.
 
-## 策略如何運作
+## How Policies Work
 
 ```
 Admin ──> POST /api/policy ──> PolicyEngine ──> Broadcast Queue
                                                       |
-                                    Agent Poll (每 5 分鐘)
+                                    Agent Poll (every 5 min)
                                                       |
                                ┌──────────┬──────────┬──────────┐
                              Agent 1    Agent 2    Agent 3
 ```
 
-1. 管理員透過 REST API 或 CLI 建立或更新策略
-2. PolicyEngine 遞增版本號並儲存策略
-3. 策略被加入廣播佇列
-4. 代理每 5 分鐘輪詢更新，並在本地版本過期時下載新策略
+1. An administrator creates or updates a policy via the REST API or CLI
+2. The PolicyEngine increments the version number and stores the policy
+3. The policy is added to the broadcast queue
+4. Agents poll for updates every 5 minutes and download new policies when their local version is outdated
 
-## 策略結構
+## Policy Structure
 
-策略是帶有版本號和設定區段的 JSON 文件：
+Policies are JSON documents with a version number and configuration sections:
 
 ```json
 {
@@ -60,30 +60,30 @@ Admin ──> POST /api/policy ──> PolicyEngine ──> Broadcast Queue
 }
 ```
 
-## 策略設定區段
+## Policy Configuration Sections
 
-| 區段 | 欄位 | 描述 |
+| Section | Fields | Description |
 |---------|--------|-------------|
-| **thresholds** | `autoRespond`、`notifyAndWait` | 自動化回應的信心門檻 |
-| **blocklist** | `ips`、`domains` | 推送至所有代理的全設備群組封鎖清單 |
-| **allowlist** | `ips`、`processes` | 免於回應的白名單 IP 和處理程序 |
-| **monitors** | `enabled`、`advanced` | 每個代理上要啟動的監控器 |
-| **alerting** | `channels`、`severity` | 通知的最低嚴重性、管道路由 |
-| **response** | `actions`、`escalation` | 允許的回應動作和升級參數 |
-| **rules** | `sigma`、`yara` | 自訂規則分發 |
+| **thresholds** | `autoRespond`, `notifyAndWait` | Confidence thresholds for automated response |
+| **blocklist** | `ips`, `domains` | Fleet-wide block lists pushed to all agents |
+| **allowlist** | `ips`, `processes` | Whitelisted IPs and processes exempt from response |
+| **monitors** | `enabled`, `advanced` | Which monitors to activate on each agent |
+| **alerting** | `channels`, `severity` | Minimum severity for notifications, channel routing |
+| **response** | `actions`, `escalation` | Allowed response actions and escalation parameters |
+| **rules** | `sigma`, `yara` | Custom rule distribution |
 
-## 規則類型
+## Rule Types
 
-| 類型 | 描述 | 值格式 |
+| Type | Description | Value Format |
 |------|-------------|-------------|
-| `block_ip` | 將 IP 或 CIDR 加入全設備群組封鎖清單 | IP 位址或 CIDR 表示法 |
-| `alert_threshold` | 設定警報的最低信心值 | 數字（0-100） |
-| `auto_respond` | 啟用/停用自動回應 | 布林值 + 信心門檻 |
-| `custom` | 自訂鍵值設定 | 字串 |
+| `block_ip` | Add IP or CIDR to fleet-wide blocklist | IP address or CIDR notation |
+| `alert_threshold` | Set minimum confidence for alerting | Number (0-100) |
+| `auto_respond` | Enable/disable automatic response | Boolean + confidence threshold |
+| `custom` | Custom key-value configuration | String |
 
 ### block_ip
 
-將 IP 位址或 CIDR 範圍加入所有目標代理的封鎖清單：
+Adds an IP address or CIDR range to the blocklist on all target agents:
 
 ```json
 {
@@ -96,7 +96,7 @@ Admin ──> POST /api/policy ──> PolicyEngine ──> Broadcast Queue
 
 ### auto_respond
 
-控制 RespondAgent 是否可以採取自動化動作。在維護期間很有用：
+Controls whether the RespondAgent can take automated actions. Useful during maintenance windows:
 
 ```json
 {
@@ -106,92 +106,92 @@ Admin ──> POST /api/policy ──> PolicyEngine ──> Broadcast Queue
 }
 ```
 
-## 策略範圍
+## Policy Scopes
 
 <Tabs>
-  <Tab title="全域策略">
-    全域策略適用於所有已註冊的代理：
+  <Tab title="Global Policies">
+    Global policies apply to all registered agents:
 
     ```bash
     panguard manager policies set --global --file policy.json
     ```
 
-    每個代理在策略輪詢期間都會收到全域策略。
+    Every agent receives global policies during policy polling.
   </Tab>
-  <Tab title="個別代理策略">
-    個別代理策略針對特定機器，並覆蓋全域設定：
+  <Tab title="Per-Agent Policies">
+    Per-agent policies target specific machines and override global settings:
 
     ```bash
     panguard manager policies set --agent srv-01 --file policy.json
     ```
 
-    個別代理策略與全域策略合併。在衝突的情況下，個別代理規則優先。
+    Per-agent policies are merged with global policies. In case of conflict, the per-agent rule takes precedence.
   </Tab>
 </Tabs>
 
-### 策略解析順序
+### Policy Resolution Order
 
-當代理輪詢其策略時，Manager 合併設定：
+When an agent polls for its policy, the Manager merges settings:
 
 ```
 Defaults ──> Global Policy ──> Per-Agent Policy
 ```
 
-後面的值覆蓋前面的值。
+Later values override earlier ones.
 
-## 版本控制
+## Version Control
 
-每次策略變更都會遞增版本號。代理在每次輪詢週期中將其本地版本與 Manager 的目前版本進行比較。
+Every policy change increments the version number. Agents compare their local version against the Manager's current version during each poll cycle.
 
-| 事件 | 版本行為 |
+| Event | Version Behavior |
 |-------|-----------------|
-| 新策略建立 | 版本遞增 |
-| 策略更新 | 版本遞增 |
-| 新增個別代理覆蓋 | 代理特定版本遞增 |
-| 代理以目前版本輪詢 | Manager 回傳 304（無變更） |
-| 代理以過期版本輪詢 | Manager 回傳新策略 |
+| New policy created | Version incremented |
+| Policy updated | Version incremented |
+| Per-agent override added | Agent-specific version incremented |
+| Agent polls with current version | Manager returns 304 (no change) |
+| Agent polls with outdated version | Manager returns new policy |
 
-## 廣播佇列
+## Broadcast Queue
 
-當策略變更需要立即行動時，Manager 立即將更新推送至所有在線代理：
+When a policy change requires immediate action, the Manager pushes the update to all online agents immediately:
 
-| 傳遞模式 | 觸發條件 | 延遲 |
+| Delivery Mode | Trigger | Latency |
 |--------------|---------|---------|
-| **輪詢** | 非緊急策略變更 | 最多 5 分鐘 |
-| **廣播** | `block_ip` 規則、`auto_respond` 停用 | 立即（透過下次心跳，約 30 秒） |
+| **Poll** | Non-urgent policy changes | Up to 5 minutes |
+| **Broadcast** | `block_ip` rules, `auto_respond` disable | Immediate (via next heartbeat, ~30 seconds) |
 
-## 緊急策略
+## Emergency Policies
 
-當 `ThreatAggregator` 偵測到跨代理威脅模式時，它會觸發緊急策略推送：
+When the `ThreatAggregator` detects a cross-agent threat pattern, it triggers an emergency policy push:
 
-| 觸發條件 | 緊急動作 |
+| Trigger | Emergency Action |
 |---------|-----------------|
-| 同一 IP 攻擊 3+ 個代理 | 全設備群組 IP 封鎖 |
-| 同一惡意軟體雜湊出現在 2+ 個代理 | 全設備群組檔案隔離規則 |
-| 偵測到協調攻擊 | 在全設備群組提升自動回應門檻 |
+| Same IP attacking 3+ agents | Fleet-wide IP block |
+| Same malware hash on 2+ agents | Fleet-wide file quarantine rule |
+| Coordinated attack detected | Elevated auto-respond threshold across fleet |
 
-緊急策略繞過正常的輪詢間隔，透過廣播佇列分發。
+Emergency policies bypass the normal poll interval and are distributed via the broadcast queue.
 
-## CLI 參考
+## CLI Reference
 
 ```
 panguard manager policies <command> [options]
 
 Commands:
-  list               顯示目前策略規則
-  set                新增或更新策略規則
-  remove             移除策略規則
-  history            顯示策略版本歷史
-  broadcast          強制立即策略推送
-  get                取得特定代理的策略
+  list               Show current policy rules
+  set                Add or update a policy rule
+  remove             Remove a policy rule
+  history            Show policy version history
+  broadcast          Force immediate policy push
+  get                Get policy for a specific agent
 
 Options:
-  --global           適用於所有代理（預設）
-  --agent <id>       適用於特定代理
-  --rule <json>      規則定義（JSON）
-  --file <path>      策略檔案（JSON）
+  --global           Apply to all agents (default)
+  --agent <id>       Apply to specific agent
+  --rule <json>      Rule definition as JSON
+  --file <path>      Policy file (JSON)
 ```
 
 <Warning>
-  停用 `auto_respond` 的策略變更透過廣播立即生效。在計畫性維護期間使用此功能，以防止 Guard 採取可能干擾您工作的動作。
+  Policy changes that disable `auto_respond` take effect immediately via broadcast. Use this during planned maintenance to prevent Guard from taking actions that could interfere with your work.
 </Warning>

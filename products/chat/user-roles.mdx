@@ -1,30 +1,30 @@
 ---
-title: "使用者角色"
-description: "3 種使用者角色——老闆、開發者和 IT 管理員——如何塑造通知內容和詳細程度。"
+title: "User Roles"
+description: "How the 3 user roles -- boss, developer, and IT admin -- shape notification content and detail level."
 icon: "users"
 ---
 
-Panguard Chat 根據您的角色調適通知內容。相同的安全事件會根據收件者是主管、工程師或 IT 管理員，產生三種完全不同的訊息。
+Panguard Chat adapts notification content to your role. The same security event produces three entirely different messages depending on whether the recipient is an executive, engineer, or IT administrator.
 
-## 角色設定
+## Role Configuration
 
 ```bash
-# 在設定時設定您的角色
+# Set your role during setup
 panguard chat setup --user-type boss
 
-# 之後變更角色
+# Change role later
 panguard chat prefs --user-type developer
 ```
 
-## 角色比較
+## Role Comparison
 
-以下範例展示同一事件——偵測到並封鎖了 C2 伺服器通訊——為每個角色格式化的結果。
+The following example shows the same event -- a C2 server communication detected and blocked -- formatted for each role.
 
-### boss -- 影響摘要
+### boss -- Impact Summary
 
-目標受眾：主管、非技術經理、企業主。
+Target audience: executives, non-technical managers, business owners.
 
-重點：業務影響、風險等級、是否已採取行動。
+Focus: business impact, risk level, whether action was taken.
 
 ```
 [Panguard AI Security Notice]
@@ -40,17 +40,17 @@ Risk Level: HIGH
 Status: Automatically resolved
 ```
 
-主要特點：
-- 無技術術語（無 IP、PID 或規則名稱）
-- 清楚說明影響
-- 明確的「我需要做什麼」指引
-- 商業友善的語言
+Key characteristics:
+- No technical jargon (no IPs, PIDs, or rule names)
+- Clear statement of impact
+- Explicit "what do I need to do" guidance
+- Business-friendly language
 
-### developer -- 技術詳情
+### developer -- Technical Details
 
-目標受眾：軟體工程師、DevOps、SRE。
+Target audience: software engineers, DevOps, SRE.
 
-重點：原始資料、IP、處理程序詳情、規則匹配、時間線。
+Focus: raw data, IPs, process details, rule matches, timeline.
 
 ```
 [Panguard AI Alert]
@@ -68,17 +68,17 @@ Timeline:
   14:23:02 - Auto-response: IP blocked
 ```
 
-主要特點：
-- 完整的 IP 位址、PID 和埠號
-- 威脅情報來源和信心評分
-- 確切匹配的規則
-- 精確到秒的時間線
+Key characteristics:
+- Full IP addresses, PIDs, and port numbers
+- Threat intelligence source and confidence score
+- Exact rule that matched
+- Precise timeline with second-level granularity
 
-### it_admin -- 修復步驟
+### it_admin -- Remediation Steps
 
-目標受眾：IT 管理員、系統管理員、技術支援。
+Target audience: IT administrators, system administrators, help desk.
 
-重點：發生了什麼、做了什麼、下一步該做什麼。
+Focus: what happened, what was done, and what to do next.
 
 ```
 [Panguard AI - Remediation Guide]
@@ -95,37 +95,37 @@ Recommended next steps:
 5. If confirmed compromise, run a full investigation
 ```
 
-主要特點：
-- 編號的修復步驟
-- 具體的執行命令
-- 升級指引
-- 參考其他 Panguard 工具
+Key characteristics:
+- Numbered remediation steps
+- Specific commands to execute
+- Escalation guidance
+- Reference to other Panguard tools
 
-## 各角色的通知內容
+## Notification Content by Role
 
-| 內容元素 | boss | developer | it_admin |
+| Content Element | boss | developer | it_admin |
 |----------------|------|-----------|----------|
-| 嚴重等級 | 是 | 是 | 是 |
-| 業務影響 | 是 | -- | -- |
-| 來源 IP 位址 | -- | 是 | 是 |
-| 處理程序 ID（PID） | -- | 是 | 是 |
-| 規則名稱 | -- | 是 | -- |
-| MITRE ATT&CK ID | -- | 是 | -- |
-| 時間線 | -- | 是 | -- |
-| 修復步驟 | -- | -- | 是 |
-| 「該做什麼」指引 | 是 | -- | 是 |
-| 威脅情報來源 | -- | 是 | -- |
-| 信心評分 | -- | 是 | -- |
+| Severity level | Yes | Yes | Yes |
+| Business impact | Yes | -- | -- |
+| Source IP address | -- | Yes | Yes |
+| Process ID (PID) | -- | Yes | Yes |
+| Rule name | -- | Yes | -- |
+| MITRE ATT&CK ID | -- | Yes | -- |
+| Timeline | -- | Yes | -- |
+| Remediation steps | -- | -- | Yes |
+| "What to do" guidance | Yes | -- | Yes |
+| Threat intel source | -- | Yes | -- |
+| Confidence score | -- | Yes | -- |
 
-## 選擇適合的角色
+## Selecting the Right Role
 
-| 如果您是... | 選擇 | 因為 |
+| If you are... | Choose | Because |
 |--------------|--------|---------|
-| 收到伺服器安全更新的創辦人或 CEO | `boss` | 您需要了解影響，而非技術細節 |
-| 管理自己 VPS 或副專案的開發者 | `developer` | 您想要原始資料來自行偵錯和調查 |
-| 負責多個系統的 IT 管理員 | `it_admin` | 您需要每個事件的清楚步驟 |
-| 管理客戶基礎設施的 MSP | `it_admin` | 逐步指南幫助您的團隊一致地回應 |
+| A founder or CEO getting security updates on your startup's servers | `boss` | You need to know the impact, not the technical details |
+| A developer managing your own VPS or side project | `developer` | You want raw data to debug and investigate yourself |
+| An IT admin responsible for multiple systems | `it_admin` | You need clear steps to follow for each incident |
+| An MSP managing client infrastructure | `it_admin` | Step-by-step guides help your team respond consistently |
 
 <Tip>
-  您可以隨時再次執行 `panguard chat setup` 來切換角色。變更對所有未來的通知立即生效。
+  You can run `panguard chat setup` again at any time to switch roles. The change takes effect immediately for all future notifications.
 </Tip>

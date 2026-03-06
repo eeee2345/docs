@@ -1,31 +1,31 @@
 ---
-title: "YARA 規則"
-description: "使用 YARA 格式的檔案模式比對規則，用於惡意軟體偵測。"
+title: "YARA Rules"
+description: "File pattern matching rules using the YARA format for malware detection."
 icon: "virus"
 ---
 
-Panguard Guard 使用 [YARA 規則](https://yara.readthedocs.io/)進行基於檔案的威脅偵測。YARA 是業界標準，用於根據二進位和文字模式在檔案中識別和分類惡意軟體。
+Panguard Guard uses [YARA rules](https://yara.readthedocs.io/) for file-based threat detection. YARA is the industry standard for identifying and classifying malware based on binary and textual patterns within files.
 
-## 什麼是 YARA 規則？
+## What Are YARA Rules?
 
-YARA 規則描述識別惡意軟體家族、可疑工具和不需要的軟體的模式。與 Sigma 規則（比對日誌事件）不同，YARA 規則比對**檔案內容** -- 掃描可執行檔、腳本、文件和其他檔案以尋找已知的惡意模式。
+YARA rules describe patterns that identify malware families, suspicious tools, and unwanted software. Unlike Sigma rules (which match log events), YARA rules match **file content** -- scanning executables, scripts, documents, and other files for known malicious patterns.
 
-## 內建規則
+## Bundled Rules
 
-Panguard Guard 附帶 **900+ YARA 規則**，涵蓋：
+Panguard Guard ships with **900+ YARA rules** covering:
 
-- 常見惡意軟體家族和變體
-- Web shell 和後門
-- 駭客工具和漏洞利用套件
-- 加密貨幣挖礦程式和勒索軟體
-- 可疑檔案特徵（封裝器、混淆）
-- 惡意文件巨集
+- Common malware families and variants
+- Web shells and backdoors
+- Hacking tools and exploit kits
+- Cryptominers and ransomware
+- Suspicious file characteristics (packers, obfuscation)
+- Malicious document macros
 
-規則來自信譽良好的開源集合，並透過 Threat Cloud 更新。
+Rules are sourced from reputable open-source collections and updated via Threat Cloud.
 
-## 規則格式
+## Rule Format
 
-YARA 規則使用類 C 語法，包含三個主要區段：
+YARA rules use a C-like syntax with three main sections:
 
 ```yara
 rule Detect_WebShell_Generic : webshell
@@ -57,30 +57,30 @@ rule Detect_WebShell_Generic : webshell
 }
 ```
 
-### 規則區段
+### Rule Sections
 
-| 區段 | 說明 |
+| Section | Description |
 |---------|-------------|
-| `meta` | 規則的中繼資料（作者、說明、嚴重程度、參考） |
-| `strings` | 要搜尋的模式（文字、十六進位、正規表達式） |
-| `condition` | 判斷規則何時匹配的布林邏輯 |
+| `meta` | Metadata about the rule (author, description, severity, references) |
+| `strings` | Patterns to search for (text, hex, regex) |
+| `condition` | Boolean logic determining when the rule matches |
 
-## 自訂規則
+## Custom Rules
 
-將 `.yar` 或 `.yara` 檔案放在自訂規則目錄中即可新增自訂 YARA 規則：
+Add custom YARA rules by placing `.yar` or `.yara` files in the custom rules directory:
 
 ```
 {dataDir}/yara-rules/custom/*.yar
 ```
 
-其中 `{dataDir}` 預設為 `~/.panguard-guard`。
+Where `{dataDir}` defaults to `~/.panguard-guard`.
 
 <CodeGroup>
-```bash 建立自訂規則目錄
+```bash Create custom rules directory
 mkdir -p ~/.panguard-guard/yara-rules/custom
 ```
 
-```bash 新增自訂規則
+```bash Add a custom rule
 cat > ~/.panguard-guard/yara-rules/custom/detect-suspicious-scripts.yar << 'EOF'
 rule Suspicious_Bash_Script : suspicious
 {
@@ -109,44 +109,44 @@ EOF
 </CodeGroup>
 
 <Info>
-自訂 YARA 規則在下一個掃描週期載入。若要立即測試，執行 `panguard scan --yara-only` 以觸發使用您新規則的目標掃描。
+Custom YARA rules are loaded on the next scan cycle. For immediate testing, run `panguard scan --yara-only` to trigger a targeted scan with your new rules.
 </Info>
 
-## 引擎架構
+## Engine Architecture
 
-Panguard Guard 包含兩個 YARA 評估引擎：
+Panguard Guard includes two YARA evaluation engines:
 
-### 原生引擎（主要）
+### Native Engine (Primary)
 
-原生引擎使用編譯的 YARA 二進位檔以獲得最佳效能。當系統上有 YARA 函式庫時使用。
+The native engine uses compiled YARA binaries for maximum performance. It is used when the YARA library is available on the system.
 
-| 功能 | 詳情 |
+| Feature | Detail |
 |---------|--------|
-| 效能 | 比正規表達式備援快最多 100 倍 |
-| 相容性 | 支援所有 YARA 功能，包括模組 |
-| 需求 | 已安裝 YARA 函式庫（`libyara`） |
-| 安裝 | 在支援的平台上與 Panguard Guard 一起打包 |
+| Performance | Up to 100x faster than regex fallback |
+| Compatibility | Supports all YARA features including modules |
+| Requirements | YARA library installed (`libyara`) |
+| Installation | Bundled with Panguard Guard on supported platforms |
 
-### 正規表達式備援（次要）
+### Regex Fallback (Secondary)
 
-當原生 YARA 函式庫不可用時，Panguard 退回使用基於 JavaScript 的正規表達式引擎，提供基本的模式比對。
+When the native YARA library is not available, Panguard falls back to a JavaScript-based regex engine that provides basic pattern matching.
 
-| 功能 | 詳情 |
+| Feature | Detail |
 |---------|--------|
-| 效能 | 對小型檔案集足夠 |
-| 相容性 | 支援字串比對和基本條件 |
-| 限制 | 不支援 YARA 模組，十六進位模式支援有限 |
-| 需求 | 無（內建於 Panguard） |
+| Performance | Adequate for small file sets |
+| Compatibility | Supports string matching and basic conditions |
+| Limitations | No YARA modules, limited hex pattern support |
+| Requirements | None (built into Panguard) |
 
 <Tip>
-強烈建議在正式部署中使用原生引擎。如果退回至正規表達式引擎，Panguard 會在啟動時記錄警告。使用套件管理器安裝 YARA：`brew install yara`（macOS）、`apt install yara`（Debian/Ubuntu）或 `yum install yara`（CentOS/RHEL）。
+The native engine is strongly recommended for production deployments. Panguard will log a warning at startup if it falls back to the regex engine. Install YARA with your package manager: `brew install yara` (macOS), `apt install yara` (Debian/Ubuntu), or `yum install yara` (CentOS/RHEL).
 </Tip>
 
-## 字串類型
+## String Types
 
-YARA 支援三種類型的字串模式：
+YARA supports three types of string patterns:
 
-### 文字字串
+### Text Strings
 
 ```yara
 strings:
@@ -156,7 +156,7 @@ strings:
     $text4 = "malware_payload" ascii wide  // both encodings
 ```
 
-### 十六進位字串
+### Hex Strings
 
 ```yara
 strings:
@@ -166,7 +166,7 @@ strings:
     $hex4 = { 4D 5A ( 90 00 | 89 00 ) 03 }    // alternatives
 ```
 
-### 正規表達式
+### Regular Expressions
 
 ```yara
 strings:
@@ -174,40 +174,40 @@ strings:
     $re2 = /[A-Za-z0-9+\/]{50,}={0,2}/ // base64 blob
 ```
 
-## 條件運算子
+## Condition Operators
 
-| 運算子 | 範例 | 說明 |
+| Operator | Example | Description |
 |----------|---------|-------------|
-| `and`、`or`、`not` | `$a and $b` | 布林邏輯 |
-| `any of` | `any of ($shell*)` | 集合中任何字串匹配 |
-| `all of` | `all of them` | 所有定義的字串匹配 |
-| `X of` | `2 of ($a, $b, $c)` | 至少 X 個字串匹配 |
-| `filesize` | `filesize < 1MB` | 檔案大小限制 |
-| `at` | `$a at 0` | 字串在特定偏移處 |
-| `in` | `$a in (0..1024)` | 字串在位元組範圍內 |
+| `and`, `or`, `not` | `$a and $b` | Boolean logic |
+| `any of` | `any of ($shell*)` | Any string in the set matches |
+| `all of` | `all of them` | All defined strings match |
+| `X of` | `2 of ($a, $b, $c)` | At least X strings match |
+| `filesize` | `filesize < 1MB` | File size constraint |
+| `at` | `$a at 0` | String at specific offset |
+| `in` | `$a in (0..1024)` | String within byte range |
 
-## 效能考量
+## Performance Considerations
 
-| 指標 | 典型值 |
+| Metric | Typical Value |
 |--------|--------------|
-| 規則載入時間 | 900 條規則不到 1 秒 |
-| 每檔案掃描時間 | 10 MB 以下的檔案不到 50 ms |
-| 記憶體開銷 | 編譯規則集約 30 MB |
-| 自訂規則限制 | 無硬性限制（建議少於 200） |
+| Rule loading time | < 1 second for 900 rules |
+| Per-file scan time | < 50 ms for files under 10 MB |
+| Memory overhead | ~30 MB for compiled rule set |
+| Custom rule limit | No hard limit (recommend < 200) |
 
 <Warning>
-YARA 掃描對大型檔案是 CPU 密集型的。Panguard 預設自動跳過大於 50 MB 的檔案。使用 `panguard config set rules.yaraMaxFileSize "100MB"` 調整此設定。
+YARA scans are CPU-intensive for large files. Panguard automatically skips files larger than 50 MB by default. Adjust this with `panguard config set rules.yaraMaxFileSize "100MB"`.
 </Warning>
 
-## 掃描目標
+## Scan Targets
 
-預設情況下，YARA 規則會針對以下目標進行評估：
+By default, YARA rules are evaluated against:
 
-| 目標 | 說明 |
+| Target | Description |
 |--------|-------------|
-| 被監控目錄中的新檔案 | `/tmp`、`/var/tmp`、`/dev/shm`、使用者主目錄 |
-| 下載的檔案 | 由 `curl`、`wget`、瀏覽器建立的檔案 |
-| 被修改的可執行檔 | 任何變更的可執行檔 |
-| 隔離審查 | 被其他偵測層標記的檔案 |
+| New files in monitored directories | `/tmp`, `/var/tmp`, `/dev/shm`, user home directories |
+| Downloaded files | Files created by `curl`, `wget`, browsers |
+| Modified executables | Any executable file that changes |
+| Quarantine review | Files flagged by other detection layers |
 
-在 `config.json` 的 `monitoring.fileIntegrity` 設定下設定被監控的目錄。
+Configure monitored directories in `config.json` under the `monitoring.fileIntegrity` settings.

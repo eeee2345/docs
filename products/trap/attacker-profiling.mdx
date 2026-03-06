@@ -1,94 +1,94 @@
 ---
-title: "攻擊者分析"
-description: "Panguard Trap 如何分類攻擊者技能等級、分析意圖，以及將行為對應至 MITRE ATT&CK。"
+title: "Attacker Profiling"
+description: "How Panguard Trap classifies attacker skill level, analyzes intent, and maps behavior to MITRE ATT&CK."
 icon: "fingerprint"
 ---
 
-Panguard Trap 不僅記錄連線——它為每個與蜜罐互動的攻擊者建立行為檔案。每個檔案包含技能等級分類、意圖分析，以及 MITRE ATT&CK 技術對應。
+Panguard Trap does not just log connections -- it builds behavioral profiles of every attacker that interacts with your honeypots. Each profile includes a skill level classification, intent analysis, and mapping to MITRE ATT&CK techniques.
 
-## 技能等級分類
+## Skill Level Classification
 
-Trap 根據觀察到的行為將攻擊者分為三個層級：
+Trap classifies attackers into three tiers based on observed behavior:
 
 ### Script Kiddie
 
-| 指標 | 範例 |
+| Indicator | Example |
 |-----------|---------|
-| 使用未經修改的公開工具 | 使用預設字典執行 Hydra |
-| 僅嘗試預設憑證 | `admin/admin`、`root/password`、`root/123456` |
-| 無後期利用活動 | 成功登入後斷線 |
-| 高量、低精密度 | 數百次使用常見密碼的登入嘗試 |
+| Uses publicly available tools without modification | Running Hydra with default wordlists |
+| Tries only default credentials | `admin/admin`, `root/password`, `root/123456` |
+| No post-exploitation activity | Disconnects after successful login |
+| High volume, low sophistication | Hundreds of login attempts with common passwords |
 
 ### Advanced
 
-| 指標 | 範例 |
+| Indicator | Example |
 |-----------|---------|
-| 修改工具參數 | 自訂字典、調整掃描時序 |
-| 嘗試多種攻擊類型 | 先嘗試 SSH，然後 HTTP，然後 MySQL |
-| 基本後期利用 | 執行 `uname -a`、`cat /etc/passwd`、檢查其他主機 |
-| 內部網路掃描 | 獲取存取後探測 RFC 1918 位址 |
+| Modifies tool parameters | Custom wordlists, adjusted scan timing |
+| Attempts multiple exploit types | Tries SSH, then HTTP, then MySQL |
+| Basic post-exploitation | Runs `uname -a`, `cat /etc/passwd`, checks for other hosts |
+| Internal network scanning | Probes RFC 1918 addresses after gaining access |
 
-### APT（進階持續性威脅）
+### APT (Advanced Persistent Threat)
 
-| 指標 | 範例 |
+| Indicator | Example |
 |-----------|---------|
-| 自訂 payload | 非標準攻擊碼、編譯的二進位檔 |
-| 低速慢行手法 | 長時間內少量連線 |
-| 建立持久化 | 安裝 cron 工作、修改 SSH 金鑰、植入後門 |
-| 針對性行為 | 搜尋特定檔案、資料庫或設定 |
-| 反取證 | 清除日誌、修改時間戳 |
+| Custom payloads | Non-standard exploit code, compiled binaries |
+| Low and slow approach | Few connections over extended time periods |
+| Persistence establishment | Installs cron jobs, modifies SSH keys, plants backdoors |
+| Targeted behavior | Searches for specific files, databases, or configurations |
+| Anti-forensics | Clears logs, modifies timestamps |
 
-### 分類信號
+### Classification Signals
 
 <AccordionGroup>
-  <Accordion title="憑證分析">
-    - **預設憑證**（admin/admin、root/root）：Script Kiddie
-    - **憑證清單**（來自已知字典的連續嘗試）：Script Kiddie 至 Advanced
-    - **針對性憑證**（組織特定的使用者名稱、先前洩露的密碼）：Advanced 至 APT
+  <Accordion title="Credential Analysis">
+    - **Default credentials** (admin/admin, root/root): Script Kiddie
+    - **Credential lists** (sequential attempts from known wordlists): Script Kiddie to Advanced
+    - **Targeted credentials** (organization-specific usernames, previously breached passwords): Advanced to APT
   </Accordion>
-  <Accordion title="命令精密度">
-    - **單一命令**（whoami、id、uname -a）：Script Kiddie
-    - **串連命令**（列舉腳本、權限提升嘗試）：Advanced
-    - **自訂工具**（混淆腳本、記憶體駐留 payload、反偵測）：APT
+  <Accordion title="Command Sophistication">
+    - **Single commands** (whoami, id, uname -a): Script Kiddie
+    - **Chained commands** (enumeration scripts, privilege escalation attempts): Advanced
+    - **Custom tooling** (obfuscated scripts, memory-resident payloads, anti-detection): APT
   </Accordion>
-  <Accordion title="行為模式">
-    - **快速且嘈雜**（快速連線嘗試、無暫停）：Script Kiddie
-    - **中等節奏**（嘗試間有延遲、有一些適應）：Advanced
-    - **緩慢且謹慎**（長時間停留、仔細列舉、反取證）：APT
+  <Accordion title="Behavioral Patterns">
+    - **Fast and noisy** (rapid connection attempts, no pauses): Script Kiddie
+    - **Moderate pacing** (delays between attempts, some adaptation): Advanced
+    - **Slow and deliberate** (long dwell time, careful enumeration, anti-forensics): APT
   </Accordion>
 </AccordionGroup>
 
-## 意圖分析
+## Intent Analysis
 
-Trap 分析行為模式將攻擊者意圖分為 6 個類別：
+Trap analyzes behavioral patterns to classify attacker intent into 6 categories:
 
-| 意圖 | 指標 | MITRE 戰術 |
+| Intent | Indicators | MITRE Tactic |
 |--------|------------|--------------|
-| **偵察** | 埠掃描、服務列舉、作業系統指紋辨識 | TA0043 |
-| **暴力破解** | 高量憑證嘗試、字典攻擊 | TA0006 |
-| **利用** | 已知 CVE payload、緩衝區溢位嘗試、注入攻擊 | TA0001 |
-| **橫向移動** | 內部網路掃描、SMB 列舉、SSH 樞紐 | TA0008 |
-| **資料外洩** | 檔案下載命令、資料編碼、出站傳輸 | TA0010 |
-| **持久化** | Cron 工作建立、SSH 金鑰修改、後門安裝 | TA0003 |
+| **Reconnaissance** | Port scanning, service enumeration, OS fingerprinting | TA0043 |
+| **Brute Force** | High-volume credential attempts, dictionary attacks | TA0006 |
+| **Exploitation** | Known CVE payloads, buffer overflow attempts, injection attacks | TA0001 |
+| **Lateral Movement** | Internal network scanning, SMB enumeration, SSH pivoting | TA0008 |
+| **Data Exfiltration** | File download commands, data encoding, outbound transfers | TA0010 |
+| **Persistence** | Cron job creation, SSH key modification, backdoor installation | TA0003 |
 
-## MITRE ATT&CK 對應
+## MITRE ATT&CK Mapping
 
-每個攻擊者動作都對應至相關的 MITRE ATT&CK 技術：
+Every attacker action is mapped to the relevant MITRE ATT&CK technique:
 
-| 觀察到的行為 | 技術 ID | 技術名稱 |
+| Observed Behavior | Technique ID | Technique Name |
 |-------------------|-------------|----------------|
-| SSH 密碼猜測 | T1110.001 | Password Guessing |
-| 憑證填充 | T1110.004 | Credential Stuffing |
-| Web Shell 上傳 | T1505.003 | Web Shell |
+| SSH password guessing | T1110.001 | Password Guessing |
+| Credential stuffing | T1110.004 | Credential Stuffing |
+| Web shell upload | T1505.003 | Web Shell |
 | `cat /etc/passwd` | T1087.001 | Local Account Discovery |
-| 內部埠掃描 | T1046 | Network Service Scanning |
-| Cron 工作建立 | T1053.003 | Cron |
-| SSH 金鑰修改 | T1098.004 | SSH Authorized Keys |
-| wget/curl 下載 | T1105 | Ingress Tool Transfer |
+| Internal port scan | T1046 | Network Service Scanning |
+| Cron job creation | T1053.003 | Cron |
+| SSH key modification | T1098.004 | SSH Authorized Keys |
+| wget/curl download | T1105 | Ingress Tool Transfer |
 
-## 檔案報告
+## Profile Report
 
-透過 CLI 查看攻擊者檔案：
+View attacker profiles via the CLI:
 
 ```bash
 panguard trap profiles
@@ -116,11 +116,11 @@ Attacker #2: 198.51.100.23
   MITRE:     T1046, T1087.001, T1105
 ```
 
-## 收集的情報
+## Collected Intelligence
 
-### 憑證資料庫
+### Credential Database
 
-記錄所有嘗試的使用者名稱/密碼組合：
+All attempted username/password combinations are recorded:
 
 ```
 ── Captured Credentials ───────────────
@@ -132,9 +132,9 @@ SSH:
   ubuntu / ubuntu       (89 attempts)
 ```
 
-### 命令記錄
+### Command Logs
 
-蜜罐工作階段中執行的每個命令都附帶時間戳記錄：
+Every command executed in a honeypot session is logged with timestamps:
 
 ```
 ── Command Log ────────────────────────
@@ -147,7 +147,7 @@ Session: 203.0.113.50 @ 2025-01-15 14:23
   $ ./backdoor.sh
 ```
 
-## 情報流程
+## Intelligence Flow
 
 ```
 Honeypot Session
@@ -162,18 +162,18 @@ Intent Classification    MITRE Mapping
 Guard Block List    Threat Cloud Upload
 ```
 
-## Threat Cloud 整合
+## Threat Cloud Integration
 
-攻擊者檔案在分享前進行匿名化：
+Attacker profiles are anonymized before sharing:
 
-| 分享的資料 | 匿名化方式 |
+| Data Shared | Anonymization |
 |------------|---------------|
-| 來源 IP | /16 遮罩（最後兩個八位元組歸零） |
-| 憑證 | 雜湊化（SHA-256），永遠不以明文分享 |
-| 命令 | 清除環境特定資料 |
-| 技能分類 | 原樣分享 |
-| 意圖分析 | 原樣分享 |
+| Source IP | /16 masked (last two octets zeroed) |
+| Credentials | Hashed (SHA-256), never plaintext |
+| Commands | Sanitized of environment-specific data |
+| Skill classification | Shared as-is |
+| Intent analysis | Shared as-is |
 
 <Info>
-  攻擊者檔案跨工作階段持久化。如果同一 IP 在數天後再次出現，Trap 會將新活動與現有檔案關聯，並可能根據新證據升級技能等級分類。可透過 `--no-cloud` 在氣隙環境中停用 Threat Cloud 分享。
+  Attacker profiles persist across sessions. If the same IP returns days later, Trap correlates the new activity with the existing profile and may upgrade the skill level classification based on new evidence. Threat Cloud sharing can be disabled with `--no-cloud` for air-gapped environments.
 </Info>

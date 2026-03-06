@@ -1,106 +1,106 @@
 ---
 title: "Panguard Scan"
-description: "60 秒安全健康檢查，包含 10 個掃描器、風險評分及 PDF 報告產生。"
+description: "60-second security health check with 10 scanners, risk scoring, and PDF report generation."
 icon: "magnifying-glass"
 ---
 
-Panguard Scan 是一款快速、全面的安全稽核工具，能在 60 秒內評估您系統的安全態勢。它執行 10 個專業掃描器，產生 0--100 的風險評分搭配 A--F 字母等級，並可選擇性地產生專業 PDF 報告。
+Panguard Scan is a fast, comprehensive security auditing tool that assesses your system's security posture in under 60 seconds. It runs 10 specialized scanners, produces a 0--100 risk score with an A--F letter grade, and optionally generates a professional PDF report.
 
-## 快速開始
+## Quick Start
 
 ```bash
-# 快速掃描（約 30 秒）
+# Quick scan (~30 seconds)
 panguard scan --quick
 
-# 完整掃描（約 60 秒）
+# Full scan (~60 seconds)
 panguard scan
 
-# 產生 PDF 報告
+# Generate PDF report
 panguard scan --output report.pdf
 
-# 繁體中文輸出
+# Traditional Chinese output
 panguard scan --lang zh-TW
 ```
 
-## 快速模式 vs 完整模式
+## Quick Mode vs Full Mode
 
-| 功能 | 快速模式（`--quick`） | 完整模式（預設） |
+| Capability | Quick Mode (`--quick`) | Full Mode (default) |
 |------------|----------------------|---------------------|
-| 時長 | 約 30 秒 | 約 60 秒 |
-| 作業系統偵測 | 是 | 是 |
-| 網路介面 | 是 | 是 |
-| 開放埠 | 是 | 是 |
-| 執行中的服務 | 是 | 是 |
-| 密碼策略 | 是 | 是 |
-| 防火牆狀態 | 是 | 是 |
-| 安全工具偵測 | 是 | 是 |
-| SSL 憑證驗證 | -- | 是 |
-| 排程任務稽核 | -- | 是 |
-| 共享資料夾安全 | -- | 是 |
-| 風險評分 | 是 | 是 |
-| PDF 報告 | 搭配 `--output` | 搭配 `--output` |
+| Duration | ~30 seconds | ~60 seconds |
+| OS detection | Yes | Yes |
+| Network interfaces | Yes | Yes |
+| Open ports | Yes | Yes |
+| Running services | Yes | Yes |
+| Password policy | Yes | Yes |
+| Firewall status | Yes | Yes |
+| Security tool detection | Yes | Yes |
+| SSL certificate validation | -- | Yes |
+| Scheduled task audit | -- | Yes |
+| Shared folder security | -- | Yes |
+| Risk scoring | Yes | Yes |
+| PDF report | With `--output` | With `--output` |
 
-## 嚴重等級
+## Severity Levels
 
-每個發現項目被分類為五個嚴重等級之一：
+Every finding is classified into one of five severity levels:
 
-| 等級 | 含義 | 處理時程 |
+| Level | Meaning | Action Timeline |
 |-------|---------|-----------------|
-| **CRITICAL** | 立即受損風險 | 立即修復 |
-| **HIGH** | 重大安全風險 | 24 小時內修復 |
-| **MEDIUM** | 中等風險，建議改善 | 一週內修復 |
-| **LOW** | 低風險，最佳實務建議 | 方便時修復 |
-| **INFO** | 資訊性發現 | 確認即可 |
+| **CRITICAL** | Immediate compromise risk | Fix immediately |
+| **HIGH** | Significant security risk | Fix within 24 hours |
+| **MEDIUM** | Moderate risk, improvement recommended | Fix within one week |
+| **LOW** | Low risk, best-practice recommendation | Fix when convenient |
+| **INFO** | Informational finding | Acknowledge |
 
-## 產品搭配
+## Product Combinations
 
 ### Scan + Guard
 
-使用 Scan 建立基準線，然後啟動 Guard 進行持續監控：
+Use Scan to establish a baseline, then activate Guard for continuous monitoring:
 
 ```bash
-# 1. 執行初始掃描
+# 1. Run initial scan
 panguard scan --output baseline.pdf
 
-# 2. 修復發現的問題
+# 2. Fix issues found
 
-# 3. 開始持續防護
+# 3. Start continuous protection
 panguard guard start
 
-# 4. 定期重新掃描以追蹤改善情況
+# 4. Re-scan periodically to track improvement
 panguard scan --output weekly-check.pdf
 ```
 
 ### Scan + Report
 
-掃描發現項目直接導入合規報告產生：
+Scan findings feed directly into compliance report generation:
 
 ```bash
 panguard scan --output scan-result.pdf
 ```
 
-## CLI 選項
+## CLI Options
 
 ```
 panguard scan [options]
 
 Options:
-  --quick              快速模式（約 30 秒）
-  --output <path>      PDF 報告輸出路徑
-  --lang <en|zh-TW>    語言（預設：en）
-  --verbose            詳細輸出
-  --json               純 JSON 輸出（供 AI 代理使用）
-  --target <host>      遠端目標（IP 或網域）
+  --quick              Quick mode (~30 seconds)
+  --output <path>      PDF report output path
+  --lang <en|zh-TW>    Language (default: en)
+  --verbose            Verbose output
+  --json               Pure JSON output (for AI agents)
+  --target <host>      Remote target (IP or domain)
 ```
 
 <CardGroup cols={3}>
-  <Card title="掃描器" icon="list-check" href="/products/scan/scanners">
-    所有 10 種掃描器類型的詳細說明。
+  <Card title="Scanners" icon="list-check" href="/products/scan/scanners">
+    All 10 scanner types in detail.
   </Card>
-  <Card title="風險評分" icon="chart-bar" href="/products/scan/risk-scoring">
-    0-100 風險評分的計算方式。
+  <Card title="Risk Scoring" icon="chart-bar" href="/products/scan/risk-scoring">
+    How the 0-100 risk score is calculated.
   </Card>
-  <Card title="PDF 報告" icon="file-pdf" href="/products/scan/pdf-reports">
-    PDF 報告結構與自訂選項。
+  <Card title="PDF Reports" icon="file-pdf" href="/products/scan/pdf-reports">
+    PDF report structure and customization.
   </Card>
 </CardGroup>

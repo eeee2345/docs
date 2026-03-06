@@ -1,14 +1,14 @@
 ---
-title: "工作階段"
-description: "管理工作階段、檢視個人資料、重設密碼和設定 TOTP 雙因素驗證。"
+title: "Sessions"
+description: "Manage sessions, view profiles, reset passwords, and configure TOTP two-factor authentication."
 icon: "key"
 ---
 
-## 工作階段管理
+## Session Management
 
 ### POST /api/auth/logout
 
-使目前的工作階段 token 失效。
+Invalidates the current session token.
 
 <CodeGroup>
 ```bash cURL
@@ -32,7 +32,7 @@ curl -X POST https://auth.panguard.ai/api/auth/logout \
 
 ### GET /api/auth/me
 
-回傳已認證使用者的個人資料、訂閱層級和帳號詳細資訊。
+Returns the authenticated user's profile, subscription tier, and account details.
 
 <CodeGroup>
 ```bash cURL
@@ -62,14 +62,14 @@ curl -X GET https://auth.panguard.ai/api/auth/me \
 
 ---
 
-## 密碼重設
+## Password Reset
 
 ### POST /api/auth/forgot-password
 
-向指定地址發送密碼重設 email。無論該 email 是否存在都回傳 200（防止列舉攻擊）。
+Sends a password reset email to the specified address. Always returns 200 regardless of whether the email exists (prevents enumeration).
 
 <ParamField body="email" type="string" required>
-  與帳號關聯的 email 地址。
+  The email address associated with the account.
 </ParamField>
 
 <CodeGroup>
@@ -95,14 +95,14 @@ curl -X POST https://auth.panguard.ai/api/auth/forgot-password \
 
 ### POST /api/auth/reset-password
 
-使用來自重設 email 的 token 重設密碼。
+Resets the password using a token from the reset email.
 
 <ParamField body="token" type="string" required>
-  來自 email 連結的密碼重設 token。
+  The password reset token from the email link.
 </ParamField>
 
 <ParamField body="newPassword" type="string" required>
-  新密碼。必須為 8--128 個字元。
+  The new password. Must be 8--128 characters.
 </ParamField>
 
 <CodeGroup>
@@ -117,7 +117,7 @@ curl -X POST https://auth.panguard.ai/api/auth/reset-password \
 </CodeGroup>
 
 <Tabs>
-  <Tab title="200 成功">
+  <Tab title="200 Success">
     ```json
     {
       "ok": true,
@@ -127,7 +127,7 @@ curl -X POST https://auth.panguard.ai/api/auth/reset-password \
     }
     ```
   </Tab>
-  <Tab title="400 無效的 Token">
+  <Tab title="400 Invalid Token">
     ```json
     {
       "ok": false,
@@ -138,16 +138,16 @@ curl -X POST https://auth.panguard.ai/api/auth/reset-password \
 </Tabs>
 
 <Warning>
-密碼重設 token 在 **1 小時**後到期。重設密碼時，所有現有工作階段都會被使其失效。
+Password reset tokens expire after **1 hour**. All existing sessions are invalidated when a password is reset.
 </Warning>
 
 ---
 
-## TOTP 雙因素驗證
+## TOTP Two-Factor Authentication
 
 ### POST /api/auth/totp/setup
 
-產生 TOTP 密鑰和 QR code URI，用於設定驗證器 app。
+Generates a TOTP secret and QR code URI for setting up an authenticator app.
 
 <CodeGroup>
 ```bash cURL
@@ -176,17 +176,17 @@ curl -X POST https://auth.panguard.ai/api/auth/totp/setup \
 </ResponseExample>
 
 <Warning>
-請將 `backupCodes` 儲存在安全的位置。它們是一次性使用的，在此初始回應後無法再次取得。每個備用代碼可在登入時替代 TOTP 代碼使用一次。
+Store the `backupCodes` in a secure location. They are single-use and cannot be retrieved after this initial response. Each backup code can be used once in place of a TOTP code during login.
 </Warning>
 
 ---
 
 ### POST /api/auth/totp/verify
 
-驗證 TOTP 代碼以完成 2FA 設定。必須在 `/totp/setup` 之後呼叫以啟用 2FA。
+Verifies a TOTP code to complete 2FA setup. Must be called after `/totp/setup` to activate 2FA.
 
 <ParamField body="totpCode" type="string" required>
-  來自驗證器 app 的六位數代碼，用於確認設定。
+  Six-digit code from the authenticator app to confirm setup.
 </ParamField>
 
 <CodeGroup>
@@ -199,7 +199,7 @@ curl -X POST https://auth.panguard.ai/api/auth/totp/verify \
 </CodeGroup>
 
 <Tabs>
-  <Tab title="200 成功">
+  <Tab title="200 Success">
     ```json
     {
       "ok": true,
@@ -209,7 +209,7 @@ curl -X POST https://auth.panguard.ai/api/auth/totp/verify \
     }
     ```
   </Tab>
-  <Tab title="400 無效的代碼">
+  <Tab title="400 Invalid Code">
     ```json
     {
       "ok": false,
@@ -223,10 +223,10 @@ curl -X POST https://auth.panguard.ai/api/auth/totp/verify \
 
 ### POST /api/auth/totp/disable
 
-停用 TOTP 雙因素驗證。基於安全考量，需要目前密碼。
+Disables TOTP two-factor authentication. Requires current password for security.
 
 <ParamField body="password" type="string" required>
-  目前帳號密碼用於確認。
+  Current account password for confirmation.
 </ParamField>
 
 <CodeGroup>
@@ -250,5 +250,5 @@ curl -X POST https://auth.panguard.ai/api/auth/totp/disable \
 </ResponseExample>
 
 <Info>
-停用 2FA 會使所有現有備用代碼失效。如果您之後重新啟用 2FA，將會產生一組新的備用代碼。
+Disabling 2FA invalidates all existing backup codes. If you re-enable 2FA later, a new set of backup codes will be generated.
 </Info>

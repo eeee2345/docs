@@ -1,14 +1,14 @@
 ---
-title: "快速入門"
-description: "從註冊到首份安全報告只需 5 分鐘。安裝 CLI、驗證身份、掃描系統，並啟動即時防護。"
+title: "Quick Start"
+description: "From sign-up to your first security report in 5 minutes. Install the CLI, authenticate, scan your system, and start real-time protection."
 icon: "rocket"
 ---
 
-本指南將引導您以最快的方式，使用 Panguard AI 保護您的第一台設備。
+This guide walks you through the fastest path to securing your first machine with Panguard AI.
 
 <Steps>
-  <Step title="安裝 CLI">
-    選擇您的平台，使用一行指令安裝 Panguard。
+  <Step title="Install the CLI">
+    Choose your platform and install Panguard with a single command.
 
     <Tabs>
       <Tab title="macOS / Linux">
@@ -21,37 +21,37 @@ icon: "rocket"
         powershell -ExecutionPolicy Bypass -Command "irm https://get.panguard.ai/windows | iex"
         ```
       </Tab>
-      <Tab title="npm（所有平台）">
+      <Tab title="npm (all platforms)">
         ```bash
         npm install -g @panguard-ai/panguard
         ```
       </Tab>
     </Tabs>
 
-    驗證安裝：
+    Verify the installation:
 
     ```bash
     panguard --version
-    # 預期輸出: 0.3.1
+    # Expected: 0.3.1
     ```
 
     <Tip>
-      **Intel Mac 使用者：**curl 安裝程式預設下載 ARM64 二進位檔。您可以改用 npm 安裝
-      (`npm install -g @panguard-ai/panguard`)，或先啟用 Rosetta 2
-      (`softwareupdate --install-rosetta`) 再使用 curl 安裝。
+      **Intel Mac users:** The curl installer downloads the ARM64 binary. Either install via npm
+      (`npm install -g @panguard-ai/panguard`) or enable Rosetta 2 first
+      (`softwareupdate --install-rosetta`) before using the curl installer.
     </Tip>
   </Step>
 
-  <Step title="建立帳號並登入">
-    如果您尚未擁有帳號，請至 [panguard.ai](https://panguard.ai) 註冊。Community 方案免費，無需信用卡。
+  <Step title="Create account and log in">
+    If you do not have an account yet, sign up at [panguard.ai](https://panguard.ai). The Community plan is free and requires no credit card.
 
-    接著從 CLI 進行驗證：
+    Then authenticate from the CLI:
 
     ```bash
     panguard login
     ```
 
-    瀏覽器會自動開啟。完成驗證後，返回終端機：
+    Your browser opens automatically. After completing authentication, return to the terminal:
 
     ```
       PANGUARD AI
@@ -67,18 +67,18 @@ icon: "rocket"
     ```
 
     <Info>
-      **無圖形介面伺服器：** 使用 `panguard login --no-browser` 取得 URL，可在其他裝置上開啟。
+      **Headless servers:** Use `panguard login --no-browser` to get a URL you can open on another device.
     </Info>
   </Step>
 
-  <Step title="執行首次掃描">
-    對您的系統執行快速安全稽核：
+  <Step title="Run your first scan">
+    Execute a quick security audit of your system:
 
     ```bash
     panguard scan --quick
     ```
 
-    掃描約 30 秒完成，並產出風險評估結果：
+    The scan completes in approximately 30 seconds and produces a risk assessment:
 
     ```
       PANGUARD AI - Security Scanner
@@ -103,20 +103,20 @@ icon: "rocket"
       3. Enforce password complexity requirements
     ```
 
-    移除 `--quick` 旗標可執行完整掃描（約 60 秒），包含 SSL 憑證驗證、排程任務稽核與共享資料夾檢查。
+    Remove the `--quick` flag for a full scan (~60 seconds) that includes SSL certificate validation, scheduled task audit, and shared folder checks.
 
     <Tabs>
-      <Tab title="產生 PDF 報告">
+      <Tab title="Generate PDF report">
         ```bash
         panguard scan --output my-report.pdf
         ```
       </Tab>
-      <Tab title="繁體中文輸出">
+      <Tab title="Traditional Chinese output">
         ```bash
         panguard scan --lang zh-TW
         ```
       </Tab>
-      <Tab title="完整掃描">
+      <Tab title="Full scan">
         ```bash
         panguard scan
         ```
@@ -124,8 +124,8 @@ icon: "rocket"
     </Tabs>
   </Step>
 
-  <Step title="啟動即時防護">
-    掃描是一次性檢查。若要持續防護，請啟動 Guard 引擎：
+  <Step title="Start real-time protection">
+    A scan is a one-time check. For continuous protection, start the Guard engine:
 
     ```bash
     panguard guard start
@@ -149,26 +149,26 @@ icon: "rocket"
     ```
 
     <Info>
-      **Guard 的運作方式：** 前 7 天，AI 觀察系統的正常行為並建立基線（此期間不會產生誤報）。從第 8 天開始，它會自動偵測異常、執行回應並通知您。
+      **How Guard works:** During the first 7 days, the AI observes normal system behavior and builds a baseline (no false positives during this period). Starting on day 8, it automatically detects anomalies, executes responses, and notifies you.
     </Info>
   </Step>
 </Steps>
 
-## 接下來做什麼
+## What to do next
 
-您的系統已完成掃描並受到保護，可以探索以下功能：
+Now that your system is scanned and protected, explore these features:
 
 <CardGroup cols={2}>
-  <Card title="設定通知" icon="bell" href="/guides/notifications-setup">
-    當偵測到威脅時，透過 Telegram、Slack 或 Email 接收警報。
+  <Card title="Set up notifications" icon="bell" href="/guides/notifications-setup">
+    Receive alerts via Telegram, Slack, or Email when threats are detected.
   </Card>
-  <Card title="部署蜜罐" icon="honey-pot" href="/guides/honeypots">
-    使用 8 種誘餌服務捕捉攻擊者。需 Pro 方案。
+  <Card title="Deploy honeypots" icon="honey-pot" href="/guides/honeypots">
+    Catch attackers with 8 types of decoy services. Requires Pro plan.
   </Card>
-  <Card title="產生合規報告" icon="file-chart-column" href="/guides/compliance-reports">
-    自動產生 ISO 27001、SOC 2 與台灣資安法稽核報告。
+  <Card title="Generate compliance reports" icon="file-chart-column" href="/guides/compliance-reports">
+    Auto-generate ISO 27001, SOC 2, and Taiwan TCSA audit reports.
   </Card>
-  <Card title="探索 CLI" icon="terminal" href="/cli/overview">
-    所有 Panguard 指令與旗標的完整參考。
+  <Card title="Explore the CLI" icon="terminal" href="/cli/overview">
+    Full reference for every Panguard command and flag.
   </Card>
 </CardGroup>

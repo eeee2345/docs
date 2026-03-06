@@ -1,60 +1,60 @@
 ---
-title: "歡迎使用 Panguard AI"
-description: "AI 驅動的自適應端點防護，專為開發者與中小企業打造。從註冊到安全防護，只需一行指令。"
+title: "Welcome to Panguard AI"
+description: "AI-driven adaptive endpoint protection for developers and small businesses. From sign-up to security in one command."
 icon: "hand-wave"
 ---
 
-Panguard AI 是一個開源網路安全平台，為開發者與中小企業帶來企業級端點防護，無需專業安全團隊。在官網註冊帳號，透過 CLI 登入，即可讓 AI 自動保護您的設備。
+Panguard AI is an open-source cybersecurity platform that brings enterprise-grade endpoint protection to developers and small businesses -- without requiring a security team. Sign up on the website, log in from the CLI, and let AI protect your machines automatically.
 
-核心理念很簡單：**當有事發生，Panguard 通知您。沒事發生時，您什麼都不用做。**
+The core philosophy is simple: **when something happens, Panguard tells you. When nothing happens, you do nothing.**
 
 <CardGroup cols={2}>
-  <Card title="快速入門" icon="rocket" href="/quickstart">
-    五分鐘內完成首次安全掃描。
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Get from zero to your first security scan in under 5 minutes.
   </Card>
-  <Card title="產品總覽" icon="shield-check" href="/overview">
-    探索完整產品套件：Scan、Guard、Chat、Trap、Report 等。
+  <Card title="Product Overview" icon="shield-check" href="/overview">
+    Explore the full product suite: Scan, Guard, Chat, Trap, Report, and more.
   </Card>
-  <Card title="CLI 參考" icon="terminal" href="/cli/overview">
-    所有 Panguard CLI 工具的完整指令參考。
+  <Card title="CLI Reference" icon="terminal" href="/cli/overview">
+    Complete command reference for every Panguard CLI tool.
   </Card>
-  <Card title="API 參考" icon="code" href="/api-reference/overview">
-    Threat Cloud、Manager 與 Auth 服務的 REST API 文件。
+  <Card title="API Reference" icon="code" href="/api-reference/overview">
+    REST API documentation for Threat Cloud, Manager, and Auth services.
   </Card>
 </CardGroup>
 
-## Panguard AI 適合誰？
+## Who is Panguard AI for?
 
 <CardGroup cols={3}>
-  <Card title="開發者" icon="laptop-code">
-    零配置保護您的個人伺服器、VPS 主機與開發環境。執行一行指令，繼續專注工作。
+  <Card title="Developers" icon="laptop-code">
+    Secure your personal servers, VPS instances, and development machines with zero configuration. Run one command and move on with your day.
   </Card>
-  <Card title="中小企業" icon="building">
-    無需聘僱專門團隊即可獲得合規等級的安全防護。自動產生 ISO 27001、SOC 2 與台灣資安法稽核報告。
+  <Card title="Small Businesses" icon="building">
+    Get compliance-ready security without hiring a dedicated team. Auto-generate ISO 27001, SOC 2, and Taiwan TCSA audit reports.
   </Card>
-  <Card title="託管服務供應商" icon="server">
-    透過單一儀表板監控和保護多個客戶端點。使用集中式策略管理，跨機群部署代理程式。
+  <Card title="Managed Service Providers" icon="server">
+    Monitor and protect multiple client endpoints from a single dashboard. Deploy agents across fleets with centralized policy management.
   </Card>
 </CardGroup>
 
-## 為什麼選擇 Panguard AI？
+## Why Panguard AI?
 
-傳統安全工具需要深厚的專業知識、產生大量未分類的警報，且企業授權費用高達六位數。免費工具雖然存在，但沒有專職安全工程師幾乎無法使用。
+Traditional security tools require deep expertise, generate thousands of un-prioritized alerts, and cost six figures for enterprise licenses. Free tools exist but are effectively unusable without dedicated security engineers.
 
-Panguard AI 採取不同的方式：
+Panguard AI takes a different approach:
 
-- **一行指令安裝** -- 無需設定檔、無需調校、無需專業術語
-- **白話通知** -- 透過 Telegram、Slack 或 Email 以您能理解的語言接收警報
-- **AI 自動判斷嚴重性** -- 系統自動分類、回應與報告，無需人工介入
-- **持續進化** -- 行為基線會自適應您的特定環境
+- **One command install** -- no configuration files, no tuning, no jargon
+- **Plain language notifications** -- receive alerts via Telegram, Slack, or Email in language you understand
+- **AI auto-judges severity** -- the system triages, responds, and reports without human intervention
+- **Gets smarter over time** -- behavioral baselines adapt to your specific environment
 
-## 快速安裝
+## Quick install
 
 ```bash
 curl -fsSL https://get.panguard.ai | bash
 ```
 
-然後進行驗證並執行首次掃描：
+Then authenticate and run your first scan:
 
 ```bash
 panguard login
@@ -62,23 +62,23 @@ panguard scan --quick
 ```
 
 <Info>
-  Community 方案免費，包含無限次掃描與 Layer 1 規則式防護。
-  無需信用卡。
+  The Community plan is free and includes unlimited scans plus Layer 1 rule-based protection.
+  No credit card required.
 </Info>
 
-## 後續步驟
+## Next steps
 
 <CardGroup cols={2}>
-  <Card title="安裝指南" icon="download" href="/installation">
-    macOS、Linux 與 Windows 的詳細平台安裝說明。
+  <Card title="Installation" icon="download" href="/installation">
+    Detailed platform-specific installation instructions for macOS, Linux, and Windows.
   </Card>
-  <Card title="帳號設定" icon="user-plus" href="/account-setup">
-    建立帳號、選擇方案並設定 CLI 連線。
+  <Card title="Account Setup" icon="user-plus" href="/account-setup">
+    Create your account, choose a plan, and configure your CLI session.
   </Card>
-  <Card title="核心概念" icon="lightbulb" href="/concepts/three-layer-ai">
-    了解驅動 Panguard 的三層式 AI 架構。
+  <Card title="Concepts" icon="lightbulb" href="/concepts/three-layer-ai">
+    Understand the three-layer AI architecture that powers Panguard.
   </Card>
-  <Card title="使用指南" icon="book-open" href="/guides/first-scan">
-    從掃描到蜜罐部署，每項功能的逐步指南。
+  <Card title="Guides" icon="book-open" href="/guides/first-scan">
+    Step-by-step guides for every feature, from scanning to honeypots.
   </Card>
 </CardGroup>

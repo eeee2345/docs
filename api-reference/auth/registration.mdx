@@ -1,25 +1,25 @@
 ---
-title: "註冊"
-description: "建立新的 Panguard AI 帳號並取得身份驗證 token。"
+title: "Registration"
+description: "Create a new Panguard AI account and receive an authentication token."
 icon: "user-plus"
 ---
 
 ## POST /api/auth/register
 
-建立新的使用者帳號並自動啟用 14 天 Solo 試用。回傳 JWT token 以立即存取 API。
+Creates a new user account and automatically activates a 14-day Solo trial. Returns a JWT token for immediate API access.
 
-### 請求
+### Request
 
 <ParamField body="email" type="string" required>
-  有效的 email 地址。必須在平台上唯一。
+  Valid email address. Must be unique across the platform.
 </ParamField>
 
 <ParamField body="name" type="string" required>
-  使用者的顯示名稱。1--100 個字元。
+  Display name for the user. 1--100 characters.
 </ParamField>
 
 <ParamField body="password" type="string" required>
-  帳號密碼。必須為 8--128 個字元。
+  Account password. Must be 8--128 characters.
 </ParamField>
 
 <CodeGroup>
@@ -58,7 +58,7 @@ data = response.json()
 ```
 </CodeGroup>
 
-### 回應
+### Response
 
 <Tabs>
   <Tab title="201 Created">
@@ -80,7 +80,7 @@ data = response.json()
     }
     ```
   </Tab>
-  <Tab title="400 驗證錯誤">
+  <Tab title="400 Validation Error">
     ```json
     {
       "ok": false,
@@ -90,37 +90,37 @@ data = response.json()
   </Tab>
 </Tabs>
 
-### 試用啟用
+### Trial Activation
 
-每個新帳號自動獲得 **14 天 Solo 試用**，包括：
+Every new account automatically receives a **14-day Solo trial** that includes:
 
-- 最多 3 台機器
-- 完整的掃描、防護、聊天和報告功能
-- 基本 AI 分析
+- Up to 3 machines
+- Full scan, guard, chat, and report capabilities
+- Basic AI analysis
 
 <Info>
-試用到期後，帳號會還原為 **Community** 層級（1 台機器，僅掃描 + 第一層防護）。您可以隨時透過 CLI 的 `panguard upgrade` 或網頁儀表板升級。
+After the trial expires, the account reverts to the **Community** tier (1 machine, scan + Layer 1 guard only). Upgrade at any time from the CLI with `panguard upgrade` or from the web dashboard.
 </Info>
 
-### 安全性：重複 Email 處理
+### Security: Duplicate Email Handling
 
 <Warning>
-為防止 email 列舉攻擊，使用已存在的 email 註冊會回傳 **200 OK** 和通用的成功訊息，而不會揭露該 email 已被使用。實際帳號不會被修改，也不會簽發新的 token。
+To prevent email enumeration attacks, registering with an already-used email returns a **200 OK** with a generic success message instead of revealing that the email is taken. The actual account is not modified, and no new token is issued.
 </Warning>
 
-這意味著：
-- 攻擊者無法透過探測 API 來發現哪些 email 已有帳號
-- 原始帳號不受影響
-- 會靜默地向現有帳號持有者發送「密碼重設」email
+This means:
+- Attackers cannot probe the API to discover which emails have accounts
+- The original account remains unaffected
+- A "password reset" email is silently sent to the existing account holder
 
-### 驗證規則
+### Validation Rules
 
-| 欄位 | 規則 |
+| Field | Rule |
 |-------|------|
-| `email` | 必須是有效的 email 格式 |
-| `name` | 1--100 個字元，前後空白自動去除 |
-| `password` | 8--128 個字元，無其他限制 |
+| `email` | Must be a valid email format |
+| `name` | 1--100 characters, trimmed |
+| `password` | 8--128 characters, no other restrictions |
 
 <Tip>
-註冊後，請安全儲存回傳的 `token`。在所有後續 Auth API 請求中將其作為 Bearer token 使用。當您執行 `panguard login` 時，CLI 會自動處理此操作。
+After registration, store the returned `token` securely. Use it as a Bearer token for all subsequent Auth API requests. The CLI handles this automatically when you run `panguard login`.
 </Tip>

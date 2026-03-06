@@ -1,113 +1,113 @@
 ---
-title: "CLI 概覽"
-description: "統一的命令列介面，涵蓋所有 Panguard AI 安全操作。"
+title: "CLI Overview"
+description: "Unified command-line interface for all Panguard AI security operations."
 icon: "terminal"
 ---
 
-Panguard CLI 是您進行掃描、防護、監控及管理端點安全的統一入口。從快速弱點掃描到部署蜜罐網路，所有功能都可透過一個二進位檔案存取。
+The Panguard CLI is your single entry point for scanning, protecting, monitoring, and managing endpoint security. Every feature -- from a quick vulnerability scan to deploying a honeypot network -- is accessible through one binary.
 
-## 使用方式
+## Usage
 
 ```bash
 panguard <command> [options]
 ```
 
-## 全域選項
+## Global Options
 
-| 選項 | 說明 |
+| Option | Description |
 | --- | --- |
-| `--help` | 顯示任何指令的說明 |
-| `--version` | 輸出已安裝的 Panguard CLI 版本 |
-| `--lang <lang>` | 設定輸出語言（`en`、`zh-TW`、`ja` 等） |
+| `--help` | Show help for any command |
+| `--version` | Print the installed Panguard CLI version |
+| `--lang <lang>` | Set output language (`en`, `zh-TW`, `ja`, etc.) |
 
-## 指令分類
+## Command Categories
 
-### 掃描
+### Scanning
 
-| 指令 | 說明 |
+| Command | Description |
 | --- | --- |
-| [`scan`](/cli/scan) | 在本機執行安全掃描 |
+| [`scan`](/cli/scan) | Run security scans on the local machine |
 
-### 防護
+### Protection
 
-| 指令 | 說明 |
+| Command | Description |
 | --- | --- |
-| [`guard`](/cli/guard) | 即時端點防護代理 |
-| [`trap`](/cli/trap) | 蜜罐 / 欺敵技術 |
-| [`chat`](/cli/chat) | 通知頻道管理（Telegram、Slack、Email） |
-| [`report`](/cli/report) | 合規報告產生 |
+| [`guard`](/cli/guard) | Real-time endpoint protection agent |
+| [`trap`](/cli/trap) | Honeypot / deception technology |
+| [`chat`](/cli/chat) | Notification channel management (Telegram, Slack, Email) |
+| [`report`](/cli/report) | Compliance report generation |
 
-### 系統
+### System
 
-| 指令 | 說明 |
+| Command | Description |
 | --- | --- |
-| [`init`](/cli/init) | 初始化當前機器的設定 |
-| [`deploy`](/cli/deploy) | 將設定部署到遠端端點 |
-| [`status`](/cli/status) | 顯示整體系統健康狀態 |
-| [`config`](/cli/config) | 檢視或編輯設定 |
-| [`doctor`](/cli/doctor) | 診斷常見系統問題 |
-| [`upgrade`](/cli/upgrade) | 將 Panguard CLI 更新至最新版本 |
+| [`init`](/cli/init) | Initialize configuration for the current machine |
+| [`deploy`](/cli/deploy) | Deploy configuration to remote endpoints |
+| [`status`](/cli/status) | Show overall system health |
+| [`config`](/cli/config) | View or edit configuration |
+| [`doctor`](/cli/doctor) | Diagnose common system issues |
+| [`upgrade`](/cli/upgrade) | Update Panguard CLI to the latest version |
 
-### 身份驗證
+### Authentication
 
-| 指令 | 說明 |
+| Command | Description |
 | --- | --- |
-| [`login`](/cli/login) | 使用 Panguard 帳號進行身份驗證 |
-| [`logout`](/cli/logout) | 結束目前的工作階段 |
-| [`whoami`](/cli/whoami) | 顯示目前已驗證的使用者 |
+| [`login`](/cli/login) | Authenticate with your Panguard account |
+| [`logout`](/cli/logout) | End the current session |
+| [`whoami`](/cli/whoami) | Display the currently authenticated user |
 
-### 進階
+### Advanced
 
-| 指令 | 說明 |
+| Command | Description |
 | --- | --- |
-| [`manager`](/cli/manager) | 啟動多端點 Manager 伺服器 |
-| [`threat`](/cli/threat) | 啟動本機 Threat Cloud 情報伺服器 |
+| [`manager`](/cli/manager) | Start the multi-endpoint Manager server |
+| [`threat`](/cli/threat) | Start the local Threat Cloud intelligence server |
 
-## 方案存取矩陣
+## Plan Access Matrix
 
-並非每個指令都適用於所有方案。下表顯示每個指令所需的最低方案。
+Not every command is available on every plan. The table below shows the minimum plan required for each command.
 
-| 指令 | Community（免費） | Solo（$9/月） | Pro（$29/月） | Business（$79/月） |
+| Command | Community (Free) | Solo ($9/mo) | Pro ($29/mo) | Business ($79/mo) |
 | --- | :---: | :---: | :---: | :---: |
-| `login` / `logout` / `whoami` | 是 | 是 | 是 | 是 |
-| `init` / `status` / `config` | 是 | 是 | 是 | 是 |
-| `doctor` / `upgrade` | 是 | 是 | 是 | 是 |
-| `scan --quick` | 是 | 是 | 是 | 是 |
-| `scan`（完整） | -- | 是 | 是 | 是 |
-| `guard start` | -- | 是 | 是 | 是 |
-| `guard status` | 是 | 是 | 是 | 是 |
-| `chat setup` | -- | 是 | 是 | 是 |
-| `deploy` | -- | 是 | 是 | 是 |
-| `report generate` | -- | -- | 是 | 是 |
-| `trap start` | -- | -- | 是 | 是 |
-| `threat start` | -- | -- | -- | 是 |
-| `manager` | -- | -- | -- | 是 |
+| `login` / `logout` / `whoami` | Yes | Yes | Yes | Yes |
+| `init` / `status` / `config` | Yes | Yes | Yes | Yes |
+| `doctor` / `upgrade` | Yes | Yes | Yes | Yes |
+| `scan --quick` | Yes | Yes | Yes | Yes |
+| `scan` (full) | -- | Yes | Yes | Yes |
+| `guard start` | -- | Yes | Yes | Yes |
+| `guard status` | Yes | Yes | Yes | Yes |
+| `chat setup` | -- | Yes | Yes | Yes |
+| `deploy` | -- | Yes | Yes | Yes |
+| `report generate` | -- | -- | Yes | Yes |
+| `trap start` | -- | -- | Yes | Yes |
+| `threat start` | -- | -- | -- | Yes |
+| `manager` | -- | -- | -- | Yes |
 
-## 安裝
+## Installation
 
-如果您尚未安裝 CLI，請執行：
+If you have not installed the CLI yet, run:
 
 ```bash
 curl -fsSL https://get.panguard.ai | bash
 ```
 
 <Info>
-  請參閱[安裝](/installation)頁面，瞭解包括 Homebrew、APT 和 Docker 在內的各平台安裝說明。
+  See the [Installation](/installation) page for platform-specific instructions including Homebrew, APT, and Docker options.
 </Info>
 
-## 下一步
+## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="快速入門" icon="rocket" href="/quickstart">
-    五分鐘內從零開始完成您的第一次掃描。
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Get from zero to your first scan in under 5 minutes.
   </Card>
   <Card title="panguard scan" icon="magnifying-glass" href="/cli/scan">
-    執行您的第一次安全掃描。
+    Run your first security scan.
   </Card>
   <Card title="panguard guard" icon="shield" href="/cli/guard">
-    啟用即時端點防護。
+    Enable real-time endpoint protection.
   </Card>
-  <Card title="帳號設定" icon="user-plus" href="/account-setup">
-    建立帳號並選擇方案。
+  <Card title="Account Setup" icon="user-plus" href="/account-setup">
+    Create your account and choose a plan.
   </Card>
 </CardGroup>
