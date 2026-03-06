@@ -13,9 +13,9 @@
     "dark": "#6B7A6E"
   },
   "navigation": {
-    "languages": [
+    "tabs": [
       {
-        "language": "en",
+        "tab": "Documentation",
         "groups": [
           {
             "group": "Getting Started",
@@ -49,6 +49,15 @@
               "troubleshooting/common-issues", "troubleshooting/auth-issues",
               "troubleshooting/guard-issues", "troubleshooting/notification-issues"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "Products",
+        "groups": [
+          {
+            "group": "Products",
+            "pages": ["products/overview"]
           },
           {
             "group": "Panguard Scan",
@@ -81,11 +90,41 @@
           {
             "group": "Threat Cloud",
             "pages": ["products/threat-cloud/overview", "products/threat-cloud/deployment", "products/threat-cloud/privacy"]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "CLI Reference",
+        "groups": [
           {
             "group": "CLI Reference",
-            "pages": ["cli/overview", "cli/scan", "cli/guard", "cli/trap", "cli/chat", "cli/report", "cli/init", "cli/deploy", "cli/status", "cli/config", "cli/doctor", "cli/upgrade", "cli/login", "cli/logout", "cli/whoami", "cli/manager", "cli/threat"]
+            "pages": ["cli/overview"]
           },
+          {
+            "group": "Scanning",
+            "pages": ["cli/scan"]
+          },
+          {
+            "group": "Protection",
+            "pages": ["cli/guard", "cli/trap", "cli/chat", "cli/report"]
+          },
+          {
+            "group": "System",
+            "pages": ["cli/init", "cli/deploy", "cli/status", "cli/config", "cli/doctor", "cli/upgrade"]
+          },
+          {
+            "group": "Authentication",
+            "pages": ["cli/login", "cli/logout", "cli/whoami"]
+          },
+          {
+            "group": "Advanced",
+            "pages": ["cli/manager", "cli/threat"]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
           {
             "group": "API Reference",
             "pages": ["api-reference/overview"]
@@ -105,7 +144,7 @@
         ]
       },
       {
-        "language": "zh-Hant",
+        "tab": "繁體中文",
         "groups": [
           {
             "group": "快速入門",
@@ -127,6 +166,20 @@
             ]
           },
           {
+            "group": "產品",
+            "pages": [
+              "zh-Hant/products/overview",
+              "zh-Hant/products/scan/overview", "zh-Hant/products/scan/scanners", "zh-Hant/products/scan/risk-scoring", "zh-Hant/products/scan/pdf-reports",
+              "zh-Hant/products/guard/overview", "zh-Hant/products/guard/agent-pipeline", "zh-Hant/products/guard/monitors", "zh-Hant/products/guard/event-correlation", "zh-Hant/products/guard/auto-response",
+              "zh-Hant/products/chat/overview", "zh-Hant/products/chat/telegram", "zh-Hant/products/chat/slack", "zh-Hant/products/chat/email-webhook", "zh-Hant/products/chat/user-roles",
+              "zh-Hant/products/trap/overview", "zh-Hant/products/trap/honeypot-types", "zh-Hant/products/trap/attacker-profiling",
+              "zh-Hant/products/report/overview", "zh-Hant/products/report/frameworks", "zh-Hant/products/report/output-formats",
+              "zh-Hant/products/mcp/overview", "zh-Hant/products/mcp/tools-reference",
+              "zh-Hant/products/manager/overview", "zh-Hant/products/manager/agent-lifecycle", "zh-Hant/products/manager/policy-engine",
+              "zh-Hant/products/threat-cloud/overview", "zh-Hant/products/threat-cloud/deployment", "zh-Hant/products/threat-cloud/privacy"
+            ]
+          },
+          {
             "group": "設定",
             "pages": [
               "zh-Hant/configuration/guard-config", "zh-Hant/configuration/chat-config", "zh-Hant/configuration/environment-variables",
@@ -141,56 +194,17 @@
             ]
           },
           {
-            "group": "Panguard Scan",
-            "pages": ["zh-Hant/products/scan/overview", "zh-Hant/products/scan/scanners", "zh-Hant/products/scan/risk-scoring", "zh-Hant/products/scan/pdf-reports"]
-          },
-          {
-            "group": "Panguard Guard",
-            "pages": ["zh-Hant/products/guard/overview", "zh-Hant/products/guard/agent-pipeline", "zh-Hant/products/guard/monitors", "zh-Hant/products/guard/event-correlation", "zh-Hant/products/guard/auto-response"]
-          },
-          {
-            "group": "Panguard Chat",
-            "pages": ["zh-Hant/products/chat/overview", "zh-Hant/products/chat/telegram", "zh-Hant/products/chat/slack", "zh-Hant/products/chat/email-webhook", "zh-Hant/products/chat/user-roles"]
-          },
-          {
-            "group": "Panguard Trap",
-            "pages": ["zh-Hant/products/trap/overview", "zh-Hant/products/trap/honeypot-types", "zh-Hant/products/trap/attacker-profiling"]
-          },
-          {
-            "group": "Panguard Report",
-            "pages": ["zh-Hant/products/report/overview", "zh-Hant/products/report/frameworks", "zh-Hant/products/report/output-formats"]
-          },
-          {
-            "group": "Panguard MCP",
-            "pages": ["zh-Hant/products/mcp/overview", "zh-Hant/products/mcp/tools-reference"]
-          },
-          {
-            "group": "Panguard Manager",
-            "pages": ["zh-Hant/products/manager/overview", "zh-Hant/products/manager/agent-lifecycle", "zh-Hant/products/manager/policy-engine"]
-          },
-          {
-            "group": "Threat Cloud",
-            "pages": ["zh-Hant/products/threat-cloud/overview", "zh-Hant/products/threat-cloud/deployment", "zh-Hant/products/threat-cloud/privacy"]
-          },
-          {
             "group": "CLI 參考",
             "pages": ["zh-Hant/cli/overview", "zh-Hant/cli/scan", "zh-Hant/cli/guard", "zh-Hant/cli/trap", "zh-Hant/cli/chat", "zh-Hant/cli/report", "zh-Hant/cli/init", "zh-Hant/cli/deploy", "zh-Hant/cli/status", "zh-Hant/cli/config", "zh-Hant/cli/doctor", "zh-Hant/cli/upgrade", "zh-Hant/cli/login", "zh-Hant/cli/logout", "zh-Hant/cli/whoami", "zh-Hant/cli/manager", "zh-Hant/cli/threat"]
           },
           {
             "group": "API 參考",
-            "pages": ["zh-Hant/api-reference/overview"]
-          },
-          {
-            "group": "Auth API",
-            "pages": ["zh-Hant/api-reference/auth/registration", "zh-Hant/api-reference/auth/login", "zh-Hant/api-reference/auth/sessions", "zh-Hant/api-reference/auth/gdpr"]
-          },
-          {
-            "group": "Manager API",
-            "pages": ["zh-Hant/api-reference/manager/authentication", "zh-Hant/api-reference/manager/agents", "zh-Hant/api-reference/manager/events", "zh-Hant/api-reference/manager/policy", "zh-Hant/api-reference/manager/dashboard"]
-          },
-          {
-            "group": "Threat Cloud API",
-            "pages": ["zh-Hant/api-reference/threat-cloud/ioc", "zh-Hant/api-reference/threat-cloud/feeds", "zh-Hant/api-reference/threat-cloud/campaigns", "zh-Hant/api-reference/threat-cloud/stats"]
+            "pages": [
+              "zh-Hant/api-reference/overview",
+              "zh-Hant/api-reference/auth/registration", "zh-Hant/api-reference/auth/login", "zh-Hant/api-reference/auth/sessions", "zh-Hant/api-reference/auth/gdpr",
+              "zh-Hant/api-reference/manager/authentication", "zh-Hant/api-reference/manager/agents", "zh-Hant/api-reference/manager/events", "zh-Hant/api-reference/manager/policy", "zh-Hant/api-reference/manager/dashboard",
+              "zh-Hant/api-reference/threat-cloud/ioc", "zh-Hant/api-reference/threat-cloud/feeds", "zh-Hant/api-reference/threat-cloud/campaigns", "zh-Hant/api-reference/threat-cloud/stats"
+            ]
           }
         ]
       }
