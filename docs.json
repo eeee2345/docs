@@ -1,68 +1,249 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
-  "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+  "name": "Panguard AI",
+  "logo": {
+    "light": "/logo/panguard-light.svg",
+    "dark": "/logo/panguard-dark.svg"
   },
   "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#8B9A8E",
+    "light": "#A8B5AB",
+    "dark": "#6B7A6E",
+    "background": {
+      "dark": "#1A1614",
+      "light": "#F5F1E8"
+    }
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
-              "index",
+              "introduction",
+              "overview",
               "quickstart",
-              "development"
+              "installation",
+              "account-setup"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Concepts",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "concepts/three-layer-ai",
+              "concepts/learning-mode",
+              "concepts/security-score",
+              "concepts/authentication",
+              "concepts/threat-intelligence",
+              "concepts/architecture"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Guides",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "guides/first-scan",
+              "guides/real-time-protection",
+              "guides/notifications-setup",
+              "guides/honeypots",
+              "guides/compliance-reports",
+              "guides/threat-cloud-deployment",
+              "guides/mcp-integration",
+              "guides/multi-endpoint",
+              "guides/system-service",
+              "guides/docker-deployment"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Configuration",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "configuration/guard-config",
+              "configuration/chat-config",
+              "configuration/environment-variables",
+              "configuration/sigma-rules",
+              "configuration/yara-rules"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "troubleshooting/common-issues",
+              "troubleshooting/auth-issues",
+              "troubleshooting/guard-issues",
+              "troubleshooting/notification-issues"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Products",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Products",
             "pages": [
-              "api-reference/introduction"
+              "products/overview"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Panguard Scan",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "products/scan/overview",
+              "products/scan/scanners",
+              "products/scan/risk-scoring",
+              "products/scan/pdf-reports"
+            ]
+          },
+          {
+            "group": "Panguard Guard",
+            "pages": [
+              "products/guard/overview",
+              "products/guard/agent-pipeline",
+              "products/guard/monitors",
+              "products/guard/event-correlation",
+              "products/guard/auto-response"
+            ]
+          },
+          {
+            "group": "Panguard Chat",
+            "pages": [
+              "products/chat/overview",
+              "products/chat/telegram",
+              "products/chat/slack",
+              "products/chat/email-webhook",
+              "products/chat/user-roles"
+            ]
+          },
+          {
+            "group": "Panguard Trap",
+            "pages": [
+              "products/trap/overview",
+              "products/trap/honeypot-types",
+              "products/trap/attacker-profiling"
+            ]
+          },
+          {
+            "group": "Panguard Report",
+            "pages": [
+              "products/report/overview",
+              "products/report/frameworks",
+              "products/report/output-formats"
+            ]
+          },
+          {
+            "group": "Panguard MCP",
+            "pages": [
+              "products/mcp/overview",
+              "products/mcp/tools-reference"
+            ]
+          },
+          {
+            "group": "Panguard Manager",
+            "pages": [
+              "products/manager/overview",
+              "products/manager/agent-lifecycle",
+              "products/manager/policy-engine"
+            ]
+          },
+          {
+            "group": "Threat Cloud",
+            "pages": [
+              "products/threat-cloud/overview",
+              "products/threat-cloud/deployment",
+              "products/threat-cloud/privacy"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "CLI Reference",
+        "groups": [
+          {
+            "group": "CLI Reference",
+            "pages": [
+              "cli/overview"
+            ]
+          },
+          {
+            "group": "Scanning",
+            "pages": [
+              "cli/scan"
+            ]
+          },
+          {
+            "group": "Protection",
+            "pages": [
+              "cli/guard",
+              "cli/trap",
+              "cli/chat",
+              "cli/report"
+            ]
+          },
+          {
+            "group": "System",
+            "pages": [
+              "cli/init",
+              "cli/deploy",
+              "cli/status",
+              "cli/config",
+              "cli/doctor",
+              "cli/upgrade"
+            ]
+          },
+          {
+            "group": "Authentication",
+            "pages": [
+              "cli/login",
+              "cli/logout",
+              "cli/whoami"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "cli/manager",
+              "cli/threat"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API Reference",
+            "pages": [
+              "api-reference/overview"
+            ]
+          },
+          {
+            "group": "Auth API",
+            "pages": [
+              "api-reference/auth/registration",
+              "api-reference/auth/login",
+              "api-reference/auth/sessions",
+              "api-reference/auth/gdpr"
+            ]
+          },
+          {
+            "group": "Manager API",
+            "pages": [
+              "api-reference/manager/authentication",
+              "api-reference/manager/agents",
+              "api-reference/manager/events",
+              "api-reference/manager/policy",
+              "api-reference/manager/dashboard"
+            ]
+          },
+          {
+            "group": "Threat Cloud API",
+            "pages": [
+              "api-reference/threat-cloud/ioc",
+              "api-reference/threat-cloud/feeds",
+              "api-reference/threat-cloud/campaigns",
+              "api-reference/threat-cloud/stats"
             ]
           }
         ]
@@ -71,52 +252,49 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "GitHub",
+          "href": "https://github.com/panguard-ai/panguard-ai",
+          "icon": "github"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Changelog",
+          "href": "/changelog",
+          "icon": "list"
         }
       ]
     }
   },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Website",
+        "href": "https://panguard.ai"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Get Started",
+      "href": "https://panguard.ai/register"
     }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/panguard-ai/panguard-ai"
     }
+  },
+  "search": {
+    "prompt": "Search Panguard docs..."
+  },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true,
+    "raiseIssue": true
+  },
+  "i18n": {
+    "languages": [
+      { "locale": "en", "name": "English" },
+      { "locale": "zh-TW", "name": "繁體中文" }
+    ],
+    "defaultLocale": "en"
   }
 }
