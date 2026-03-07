@@ -1,12 +1,27 @@
 ---
 title: "Product Suite Overview"
-description: "Panguard AI ships 8 integrated products that cover the full security lifecycle -- from scanning and detection to response, compliance, and collective intelligence."
+description: "Panguard AI ships 9 integrated products covering AI agent security, endpoint protection, and compliance -- with deep OpenClaw ecosystem integration."
 icon: "boxes-stacked"
 ---
 
-Panguard AI is not a single tool. It is an integrated platform of 8 products, each focused on a specific stage of the security lifecycle. Together they form a closed loop: scan your systems, monitor them in real time, notify the right people, trap attackers, generate compliance reports, and share intelligence across your fleet.
+Panguard AI is an integrated security platform with 9 products spanning two domains: **AI agent security** and **endpoint protection**. Whether you're vetting skills from the OpenClaw ecosystem or monitoring your servers 24/7, Panguard covers the full security lifecycle.
 
-## The Product Suite
+## AI Agent Security
+
+The OpenClaw ecosystem makes it easy to discover and install AI skills -- but openness requires trust. Panguard provides the security layer that makes that trust verifiable.
+
+<CardGroup cols={2}>
+  <Card title="Skill Auditor" icon="shield-check" href="/products/skill-auditor/overview">
+    Automated security scanner for AI agent skills. Detects prompt injection, tool poisoning, hidden Unicode, encoded payloads, and excessive permissions. Returns a 0-100 risk score in under 1 second.
+  </Card>
+  <Card title="MCP Server" icon="plug" href="/products/mcp/overview">
+    Model Context Protocol server exposing 11 Panguard tools to AI assistants like Claude Desktop and Cursor.
+  </Card>
+</CardGroup>
+
+## Endpoint Protection
+
+Scan, monitor, trap, and report -- a closed-loop defense for your servers and workstations.
 
 <CardGroup cols={2}>
   <Card title="Scan" icon="magnifying-glass" href="/products/scan/overview">
@@ -23,9 +38,6 @@ Panguard AI is not a single tool. It is an integrated platform of 8 products, ea
   </Card>
   <Card title="Report" icon="file-check" href="/products/report/overview">
     Auto-generate compliance reports for ISO 27001, SOC 2, and Taiwan Cyber Security Act (TCSA). Outputs JSON and PDF in English and Traditional Chinese.
-  </Card>
-  <Card title="MCP Server" icon="plug" href="/products/mcp/overview">
-    Model Context Protocol server exposing 11 Panguard tools to AI assistants like Claude Desktop and Cursor.
   </Card>
   <Card title="Manager" icon="building" href="/products/manager/overview">
     Centralized fleet orchestration with hub-and-spoke architecture. Agent registry, cross-agent threat correlation, and policy distribution for up to 500 endpoints.

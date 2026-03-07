@@ -1,48 +1,49 @@
 ---
 title: "歡迎使用 Panguard AI"
-description: "AI 驅動的自適應端點防護，專為開發者與中小企業打造。從註冊到安全防護，只需一行指令。"
+description: "AI 代理程式與端點的安全防護。審查 OpenClaw 生態系的 skill、保護您的伺服器、維持合規 -- 一個平台搞定。"
 icon: "hand-wave"
 ---
 
-Panguard AI 是一個開源網路安全平台，為開發者與中小企業帶來企業級端點防護，無需專業安全團隊。在官網註冊帳號，透過 CLI 登入，即可讓 AI 自動保護您的設備。
+Panguard AI 是一個開源安全平台，同時保護 **AI 代理程式**與**端點**。作為 [OpenClaw](https://openclaw.ai) skill 生態系的安全防護層，Panguard 在 skill 到達您的代理程式之前，掃描 prompt injection、tool poisoning 和隱藏威脅。同時為開發者與中小企業帶來企業級端點防護，無需專業安全團隊。
 
 核心理念很簡單：**當有事發生，Panguard 通知您。沒事發生時，您什麼都不用做。**
 
 <CardGroup cols={2}>
+  <Card title="Skill Auditor" icon="shield-check" href="/products/skill-auditor/overview">
+    安裝前掃描 AI skill 的安全威脅。OpenClaw 生態系的 App Store 審核機制。
+  </Card>
   <Card title="快速入門" icon="rocket" href="/quickstart">
     五分鐘內完成首次安全掃描。
   </Card>
-  <Card title="產品總覽" icon="shield-check" href="/overview">
-    探索完整產品套件：Scan、Guard、Chat、Trap、Report 等。
+  <Card title="產品總覽" icon="boxes-stacked" href="/overview">
+    探索完整產品套件：Skill Auditor、Scan、Guard、Chat、Trap、Report 等。
   </Card>
-  <Card title="CLI 參考" icon="terminal" href="/cli/overview">
-    所有 Panguard CLI 工具的完整指令參考。
-  </Card>
-  <Card title="API 參考" icon="code" href="/api-reference/overview">
-    Threat Cloud、Manager 與 Auth 服務的 REST API 文件。
+  <Card title="OpenClaw 整合" icon="puzzle-piece" href="/products/skill-auditor/openclaw-integration">
+    Panguard 如何作為 OpenClaw AI skill 生態系的信任防護層。
   </Card>
 </CardGroup>
 
 ## Panguard AI 適合誰？
 
 <CardGroup cols={3}>
-  <Card title="開發者" icon="laptop-code">
-    零配置保護您的個人伺服器、VPS 主機與開發環境。執行一行指令，繼續專注工作。
+  <Card title="AI 代理程式開發者" icon="robot">
+    安裝前審查第三方 skill。在代理程式管線中使用 Skill Auditor 作為安裝前閘門，或整合至 skill 倉庫的 CI。
   </Card>
-  <Card title="中小企業" icon="building">
-    無需聘僱專門團隊即可獲得合規等級的安全防護。自動產生 ISO 27001、SOC 2 與台灣資安法稽核報告。
+  <Card title="開發者與中小企業" icon="laptop-code">
+    零配置保護伺服器與開發環境。自動產生 ISO 27001、SOC 2 與台灣資安法合規報告。
   </Card>
   <Card title="託管服務供應商" icon="server">
-    透過單一儀表板監控和保護多個客戶端點。使用集中式策略管理，跨機群部署代理程式。
+    透過單一儀表板監控和保護多個客戶端點。在代理程式機群中執行 skill 審計策略。
   </Card>
 </CardGroup>
 
 ## 為什麼選擇 Panguard AI？
 
-傳統安全工具需要深厚的專業知識、產生大量未分類的警報，且企業授權費用高達六位數。免費工具雖然存在，但沒有專職安全工程師幾乎無法使用。
+AI 代理程式正透過 OpenClaw 等 skill 生態系獲得強大能力 -- 但每次安裝 skill 都是一次信任決策。同時，傳統端點安全工具需要深厚專業知識，授權費用高達六位數。
 
 Panguard AI 採取不同的方式：
 
+- **AI skill 安全** -- 安裝前掃描 skill 的 prompt injection、tool poisoning、隱藏 Unicode 和編碼載荷
 - **一行指令安裝** -- 無需設定檔、無需調校、無需專業術語
 - **白話通知** -- 透過 Telegram、Slack 或 Email 以您能理解的語言接收警報
 - **AI 自動判斷嚴重性** -- 系統自動分類、回應與報告，無需人工介入

@@ -1,0 +1,185 @@
+---
+title: "OpenClaw 整合"
+description: "Panguard Skill Auditor 如何作為 OpenClaw AI skill 生態系的安全防護層。"
+icon: "puzzle-piece"
+---
+
+[OpenClaw](https://openclaw.ai) 正在建構一個開放的 AI 代理程式 skill 生態系 -- 一個讓開發者發布、探索和安裝 Claude Code、Cursor、Windsurf 等工具能力的平台。Panguard Skill Auditor 是讓這個生態系值得信賴的安全基礎設施。
+
+## 為什麼 OpenClaw 需要安全防護層
+
+行動應用程式商店多年前就學到了這個教訓：沒有安全審核的開放平台會變成惡意軟體散布管道。同樣的原則適用於 AI skill 生態系。
+
+| App Store | OpenClaw 生態系 |
+|-----------|----------------|
+| 應用程式審核流程 | **Panguard Skill Auditor** |
+| 惡意軟體掃描 | Prompt injection + tool poisoning 偵測 |
+| 權限審查 | 權限範圍分析 |
+| 程式碼簽章 | Manifest 驗證 + 完整性檢查 |
+| 使用者評分 | 量化風險評分（0-100） |
+
+沒有自動化安全掃描，每次 skill 安裝都是盲目的信任決策。Panguard 讓這個決策有據可依。
+
+## 架構
+
+```
+開發者發布 skill
+         |
+         v
+  ┌──────────────┐
+  │  OpenClaw     │
+  │  Registry     │
+  │  (ClawdHub)   │
+  └──────┬───────┘
+         │
+         v
+  ┌──────────────┐     ┌─────────────────┐
+  │  claw install │────>│ Panguard Skill  │
+  │              │     │ Auditor         │
+  └──────────────┘     └────────┬────────┘
+                                │
+                    ┌───────────┼───────────┐
+                    v           v           v
+              風險評分      發現結果      判定
+              (0-100)    (按檢查項)  (通過/不通過)
+                                │
+                                v
+                    ┌───────────────────┐
+                    │   安裝 / 封鎖     │
+                    └───────────────────┘
+```
+
+## 整合方式
+
+### 1. 安裝前閘門
+
+最簡單的整合：在每次 `claw install` 前執行 Skill Auditor。
+
+```bash
+# 安裝前審計
+panguard audit skill ./skills/new-skill --json | jq '.riskLevel'
+
+# 自動化閘門
+audit_and_install() {
+  local SKILL_PATH="$1"
+  local RESULT=$(panguard audit skill "$SKILL_PATH" --json)
+  local RISK=$(echo "$RESULT" | jq -r '.riskLevel')
+  local SCORE=$(echo "$RESULT" | jq -r '.riskScore')
+
+  echo "風險：$RISK ($SCORE/100)"
+
+  if [ "$RISK" = "CRITICAL" ]; then
+    echo "已封鎖：發現嚴重安全問題"
+    echo "$RESULT" | jq '.findings[]'
+    return 1
+  fi
+
+  if [ "$RISK" = "HIGH" ]; then
+    echo "警告：高風險。請在安裝前審查發現的問題。"
+    echo "$RESULT" | jq '.findings[]'
+    read -p "仍要繼續？(y/N) " confirm
+    [ "$confirm" = "y" ] || return 1
+  fi
+
+  claw install "$SKILL_PATH"
+}
+```
+
+### 2. Skill 倉庫的 CI 管線
+
+將 Skill Auditor 加入 GitHub Actions 工作流程，在每個 PR 上掃描 skill。
+
+```yaml
+# .github/workflows/skill-audit.yml
+name: Skill Security Audit
+on:
+  pull_request:
+    paths:
+      - 'skills/**'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Panguard
+        run: curl -fsSL https://panguard.ai/api/install | bash
+
+      - name: Audit all skills
+        run: |
+          for skill_dir in skills/*/; do
+            echo "Auditing $skill_dir..."
+            RESULT=$(panguard audit skill "$skill_dir" --json)
+            RISK=$(echo "$RESULT" | jq -r '.riskLevel')
+
+            if [ "$RISK" = "CRITICAL" ] || [ "$RISK" = "HIGH" ]; then
+              echo "::error::$skill_dir failed audit: $RISK"
+              echo "$RESULT" | jq '.findings[]'
+              exit 1
+            fi
+          done
+```
+
+### 3. 登錄庫全面掃描
+
+掃描整個 skill 登錄庫以建立信任資料庫。
+
+```bash
+# 掃描登錄庫中的所有 skill
+panguard audit skill --registry https://registry.openclaw.ai --json > audit-results.json
+
+# 篩選高風險 skill
+cat audit-results.json | jq '[.[] | select(.riskScore >= 40)]'
+```
+
+### 4. 機群策略執行
+
+使用 Panguard Manager 在組織內執行 skill 審計策略。
+
+```yaml
+# panguard-manager policy
+skill_policy:
+  require_audit: true
+  max_risk_score: 39
+  block_levels: ["CRITICAL", "HIGH"]
+  auto_audit_on_install: true
+  audit_cache_ttl: 86400  # 每日重新審計
+```
+
+## 信任鏈
+
+Panguard 為 OpenClaw 生態系中的每個 skill 建立可驗證的信任鏈：
+
+<Steps>
+  <Step title="發布">
+    開發者將 skill 連同 SKILL.md manifest 發布至 OpenClaw 登錄庫。
+  </Step>
+  <Step title="掃描">
+    Panguard Skill Auditor 執行 7 項檢查並指派風險評分。
+  </Step>
+  <Step title="認證">
+    審計結果作為可驗證的認證，連結至 skill 版本。
+  </Step>
+  <Step title="執行">
+    組織設定策略，封鎖超過風險閾值的 skill。
+  </Step>
+  <Step title="監控">
+    skill 更新時重新審計。評分變化透過 Panguard Chat 發送警報。
+  </Step>
+</Steps>
+
+## 支援的 Skill 格式
+
+Skill Auditor 支援任何遵循 OpenClaw SKILL.md 規範的 skill：
+
+| 格式 | 支援程度 |
+|------|---------|
+| OpenClaw SKILL.md | 完整支援 |
+| Claude Code 自訂指令 | 完整支援 |
+| Cursor rules 檔案 | 部分（跳過 manifest 檢查） |
+| 一般 markdown skill 檔案 | 部分（僅內容檢查） |
+
+<Info>
+  Panguard Skill Auditor 是開源的。歡迎在 [github.com/panguard-ai/panguard-ai](https://github.com/panguard-ai/panguard-ai) 貢獻新的偵測模式。
+</Info>

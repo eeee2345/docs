@@ -1,0 +1,185 @@
+---
+title: "OpenClaw Integration"
+description: "How Panguard Skill Auditor serves as the security layer for the OpenClaw AI skill ecosystem."
+icon: "puzzle-piece"
+---
+
+[OpenClaw](https://openclaw.ai) is building an open ecosystem for AI agent skills -- a place where developers publish, discover, and install capabilities for agents like Claude Code, Cursor, and Windsurf. Panguard Skill Auditor is the security infrastructure that makes this ecosystem trustworthy.
+
+## Why OpenClaw Needs a Security Layer
+
+Mobile app stores learned this lesson years ago: an open platform without security review becomes a malware distribution channel. The same principle applies to AI skill ecosystems.
+
+| App Store | OpenClaw Ecosystem |
+|-----------|-------------------|
+| App review process | **Panguard Skill Auditor** |
+| Malware scanning | Prompt injection + tool poisoning detection |
+| Permission review | Permission scope analysis |
+| Code signing | Manifest validation + integrity checks |
+| User ratings | Quantitative risk score (0-100) |
+
+Without automated security scanning, every skill installation is a trust decision made blindly. Panguard makes that decision informed.
+
+## Architecture
+
+```
+Developer publishes skill
+         |
+         v
+  ┌──────────────┐
+  │  OpenClaw     │
+  │  Registry     │
+  │  (ClawdHub)   │
+  └──────┬───────┘
+         │
+         v
+  ┌──────────────┐     ┌─────────────────┐
+  │  claw install │────>│ Panguard Skill  │
+  │              │     │ Auditor         │
+  └──────────────┘     └────────┬────────┘
+                                │
+                    ┌───────────┼───────────┐
+                    v           v           v
+              Risk Score   Findings    Verdict
+              (0-100)    (per check)  (PASS/FAIL)
+                                │
+                                v
+                    ┌───────────────────┐
+                    │  Install / Block  │
+                    └───────────────────┘
+```
+
+## Integration Points
+
+### 1. Pre-Install Gate
+
+The simplest integration: run Skill Auditor before every `claw install`.
+
+```bash
+# Audit before install
+panguard audit skill ./skills/new-skill --json | jq '.riskLevel'
+
+# Automated gate
+audit_and_install() {
+  local SKILL_PATH="$1"
+  local RESULT=$(panguard audit skill "$SKILL_PATH" --json)
+  local RISK=$(echo "$RESULT" | jq -r '.riskLevel')
+  local SCORE=$(echo "$RESULT" | jq -r '.riskScore')
+
+  echo "Risk: $RISK ($SCORE/100)"
+
+  if [ "$RISK" = "CRITICAL" ]; then
+    echo "BLOCKED: Critical security issues found"
+    echo "$RESULT" | jq '.findings[]'
+    return 1
+  fi
+
+  if [ "$RISK" = "HIGH" ]; then
+    echo "WARNING: High risk. Review findings before installing."
+    echo "$RESULT" | jq '.findings[]'
+    read -p "Continue anyway? (y/N) " confirm
+    [ "$confirm" = "y" ] || return 1
+  fi
+
+  claw install "$SKILL_PATH"
+}
+```
+
+### 2. CI Pipeline for Skill Repositories
+
+Add Skill Auditor to your GitHub Actions workflow to scan skills on every PR.
+
+```yaml
+# .github/workflows/skill-audit.yml
+name: Skill Security Audit
+on:
+  pull_request:
+    paths:
+      - 'skills/**'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Panguard
+        run: curl -fsSL https://panguard.ai/api/install | bash
+
+      - name: Audit all skills
+        run: |
+          for skill_dir in skills/*/; do
+            echo "Auditing $skill_dir..."
+            RESULT=$(panguard audit skill "$skill_dir" --json)
+            RISK=$(echo "$RESULT" | jq -r '.riskLevel')
+
+            if [ "$RISK" = "CRITICAL" ] || [ "$RISK" = "HIGH" ]; then
+              echo "::error::$skill_dir failed audit: $RISK"
+              echo "$RESULT" | jq '.findings[]'
+              exit 1
+            fi
+          done
+```
+
+### 3. Registry-Wide Scanning
+
+Scan an entire skill registry to build a trust database.
+
+```bash
+# Scan all skills in a registry
+panguard audit skill --registry https://registry.openclaw.ai --json > audit-results.json
+
+# Filter for risky skills
+cat audit-results.json | jq '[.[] | select(.riskScore >= 40)]'
+```
+
+### 4. Fleet Policy Enforcement
+
+Use Panguard Manager to enforce skill audit policies across your organization.
+
+```yaml
+# panguard-manager policy
+skill_policy:
+  require_audit: true
+  max_risk_score: 39
+  block_levels: ["CRITICAL", "HIGH"]
+  auto_audit_on_install: true
+  audit_cache_ttl: 86400  # re-audit daily
+```
+
+## The Trust Chain
+
+Panguard creates a verifiable trust chain for every skill in the OpenClaw ecosystem:
+
+<Steps>
+  <Step title="Publish">
+    Developer publishes a skill to the OpenClaw registry with a SKILL.md manifest.
+  </Step>
+  <Step title="Scan">
+    Panguard Skill Auditor runs 7 checks and assigns a risk score.
+  </Step>
+  <Step title="Attest">
+    The audit result is recorded as a verifiable attestation linked to the skill version.
+  </Step>
+  <Step title="Enforce">
+    Organizations set policies that block skills above their risk threshold.
+  </Step>
+  <Step title="Monitor">
+    Skills are re-audited when updated. Score changes trigger alerts via Panguard Chat.
+  </Step>
+</Steps>
+
+## Supported Skill Formats
+
+Skill Auditor supports any skill that follows the OpenClaw SKILL.md specification:
+
+| Format | Support |
+|--------|---------|
+| OpenClaw SKILL.md | Full support |
+| Claude Code custom commands | Full support |
+| Cursor rules files | Partial (manifest checks skipped) |
+| Generic markdown skill files | Partial (content checks only) |
+
+<Info>
+  Panguard Skill Auditor is open source. Contribute new detection patterns at [github.com/panguard-ai/panguard-ai](https://github.com/panguard-ai/panguard-ai).
+</Info>

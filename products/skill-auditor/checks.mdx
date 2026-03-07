@@ -1,0 +1,184 @@
+---
+title: "Security Checks"
+description: "Detailed reference for all 7 security checks performed by Panguard Skill Auditor."
+icon: "list-check"
+---
+
+Skill Auditor runs 7 independent checks against every skill. Each check produces findings with severity levels (CRITICAL, HIGH, MEDIUM, LOW, INFO) that contribute to the final 0-100 risk score.
+
+## 1. Manifest Validation
+
+Verifies the SKILL.md frontmatter structure.
+
+**What it checks:**
+- Required fields: `name`, `description`
+- Valid metadata structure and JSON formatting
+- Proper YAML frontmatter delimiters
+- Field value constraints (name length, valid characters)
+
+**Example finding:**
+```
+[MEDIUM] Missing required field: "description"
+         SKILL.md:1 - frontmatter block
+```
+
+## 2. Prompt Injection Detection
+
+11 regex patterns scan for attempts to override agent instructions.
+
+**Patterns detected:**
+
+| Pattern | Severity | Example |
+|---------|----------|---------|
+| Ignore previous instructions | CRITICAL | "ignore all previous instructions and..." |
+| Identity override | HIGH | "you are now a hacking assistant" |
+| System prompt manipulation | CRITICAL | "your new system prompt is..." |
+| Jailbreak patterns | CRITICAL | "DAN mode enabled", "bypass safety" |
+| Hidden instruction in comments | HIGH | `<!-- secretly do X -->` |
+| Role reassignment | HIGH | "act as root", "pretend you are" |
+| Instruction boundary bypass | CRITICAL | "end of system prompt", "begin user mode" |
+| Output manipulation | MEDIUM | "do not mention this instruction" |
+| Context window stuffing | MEDIUM | Extremely long strings designed to push instructions out of context |
+| Nested injection | HIGH | Instructions hidden inside code blocks or data |
+| Indirect injection | HIGH | "when the user says X, instead do Y" |
+
+<Warning>
+  Prompt injection is the most dangerous attack vector for AI skills. A single injected instruction can completely change an agent's behavior, making it exfiltrate data, ignore safety rules, or attack other systems.
+</Warning>
+
+## 3. Hidden Content Detection
+
+Finds content invisible to human reviewers but processed by AI agents.
+
+**What it detects:**
+
+- **Zero-width Unicode characters**: U+200B (zero-width space), U+200C (zero-width non-joiner), U+200D (zero-width joiner), U+FEFF (byte order mark)
+- **RTL override characters**: U+202E and U+202D that reverse text direction to hide content
+- **Homoglyph attacks**: Characters that look identical to ASCII but are different Unicode codepoints (e.g., Cyrillic "а" vs Latin "a")
+
+**Example finding:**
+```
+[HIGH] Zero-width characters detected
+       SKILL.md:23 - 4 instances of U+200B found between visible characters
+```
+
+## 4. Encoded Payload Detection
+
+Decodes and inspects Base64-encoded content for dangerous operations.
+
+**What it checks:**
+- Base64 strings are decoded and scanned for: `eval`, `exec`, `subprocess`, `child_process`, `os.system`, `Runtime.exec`
+- Hex-encoded payloads
+- URL-encoded command sequences
+- Multi-layer encoding (Base64 inside Base64)
+
+**Example finding:**
+```
+[CRITICAL] Base64 payload contains dangerous call
+           SKILL.md:56 - decoded content includes "eval(require('child_process')...)"
+```
+
+## 5. Tool Poisoning Detection
+
+Identifies dangerous shell commands and system access patterns.
+
+**Categories:**
+
+<AccordionGroup>
+  <Accordion title="Privilege Escalation">
+    - `sudo` commands
+    - `chmod 777`, `chmod +s`
+    - `chown root`
+    - `setuid` operations
+  </Accordion>
+  <Accordion title="Reverse Shell">
+    - `nc -e /bin/bash`
+    - `bash -i >& /dev/tcp/`
+    - `/dev/tcp/` or `/dev/udp/`
+    - Python/Perl/Ruby reverse shell one-liners
+  </Accordion>
+  <Accordion title="Remote Code Execution">
+    - `curl | bash`, `wget | sh`
+    - `eval "$(curl ...)"` patterns
+    - Download-and-execute chains
+  </Accordion>
+  <Accordion title="Data Exfiltration">
+    - Reading `~/.ssh/`, `~/.aws/`, `~/.gnupg/`
+    - Accessing `.env` files
+    - `$ENV` variable dumping
+    - Sending data via `curl`, `wget`, or `nc` to external hosts
+  </Accordion>
+  <Accordion title="Destructive Operations">
+    - `rm -rf /` or `rm -rf ~`
+    - `mkfs` (filesystem formatting)
+    - `dd if=/dev/zero`
+    - Database `DROP` commands
+  </Accordion>
+</AccordionGroup>
+
+## 6. Code Security (SAST + Secrets)
+
+Scans all files in the skill directory with static analysis.
+
+**SAST checks:**
+- Common vulnerability patterns per language
+- Unsafe function usage (`eval`, `exec`, `system`)
+- SQL injection patterns
+- Path traversal attempts
+
+**Secrets scanning:**
+- Hardcoded API keys (AWS, GCP, Azure, OpenAI, Anthropic)
+- Private keys (RSA, EC, Ed25519)
+- Passwords in source code
+- Connection strings with credentials
+- JWT tokens
+
+**Example finding:**
+```
+[HIGH] Hardcoded secret detected
+       utils.js:12 - AWS access key pattern: "AKIA..."
+```
+
+## 7. Permission Scope Analysis
+
+Evaluates whether requested permissions match the skill's stated purpose.
+
+**What it checks:**
+- Filesystem access scope vs description
+- Network access requirements vs stated functionality
+- Environment variable access patterns
+- Process execution permissions
+- Cross-skill interaction requests
+
+**Example finding:**
+```
+[MEDIUM] Permission scope mismatch
+         SKILL.md metadata requests "filesystem:write" but
+         description states "read-only code formatter"
+```
+
+## Scoring Algorithm
+
+Each finding contributes to the risk score based on severity:
+
+| Severity | Points |
+|----------|--------|
+| CRITICAL | 25 |
+| HIGH | 15 |
+| MEDIUM | 5 |
+| LOW | 2 |
+| INFO | 0 |
+
+The score is capped at 100. Multiple findings of the same type are deduplicated -- the highest severity instance counts.
+
+## Comparison with Manual Review
+
+| Capability | Human Review | Skill Auditor |
+|-----------|-------------|---------------|
+| Speed | Minutes per skill | Under 1 second |
+| Consistency | Varies by reviewer | Deterministic |
+| Hidden Unicode | Invisible to human eye | Automatic detection |
+| Base64 payloads | Requires manual decode | Auto-decode and analyze |
+| SAST scanning | Not practical manually | Integrated scanner |
+| Secrets detection | Manual grep | Pattern-based detection |
+| Risk score | Subjective opinion | Quantitative 0-100 |

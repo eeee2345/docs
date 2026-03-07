@@ -1,0 +1,147 @@
+---
+title: "Skill Auditor"
+description: "AI 技能自動化安全掃描器。OpenClaw 生態系的 App Store 審核機制。"
+icon: "shield-check"
+---
+
+AI 代理程式越來越強大 -- 而強大的能力伴隨著風險。當你從 OpenClaw、GitHub 或任何第三方來源安裝一個 skill 時，你等於是授予 AI 代理程式新的能力。一個惡意的 skill 可以竊取機密、執行任意程式碼、或透過 prompt injection 劫持你的代理程式行為。
+
+**Panguard Skill Auditor** 是不受信任的 skill 與你的 AI 代理程式之間的安全閘門。把它想像成 AI skill 的 App Store 審核機制。
+
+## 問題
+
+OpenClaw 生態系讓探索和安裝 AI 代理程式的 skill 變得很容易，支援 Claude Code、Cursor 和 Windsurf 等工具。但這種開放性創造了新的攻擊面：
+
+| 攻擊向量 | 作用 | 常見程度 |
+|---------|------|---------|
+| **Prompt Injection** | 覆寫代理程式指令以改變行為 | 非常常見 |
+| **Tool Poisoning** | 嵌入反向 shell、`curl \| bash` 或 `sudo` 指令 | 日益增長 |
+| **隱藏 Unicode** | 零寬字元隱藏惡意指令，人眼無法察覺 | 新興威脅 |
+| **編碼載荷** | Base64 編碼的 `eval()` 或 `exec()` 呼叫繞過文字掃描 | 新興威脅 |
+| **機密竊取** | 讀取 `.env`、`.ssh/`、`.aws/` 並傳送至外部伺服器 | 常見 |
+| **過度權限** | 要求超出 skill 實際需要的存取權限 | 非常常見 |
+
+人工審查可以發現部分問題 -- 但零寬 Unicode 對人眼不可見，Base64 載荷需要解碼才能檢查。
+
+## 運作方式
+
+<Steps>
+  <Step title="指向一個 skill">
+    提供本地路徑或 GitHub URL 指向任何 SKILL.md 檔案。
+    ```bash
+    panguard audit skill ./path/to/skill
+    panguard audit skill https://github.com/user/repo/tree/main/skills/my-skill
+    ```
+  </Step>
+  <Step title="自動化分析">
+    Skill Auditor 平行執行 7 項獨立檢查，在 1 秒內完成。
+  </Step>
+  <Step title="風險評分">
+    回傳量化的 0-100 風險評分，附帶嚴重性分級的發現和明確的通過/不通過判定。
+  </Step>
+  <Step title="依結果行動">
+    安心安裝、審查標記的問題、或在 CI 中自動封鎖危險的 skill。
+  </Step>
+</Steps>
+
+## 快速開始
+
+```bash
+# 安裝 Panguard
+curl -fsSL https://panguard.ai/api/install | bash
+
+# 在安裝前審計一個 skill
+panguard audit skill ./skills/some-community-skill
+
+# 從 GitHub URL 審計
+panguard audit skill https://github.com/user/repo/tree/main/skills/my-skill
+
+# JSON 輸出用於 CI 管線
+panguard audit skill ./skills/some-skill --json
+```
+
+## 範例輸出
+
+```
+PANGUARD SKILL AUDIT REPORT
+============================
+Skill:      data-scraper-skill
+Risk Score: 72/100
+Risk Level: CRITICAL
+Duration:   0.3s
+
+CHECKS:
+  [FAIL] Prompt Safety: 2 suspicious pattern(s) detected
+  [PASS] Manifest: Valid SKILL.md structure
+  [WARN] Code: 1 issue(s) found
+  [PASS] Secrets: No hardcoded credentials
+  [PASS] Dependencies: No known issues
+  [FAIL] Permissions: Scope exceeds stated purpose
+
+FINDINGS:
+  [CRITICAL] Prompt injection: "ignore previous instructions"
+             SKILL.md:42
+  [HIGH]     Reverse shell pattern detected
+             SKILL.md:87 - "bash -i >& /dev/tcp/..."
+  [MEDIUM]   Excessive permission: requests filesystem write
+             but description says "read-only data fetcher"
+
+VERDICT: DO NOT INSTALL - Critical security issues found
+```
+
+## 風險等級
+
+| 分數 | 等級 | 建議行動 |
+|------|------|---------|
+| 0-14 | LOW | 快速審查後即可安裝 |
+| 15-39 | MEDIUM | 安裝前先審查發現的問題 |
+| 40-69 | HIGH | 需要徹底的人工審查 |
+| 70-100 | CRITICAL | 不要安裝 |
+
+## OpenClaw 整合
+
+Skill Auditor 專為 OpenClaw skill 生態系設計：
+
+<CardGroup cols={2}>
+  <Card title="安裝前閘門" icon="lock">
+    在 `claw install` 前執行 `panguard audit skill`，審查 OpenClaw 登錄庫中的任何 skill。
+  </Card>
+  <Card title="CI 管線" icon="circle-check">
+    將 Skill Auditor 加入你的 skill 倉庫 CI，封鎖引入安全問題的合併請求。
+  </Card>
+  <Card title="登錄庫掃描" icon="magnifying-glass">
+    掃描整個 skill 登錄庫，建立已審查 skill 的信任資料庫。
+  </Card>
+  <Card title="代理程式機群策略" icon="building">
+    使用 Panguard Manager 在組織內所有代理程式上執行審計策略。
+  </Card>
+</CardGroup>
+
+### 安裝前掛鉤範例
+
+```bash
+# 加入你的代理程式 skill 安裝管線
+RESULT=$(panguard audit skill "$SKILL_PATH" --json)
+RISK=$(echo "$RESULT" | jq -r '.riskLevel')
+
+if [ "$RISK" = "CRITICAL" ] || [ "$RISK" = "HIGH" ]; then
+  echo "已封鎖：skill 未通過安全審計 ($RISK)"
+  exit 1
+fi
+
+# 可安全安裝
+claw install "$SKILL_PATH"
+```
+
+<Info>
+  Skill Auditor 包含在所有 Panguard 方案中，包括免費的 Community 方案。
+</Info>
+
+<CardGroup cols={2}>
+  <Card title="安全檢查項目" icon="list-check" href="/products/skill-auditor/checks">
+    深入了解全部 7 項安全檢查及其偵測內容。
+  </Card>
+  <Card title="OpenClaw 整合" icon="puzzle-piece" href="/products/skill-auditor/openclaw-integration">
+    Panguard 如何作為 OpenClaw 生態系的安全防護層。
+  </Card>
+</CardGroup>

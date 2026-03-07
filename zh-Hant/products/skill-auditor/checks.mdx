@@ -1,0 +1,159 @@
+---
+title: "安全檢查項目"
+description: "Panguard Skill Auditor 執行的 7 項安全檢查詳細參考。"
+icon: "list-check"
+---
+
+Skill Auditor 對每個 skill 執行 7 項獨立檢查。每項檢查產生帶嚴重性等級（CRITICAL、HIGH、MEDIUM、LOW、INFO）的發現，這些發現共同構成最終的 0-100 風險評分。
+
+## 1. Manifest 驗證
+
+驗證 SKILL.md frontmatter 結構。
+
+**檢查項目：**
+- 必要欄位：`name`、`description`
+- 有效的 metadata 結構和 JSON 格式
+- 正確的 YAML frontmatter 分隔符
+- 欄位值限制（名稱長度、有效字元）
+
+**範例發現：**
+```
+[MEDIUM] Missing required field: "description"
+         SKILL.md:1 - frontmatter block
+```
+
+## 2. Prompt Injection 偵測
+
+11 種正規表達式模式掃描覆寫代理程式指令的嘗試。
+
+**偵測的模式：**
+
+| 模式 | 嚴重性 | 範例 |
+|------|--------|------|
+| 忽略先前指令 | CRITICAL | "ignore all previous instructions and..." |
+| 身份覆寫 | HIGH | "you are now a hacking assistant" |
+| 系統提示操控 | CRITICAL | "your new system prompt is..." |
+| 越獄模式 | CRITICAL | "DAN mode enabled", "bypass safety" |
+| 註解中的隱藏指令 | HIGH | `<!-- secretly do X -->` |
+| 角色重新指派 | HIGH | "act as root", "pretend you are" |
+| 指令邊界繞過 | CRITICAL | "end of system prompt", "begin user mode" |
+| 輸出操控 | MEDIUM | "do not mention this instruction" |
+| 上下文視窗填充 | MEDIUM | 超長字串設計將指令推出上下文 |
+| 巢狀注入 | HIGH | 隱藏在程式碼區塊或資料中的指令 |
+| 間接注入 | HIGH | "when the user says X, instead do Y" |
+
+<Warning>
+  Prompt injection 是 AI skill 最危險的攻擊向量。一條注入的指令就能完全改變代理程式的行為，使其竊取資料、忽略安全規則、或攻擊其他系統。
+</Warning>
+
+## 3. 隱藏內容偵測
+
+發現人眼不可見但 AI 代理程式會處理的內容。
+
+**偵測項目：**
+
+- **零寬 Unicode 字元**：U+200B（零寬空格）、U+200C（零寬非連接符）、U+200D（零寬連接符）、U+FEFF（位元組順序標記）
+- **RTL 覆寫字元**：U+202E 和 U+202D，反轉文字方向以隱藏內容
+- **同形字攻擊**：外觀與 ASCII 相同但屬於不同 Unicode 碼位的字元（如西里爾字母 "а" 與拉丁字母 "a"）
+
+## 4. 編碼載荷偵測
+
+解碼並檢查 Base64 編碼內容中的危險操作。
+
+**檢查項目：**
+- 解碼 Base64 字串並掃描：`eval`、`exec`、`subprocess`、`child_process`、`os.system`、`Runtime.exec`
+- 十六進位編碼載荷
+- URL 編碼的指令序列
+- 多層編碼（Base64 中的 Base64）
+
+## 5. Tool Poisoning 偵測
+
+識別危險的 shell 指令和系統存取模式。
+
+**類別：**
+
+<AccordionGroup>
+  <Accordion title="權限提升">
+    - `sudo` 指令
+    - `chmod 777`、`chmod +s`
+    - `chown root`
+    - `setuid` 操作
+  </Accordion>
+  <Accordion title="反向 Shell">
+    - `nc -e /bin/bash`
+    - `bash -i >& /dev/tcp/`
+    - `/dev/tcp/` 或 `/dev/udp/`
+    - Python/Perl/Ruby 反向 shell 一行指令
+  </Accordion>
+  <Accordion title="遠端程式碼執行">
+    - `curl | bash`、`wget | sh`
+    - `eval "$(curl ...)"` 模式
+    - 下載並執行鏈
+  </Accordion>
+  <Accordion title="資料外洩">
+    - 讀取 `~/.ssh/`、`~/.aws/`、`~/.gnupg/`
+    - 存取 `.env` 檔案
+    - `$ENV` 變數傾印
+    - 透過 `curl`、`wget` 或 `nc` 傳送資料至外部主機
+  </Accordion>
+  <Accordion title="破壞性操作">
+    - `rm -rf /` 或 `rm -rf ~`
+    - `mkfs`（格式化檔案系統）
+    - `dd if=/dev/zero`
+    - 資料庫 `DROP` 指令
+  </Accordion>
+</AccordionGroup>
+
+## 6. 程式碼安全（SAST + 機密掃描）
+
+對 skill 目錄中的所有檔案進行靜態分析掃描。
+
+**SAST 檢查：**
+- 各語言常見漏洞模式
+- 不安全函式使用（`eval`、`exec`、`system`）
+- SQL injection 模式
+- 路徑遍歷嘗試
+
+**機密掃描：**
+- 硬編碼 API 金鑰（AWS、GCP、Azure、OpenAI、Anthropic）
+- 私鑰（RSA、EC、Ed25519）
+- 原始碼中的密碼
+- 含憑證的連線字串
+- JWT token
+
+## 7. 權限範圍分析
+
+評估請求的權限是否與 skill 的聲明用途相符。
+
+**檢查項目：**
+- 檔案系統存取範圍 vs 描述
+- 網路存取需求 vs 聲明功能
+- 環境變數存取模式
+- 程序執行權限
+- 跨 skill 互動請求
+
+## 評分演算法
+
+每項發現依嚴重性貢獻風險評分：
+
+| 嚴重性 | 分數 |
+|--------|------|
+| CRITICAL | 25 |
+| HIGH | 15 |
+| MEDIUM | 5 |
+| LOW | 2 |
+| INFO | 0 |
+
+評分上限為 100。相同類型的多個發現會去重 -- 計入最高嚴重性的實例。
+
+## 與人工審查的比較
+
+| 能力 | 人工審查 | Skill Auditor |
+|------|---------|---------------|
+| 速度 | 每個 skill 數分鐘 | 不到 1 秒 |
+| 一致性 | 因審查者而異 | 確定性 |
+| 隱藏 Unicode | 人眼不可見 | 自動偵測 |
+| Base64 載荷 | 需手動解碼 | 自動解碼分析 |
+| SAST 掃描 | 不切實際 | 整合掃描器 |
+| 機密偵測 | 手動 grep | 模式匹配偵測 |
+| 風險評分 | 主觀判斷 | 量化 0-100 |

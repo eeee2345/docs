@@ -88,6 +88,10 @@
             "pages": ["products/manager/overview", "products/manager/agent-lifecycle", "products/manager/policy-engine"]
           },
           {
+            "group": "Panguard Skill Auditor",
+            "pages": ["products/skill-auditor/overview", "products/skill-auditor/checks", "products/skill-auditor/openclaw-integration"]
+          },
+          {
             "group": "Threat Cloud",
             "pages": ["products/threat-cloud/overview", "products/threat-cloud/deployment", "products/threat-cloud/privacy"]
           }
@@ -176,6 +180,7 @@
               "zh-Hant/products/report/overview", "zh-Hant/products/report/frameworks", "zh-Hant/products/report/output-formats",
               "zh-Hant/products/mcp/overview", "zh-Hant/products/mcp/tools-reference",
               "zh-Hant/products/manager/overview", "zh-Hant/products/manager/agent-lifecycle", "zh-Hant/products/manager/policy-engine",
+              "zh-Hant/products/skill-auditor/overview", "zh-Hant/products/skill-auditor/checks", "zh-Hant/products/skill-auditor/openclaw-integration",
               "zh-Hant/products/threat-cloud/overview", "zh-Hant/products/threat-cloud/deployment", "zh-Hant/products/threat-cloud/privacy"
             ]
           },

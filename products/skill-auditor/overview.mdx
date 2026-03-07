@@ -1,0 +1,147 @@
+---
+title: "Skill Auditor"
+description: "Automated security scanner for AI agent skills. The App Store review process for the OpenClaw ecosystem."
+icon: "shield-check"
+---
+
+AI agents are becoming powerful -- and with power comes risk. When you install a skill from OpenClaw, GitHub, or any third-party source, you're granting an AI agent new capabilities. A malicious skill can exfiltrate secrets, execute arbitrary code, or hijack your agent's behavior through prompt injection.
+
+**Panguard Skill Auditor** is the security gate between untrusted skills and your AI agents. Think of it as the App Store review process, but for AI skills.
+
+## The Problem
+
+The OpenClaw ecosystem makes it easy to discover and install skills for AI agents like Claude Code, Cursor, and Windsurf. But this openness creates a new attack surface:
+
+| Attack Vector | What It Does | How Common |
+|---------------|-------------|------------|
+| **Prompt Injection** | Overrides agent instructions to change behavior | Very common |
+| **Tool Poisoning** | Embeds reverse shells, `curl \| bash`, or `sudo` commands | Growing |
+| **Hidden Unicode** | Zero-width characters that hide malicious instructions from human review | Emerging |
+| **Encoded Payloads** | Base64-encoded `eval()` or `exec()` calls that bypass text scanning | Emerging |
+| **Secret Exfiltration** | Reads `.env`, `.ssh/`, `.aws/` and sends data to external servers | Common |
+| **Excessive Permissions** | Requests more access than the skill actually needs | Very common |
+
+Manual review catches some of these -- but zero-width Unicode is invisible to the human eye, and Base64 payloads require decoding to inspect.
+
+## How It Works
+
+<Steps>
+  <Step title="Point at a skill">
+    Provide a local path or GitHub URL to any SKILL.md file.
+    ```bash
+    panguard audit skill ./path/to/skill
+    panguard audit skill https://github.com/user/repo/tree/main/skills/my-skill
+    ```
+  </Step>
+  <Step title="Automated analysis">
+    Skill Auditor runs 7 independent checks in parallel, completing in under 1 second.
+  </Step>
+  <Step title="Risk score">
+    Returns a quantitative 0-100 risk score with severity-graded findings and a clear PASS/FAIL verdict.
+  </Step>
+  <Step title="Act on the result">
+    Install with confidence, review flagged issues, or block dangerous skills automatically in CI.
+  </Step>
+</Steps>
+
+## Quick Start
+
+```bash
+# Install Panguard
+curl -fsSL https://panguard.ai/api/install | bash
+
+# Audit a skill before installing it
+panguard audit skill ./skills/some-community-skill
+
+# Audit from a GitHub URL
+panguard audit skill https://github.com/user/repo/tree/main/skills/my-skill
+
+# JSON output for CI pipelines
+panguard audit skill ./skills/some-skill --json
+```
+
+## Sample Output
+
+```
+PANGUARD SKILL AUDIT REPORT
+============================
+Skill:      data-scraper-skill
+Risk Score: 72/100
+Risk Level: CRITICAL
+Duration:   0.3s
+
+CHECKS:
+  [FAIL] Prompt Safety: 2 suspicious pattern(s) detected
+  [PASS] Manifest: Valid SKILL.md structure
+  [WARN] Code: 1 issue(s) found
+  [PASS] Secrets: No hardcoded credentials
+  [PASS] Dependencies: No known issues
+  [FAIL] Permissions: Scope exceeds stated purpose
+
+FINDINGS:
+  [CRITICAL] Prompt injection: "ignore previous instructions"
+             SKILL.md:42
+  [HIGH]     Reverse shell pattern detected
+             SKILL.md:87 - "bash -i >& /dev/tcp/..."
+  [MEDIUM]   Excessive permission: requests filesystem write
+             but description says "read-only data fetcher"
+
+VERDICT: DO NOT INSTALL - Critical security issues found
+```
+
+## Risk Levels
+
+| Score | Level | Action |
+|-------|-------|--------|
+| 0-14 | LOW | Safe to install after quick review |
+| 15-39 | MEDIUM | Review findings before installing |
+| 40-69 | HIGH | Requires thorough manual review |
+| 70-100 | CRITICAL | Do NOT install |
+
+## OpenClaw Integration
+
+Skill Auditor is designed to work seamlessly with the OpenClaw skill ecosystem:
+
+<CardGroup cols={2}>
+  <Card title="Pre-Install Gate" icon="lock">
+    Run `panguard audit skill` before `claw install` to vet any skill from the OpenClaw registry.
+  </Card>
+  <Card title="CI Pipeline" icon="circle-check">
+    Add Skill Auditor to your skill repository's CI to block merges that introduce security issues.
+  </Card>
+  <Card title="Registry Scanning" icon="magnifying-glass">
+    Scan entire skill registries to build a trust database of vetted skills.
+  </Card>
+  <Card title="Agent Fleet Policy" icon="building">
+    Use Panguard Manager to enforce audit policies across all agents in your organization.
+  </Card>
+</CardGroup>
+
+### Pre-Install Hook Example
+
+```bash
+# Add to your agent's skill install pipeline
+RESULT=$(panguard audit skill "$SKILL_PATH" --json)
+RISK=$(echo "$RESULT" | jq -r '.riskLevel')
+
+if [ "$RISK" = "CRITICAL" ] || [ "$RISK" = "HIGH" ]; then
+  echo "Blocked: skill failed security audit ($RISK)"
+  exit 1
+fi
+
+# Safe to install
+claw install "$SKILL_PATH"
+```
+
+<Info>
+  Skill Auditor is included in all Panguard plans, including the free Community plan.
+</Info>
+
+<CardGroup cols={2}>
+  <Card title="Security Checks" icon="list-check" href="/products/skill-auditor/checks">
+    Deep dive into all 7 security checks and what they detect.
+  </Card>
+  <Card title="OpenClaw Integration" icon="puzzle-piece" href="/products/skill-auditor/openclaw-integration">
+    How Panguard fits into the OpenClaw ecosystem as the security layer.
+  </Card>
+</CardGroup>
