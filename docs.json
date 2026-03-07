@@ -19,7 +19,7 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["introduction", "overview", "quickstart", "installation", "account-setup"]
+            "pages": ["introduction", "overview", "quickstart", "installation", "account-setup", "changelog"]
           },
           {
             "group": "Concepts",
@@ -152,7 +152,7 @@
         "groups": [
           {
             "group": "快速入門",
-            "pages": ["zh-Hant/introduction", "zh-Hant/overview", "zh-Hant/quickstart", "zh-Hant/installation", "zh-Hant/account-setup"]
+            "pages": ["zh-Hant/introduction", "zh-Hant/overview", "zh-Hant/quickstart", "zh-Hant/installation", "zh-Hant/account-setup", "zh-Hant/changelog"]
           },
           {
             "group": "核心概念",
