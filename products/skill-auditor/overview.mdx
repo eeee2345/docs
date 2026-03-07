@@ -27,20 +27,20 @@ Manual review catches some of these -- but zero-width Unicode is invisible to th
 
 <Steps>
   <Step title="Point at a skill">
-    Provide a local path or GitHub URL to any SKILL.md file.
+    Provide a local path, GitHub URL, or any SKILL.md source.
     ```bash
-    panguard audit skill ./path/to/skill
+    panguard audit skill ./skills/some-community-skill
     panguard audit skill https://github.com/user/repo/tree/main/skills/my-skill
     ```
   </Step>
   <Step title="Automated analysis">
     Skill Auditor runs 7 independent checks in parallel, completing in under 1 second.
   </Step>
-  <Step title="Risk score">
-    Returns a quantitative 0-100 risk score with severity-graded findings and a clear PASS/FAIL verdict.
+  <Step title="Risk score + findings">
+    Returns a quantitative 0-100 risk score with severity-graded findings, line numbers, and a clear verdict.
   </Step>
   <Step title="Act on the result">
-    Install with confidence, review flagged issues, or block dangerous skills automatically in CI.
+    Install with confidence, review flagged issues, or block dangerous skills automatically in CI/CD.
   </Step>
 </Steps>
 
@@ -63,27 +63,16 @@ panguard audit skill ./skills/some-skill --json
 ## Sample Output
 
 ```
-PANGUARD SKILL AUDIT REPORT
-============================
-Skill:      data-scraper-skill
-Risk Score: 72/100
-Risk Level: CRITICAL
-Duration:   0.3s
+$ panguard audit skill ./skills/data-scraper-skill
 
-CHECKS:
-  [FAIL] Prompt Safety: 2 suspicious pattern(s) detected
-  [PASS] Manifest: Valid SKILL.md structure
-  [WARN] Code: 1 issue(s) found
-  [PASS] Secrets: No hardcoded credentials
-  [PASS] Dependencies: No known issues
-  [FAIL] Permissions: Scope exceeds stated purpose
+Scanning data-scraper-skill... done (0.3s)
+Risk Score: 72/100 (CRITICAL)
 
-FINDINGS:
   [CRITICAL] Prompt injection: "ignore previous instructions"
              SKILL.md:42
-  [HIGH]     Reverse shell pattern detected
-             SKILL.md:87 - "bash -i >& /dev/tcp/..."
-  [MEDIUM]   Excessive permission: requests filesystem write
+  [HIGH]     Reverse shell: "bash -i >& /dev/tcp/..."
+             SKILL.md:87
+  [MEDIUM]   Permission scope mismatch: requests filesystem write
              but description says "read-only data fetcher"
 
 VERDICT: DO NOT INSTALL - Critical security issues found

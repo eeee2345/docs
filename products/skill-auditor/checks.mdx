@@ -166,10 +166,41 @@ Each finding contributes to the risk score based on severity:
 | CRITICAL | 25 |
 | HIGH | 15 |
 | MEDIUM | 5 |
-| LOW | 2 |
+| LOW | 1 |
 | INFO | 0 |
 
 The score is capped at 100. Multiple findings of the same type are deduplicated -- the highest severity instance counts.
+
+## Three-Layer Architecture
+
+Skill Auditor uses three complementary layers to catch threats that any single layer would miss:
+
+### Layer 1: Pattern Matching (Regex)
+
+The 7 checks described above — deterministic, under 1 second, catches known attack patterns including:
+- 11 prompt injection signatures + 6 tool poisoning patterns
+- Homoglyph detection (Cyrillic/Greek characters that look identical to Latin)
+- Base64 payload decoding (threshold: 20+ characters)
+- Zero-width Unicode detection
+
+### Layer 2: AI Semantic Analysis
+
+An LLM analyzes the skill for threats that regex cannot catch:
+- **Social engineering**: deceptive language, false urgency, fake authority
+- **Intent mismatch**: description says "read-only" but instructions request write access
+- **Obfuscated attacks**: word breaks, natural language injection, indirect exfiltration
+- **Trust escalation**: skill tries to make itself seem more trusted than it is
+
+<Info>
+  Layer 2 requires an LLM provider (Ollama, Claude, or OpenAI). Without one, Layer 1 still runs. Pass `--ai` flag or configure in `panguard.config`.
+</Info>
+
+### Layer 3: Threat Cloud Intelligence (Community)
+
+Every scan contributes anonymized threat indicators (skill hash + risk score + finding categories) to Panguard Threat Cloud. Benefits:
+- If someone already scanned a known-malicious skill, subsequent users get instant results
+- Skills build trust scores over time based on community scanning
+- Zero-day skill threats propagate across the network within minutes
 
 ## Comparison with Manual Review
 
@@ -178,7 +209,10 @@ The score is capped at 100. Multiple findings of the same type are deduplicated 
 | Speed | Minutes per skill | Under 1 second |
 | Consistency | Varies by reviewer | Deterministic |
 | Hidden Unicode | Invisible to human eye | Automatic detection |
+| Homoglyph attacks | Invisible to human eye | Cyrillic/Greek lookalike detection |
 | Base64 payloads | Requires manual decode | Auto-decode and analyze |
+| Social engineering | Depends on reviewer | AI semantic analysis |
+| Known malicious skills | Requires prior knowledge | Community threat intelligence |
 | SAST scanning | Not practical manually | Integrated scanner |
 | Secrets detection | Manual grep | Pattern-based detection |
 | Risk score | Subjective opinion | Quantitative 0-100 |

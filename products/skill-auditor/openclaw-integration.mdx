@@ -121,17 +121,11 @@ jobs:
           done
 ```
 
-### 3. Registry-Wide Scanning
+### 3. Registry-Wide Scanning (Planned)
 
-Scan an entire skill registry to build a trust database.
-
-```bash
-# Scan all skills in a registry
-panguard audit skill --registry https://registry.openclaw.ai --json > audit-results.json
-
-# Filter for risky skills
-cat audit-results.json | jq '[.[] | select(.riskScore >= 40)]'
-```
+<Info>
+  Registry-wide scanning is on the roadmap. Currently you can scan individual skills from local paths or GitHub URLs.
+</Info>
 
 ### 4. Fleet Policy Enforcement
 
@@ -158,8 +152,8 @@ Panguard creates a verifiable trust chain for every skill in the OpenClaw ecosys
   <Step title="Scan">
     Panguard Skill Auditor runs 7 checks and assigns a risk score.
   </Step>
-  <Step title="Attest">
-    The audit result is recorded as a verifiable attestation linked to the skill version.
+  <Step title="Record">
+    The audit result is stored locally. Registry-level attestation is on the roadmap.
   </Step>
   <Step title="Enforce">
     Organizations set policies that block skills above their risk threshold.

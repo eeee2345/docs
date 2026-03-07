@@ -121,17 +121,11 @@ jobs:
           done
 ```
 
-### 3. 登錄庫全面掃描
+### 3. Registry 全面掃描（規劃中）
 
-掃描整個 skill 登錄庫以建立信任資料庫。
-
-```bash
-# 掃描登錄庫中的所有 skill
-panguard audit skill --registry https://registry.openclaw.ai --json > audit-results.json
-
-# 篩選高風險 skill
-cat audit-results.json | jq '[.[] | select(.riskScore >= 40)]'
-```
+<Info>
+  Registry 全面掃描功能在開發路線圖中。目前可以從本地路徑或 GitHub URL 掃描個別 skill。
+</Info>
 
 ### 4. 機群策略執行
 
@@ -153,13 +147,13 @@ Panguard 為 OpenClaw 生態系中的每個 skill 建立可驗證的信任鏈：
 
 <Steps>
   <Step title="發布">
-    開發者將 skill 連同 SKILL.md manifest 發布至 OpenClaw 登錄庫。
+    開發者將 skill 連同 SKILL.md manifest 發布至 OpenClaw registry。
   </Step>
   <Step title="掃描">
     Panguard Skill Auditor 執行 7 項檢查並指派風險評分。
   </Step>
-  <Step title="認證">
-    審計結果作為可驗證的認證，連結至 skill 版本。
+  <Step title="記錄">
+    審計結果儲存在本地。Registry 級別的認證功能在開發路線圖中。
   </Step>
   <Step title="執行">
     組織設定策略，封鎖超過風險閾值的 skill。
