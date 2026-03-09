@@ -31,7 +31,7 @@
           {
             "group": "Guides",
             "pages": [
-              "guides/first-scan", "guides/real-time-protection", "guides/notifications-setup",
+              "guides/deployment-reference", "guides/first-scan", "guides/real-time-protection", "guides/notifications-setup",
               "guides/honeypots", "guides/compliance-reports", "guides/threat-cloud-deployment",
               "guides/mcp-integration", "guides/multi-endpoint", "guides/system-service", "guides/docker-deployment"
             ]

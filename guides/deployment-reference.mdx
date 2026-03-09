@@ -1,0 +1,324 @@
+---
+title: "Deployment Reference"
+description: "Platform matrix, install methods, CI/CD pipelines, Docker images, and environment-specific considerations for deploying Panguard across your infrastructure."
+icon: "server"
+---
+
+## Install Methods at a Glance
+
+All methods install the same `panguard` CLI (v0.3.1). Choose the method that fits your environment.
+
+| Method | Command | Best For |
+|--------|---------|----------|
+| **curl** (macOS/Linux) | `curl -fsSL https://get.panguard.ai \| bash` | Servers, developer machines |
+| **PowerShell** (Windows) | `irm https://get.panguard.ai/windows \| iex` | Windows workstations |
+| **npm** (all platforms) | `npm install -g @panguard-ai/panguard` | CI/CD, containers, Intel Mac |
+| **Source** | `git clone` + `pnpm build` | Contributors, air-gapped environments |
+
+## Platform Support Matrix
+
+### Prebuilt Binaries (v0.3.1)
+
+| Platform | Architecture | Binary | npm | Source |
+|----------|-------------|:------:|:---:|:------:|
+| macOS | ARM64 (Apple Silicon) | Yes | Yes | Yes |
+| macOS | x64 (Intel) | No | Yes | Yes |
+| Linux (glibc) | x64 | Yes | Yes | Yes |
+| Linux (glibc) | ARM64 | Yes | Yes | Yes |
+| Linux (musl/Alpine) | x64 | No | Yes | Yes |
+| Windows | x64 | Yes | Yes | Yes |
+| Windows | ARM64 | No | Yes | No |
+
+<Info>
+  The curl installer auto-detects your platform and falls back to npm if no prebuilt binary is available. You do not need to choose manually.
+</Info>
+
+### Feature Availability by OS
+
+| Feature | macOS | Linux | Windows |
+|---------|:-----:|:-----:|:-------:|
+| Scan (full audit) | Full | Full | Partial |
+| Guard (real-time) | Yes | Yes | Yes |
+| Trap (honeypots) | Yes | Yes | Yes |
+| Chat (notifications) | Yes | Yes | Yes |
+| Report (compliance) | Yes | Yes | Yes |
+| Skill Auditor | Yes | Yes | Yes |
+| Firewall integration | `socketfilterfw` | `iptables`/`ufw`/`nftables` | N/A |
+| Process monitoring | `lsof` | `ss` | `netstat` |
+
+## Install Fallback Chain
+
+The curl installer follows a deterministic fallback chain. Each step is attempted only if the previous one fails.
+
+```
+1. Download prebuilt binary from GitHub Releases
+   - Verify SHA-256 checksum
+   - Extract to ~/.panguard/
+   |
+   v (if binary unavailable or checksum fails)
+2. npm install -g @panguard-ai/panguard
+   - Requires npm on PATH
+   - Installs to npm global prefix
+   |
+   v (if npm unavailable or install fails)
+3. Source build
+   - git clone → pnpm install → pnpm build
+   - Requires git, pnpm, Node.js 20+
+```
+
+## CI/CD Integration
+
+### GitHub Actions
+
+```yaml
+name: Security Scan
+on: [push, pull_request]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Panguard
+        run: npm install -g @panguard-ai/panguard
+
+      - name: Run security scan
+        run: panguard scan --quick --json > scan-results.json
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: panguard-scan
+          path: scan-results.json
+```
+
+### GitLab CI
+
+```yaml
+security-scan:
+  image: node:20-slim
+  script:
+    - npm install -g @panguard-ai/panguard
+    - panguard scan --quick --json > scan-results.json
+  artifacts:
+    paths:
+      - scan-results.json
+    expire_in: 30 days
+```
+
+### Jenkins
+
+```groovy
+pipeline {
+    agent { docker { image 'node:20' } }
+    stages {
+        stage('Security Scan') {
+            steps {
+                sh 'npm install -g @panguard-ai/panguard'
+                sh 'panguard scan --quick --json > scan-results.json'
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'scan-results.json'
+                }
+            }
+        }
+    }
+}
+```
+
+<Warning>
+  Use `npm install -g` in CI/CD instead of curl. It is faster, deterministic, and does not require architecture detection.
+</Warning>
+
+## Docker
+
+### Scan a host from a container
+
+```dockerfile
+FROM node:20-slim
+RUN npm install -g @panguard-ai/panguard
+ENTRYPOINT ["panguard"]
+```
+
+```bash
+docker build -t panguard .
+docker run --rm panguard scan --quick --json
+```
+
+### Guard as a sidecar
+
+```yaml
+# docker-compose.yml
+services:
+  app:
+    image: your-app:latest
+
+  panguard-guard:
+    image: node:20-slim
+    command: >
+      sh -c "npm install -g @panguard-ai/panguard &&
+             panguard guard start --daemon"
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /var/log:/var/log:ro
+```
+
+## Environment-Specific Notes
+
+### Alpine Linux / musl
+
+The installer automatically detects musl libc via three methods:
+1. `ldd --version` output containing "musl"
+2. Presence of `/etc/alpine-release`
+3. Existence of `/lib/ld-musl-*.so*`
+
+When detected, the installer skips the prebuilt binary and installs via npm directly. No manual intervention required.
+
+```dockerfile
+# Alpine Dockerfile
+FROM node:20-alpine
+RUN npm install -g @panguard-ai/panguard
+```
+
+### macOS Intel (x86_64)
+
+No prebuilt binary is currently available for macOS x64. Two options:
+
+```bash
+# Option 1: npm (recommended)
+npm install -g @panguard-ai/panguard
+
+# Option 2: Enable Rosetta 2 and use the ARM64 binary
+softwareupdate --install-rosetta
+curl -fsSL https://get.panguard.ai | bash
+```
+
+### Headless Servers (no browser)
+
+Authentication requires a browser for the OAuth flow. On headless machines:
+
+```bash
+panguard login --no-browser
+# Prints a URL to open on another device
+# Paste the returned code back into the terminal
+```
+
+### Air-Gapped Environments
+
+For machines without internet access, build from source on a connected machine, then transfer:
+
+```bash
+# On connected machine
+git clone https://github.com/panguard-ai/panguard-ai.git
+cd panguard-ai && pnpm install && pnpm build
+tar -czf panguard-offline.tar.gz .
+
+# Transfer panguard-offline.tar.gz to air-gapped machine
+
+# On air-gapped machine
+tar -xzf panguard-offline.tar.gz
+./bin/panguard --version
+```
+
+### Systemd Service (Linux)
+
+Run Guard as a system service for persistent protection:
+
+```bash
+panguard guard install-service
+```
+
+Or manually create the unit file:
+
+```ini
+# /etc/systemd/system/panguard-guard.service
+[Unit]
+Description=Panguard Guard - Real-time Security Monitor
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/panguard guard start --daemon
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now panguard-guard
+```
+
+## Verification Checklist
+
+After installation, verify each component:
+
+```bash
+# CLI version
+panguard --version
+# Expected: 0.3.1
+
+# System diagnostics
+panguard doctor
+# Checks: Node.js, connectivity, permissions, rule files
+
+# Quick scan (functional test)
+panguard scan --quick
+# Expected: risk score output within 30 seconds
+
+# Guard start (real-time protection)
+panguard guard start
+# Expected: "Guard engine starting..." with rule count
+```
+
+## System Requirements
+
+| Resource | Minimum | Recommended |
+|----------|---------|-------------|
+| **Node.js** | 20.0.0 | 22 LTS |
+| **OS** | macOS 12+, Ubuntu 20.04+, Windows 10+ | Latest LTS |
+| **Disk** | 200 MB | 500 MB (with YARA rules) |
+| **Memory** | 512 MB | 1 GB (Guard), 2 GB (Threat Cloud) |
+| **Network** | Outbound HTTPS (443) | For Threat Cloud sync and updates |
+
+## Ports Used
+
+| Port | Component | Direction | Purpose |
+|------|-----------|-----------|---------|
+| 443 | CLI | Outbound | Auth, Threat Cloud sync, rule updates |
+| 8080 | Threat Cloud | Inbound | API server (self-hosted only) |
+| 2222-9999 | Trap | Inbound | Honeypot listeners (configurable) |
+| 514 | Guard | Inbound | Syslog UDP receiver (optional) |
+
+## Uninstall
+
+<Tabs>
+  <Tab title="npm">
+    ```bash
+    npm uninstall -g @panguard-ai/panguard
+    ```
+  </Tab>
+  <Tab title="curl install">
+    ```bash
+    rm -rf ~/.panguard
+    rm "$(which panguard)"
+    ```
+  </Tab>
+  <Tab title="systemd">
+    ```bash
+    sudo systemctl disable --now panguard-guard
+    sudo rm /etc/systemd/system/panguard-guard.service
+    sudo systemctl daemon-reload
+    npm uninstall -g @panguard-ai/panguard
+    ```
+  </Tab>
+</Tabs>
