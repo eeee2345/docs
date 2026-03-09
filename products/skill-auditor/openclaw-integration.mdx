@@ -51,7 +51,84 @@ Developer publishes skill
 
 ## Integration Points
 
-### 1. Pre-Install Gate
+### 1. npm Package Integration (Recommended)
+
+The fastest way to add Skill Auditor to any Node.js project. No CLI installation, no shell scripts -- just `npm install` and import.
+
+```bash
+npm install @panguard-ai/panguard-skill-auditor
+```
+
+#### Basic Usage
+
+```typescript
+import { auditSkill } from '@panguard-ai/panguard-skill-auditor';
+
+const report = await auditSkill('./skills/some-community-skill');
+
+console.log(report.riskScore);   // 0-100
+console.log(report.riskLevel);   // "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"
+console.log(report.verdict);     // Human-readable verdict string
+console.log(report.findings);    // AuditFinding[] with severity, message, line numbers
+```
+
+#### Pre-Install Gate in TypeScript
+
+```typescript
+import { auditSkill } from '@panguard-ai/panguard-skill-auditor';
+
+async function safeInstall(skillPath: string): Promise<boolean> {
+  const report = await auditSkill(skillPath);
+
+  if (report.riskLevel === 'CRITICAL') {
+    console.error(`BLOCKED: ${skillPath} has critical issues`);
+    report.findings
+      .filter(f => f.severity === 'CRITICAL')
+      .forEach(f => console.error(`  [${f.severity}] ${f.message} (line ${f.line})`));
+    return false;
+  }
+
+  if (report.riskLevel === 'HIGH') {
+    console.warn(`WARNING: ${skillPath} scored ${report.riskScore}/100`);
+    report.findings.forEach(f => console.warn(`  [${f.severity}] ${f.message}`));
+    // Require manual approval for HIGH risk
+    return false;
+  }
+
+  // LOW or MEDIUM -- safe to install
+  return true;
+}
+```
+
+#### Custom AI Provider (Optional)
+
+Layer 2 semantic analysis uses an LLM. You can provide your own:
+
+```typescript
+import { auditSkill } from '@panguard-ai/panguard-skill-auditor';
+import type { SkillAnalysisLLM } from '@panguard-ai/panguard-skill-auditor';
+
+const myLLM: SkillAnalysisLLM = {
+  analyze: async (prompt: string) => {
+    // Call your preferred LLM (Claude, GPT, local model, etc.)
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'x-api-key': process.env.ANTHROPIC_API_KEY!, 'content-type': 'application/json', 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1024, messages: [{ role: 'user', content: prompt }] }),
+    });
+    const data = await response.json();
+    return data.content[0].text;
+  },
+};
+
+const report = await auditSkill('./skills/my-skill', { llm: myLLM });
+```
+
+<Info>
+  Without a custom LLM, Layer 2 (AI semantic analysis) is skipped. Layer 1 regex checks still run and catch the majority of threats.
+</Info>
+
+### 2. Pre-Install Gate (CLI)
 
 The simplest integration: run Skill Auditor before every `claw install`.
 
@@ -85,10 +162,57 @@ audit_and_install() {
 }
 ```
 
-### 2. CI Pipeline for Skill Repositories
+### 3. CI Pipeline for Skill Repositories
 
-Add Skill Auditor to your GitHub Actions workflow to scan skills on every PR.
+Add Skill Auditor to your GitHub Actions workflow to scan skills on every PR. You can use either the npm package or the CLI.
 
+<Tabs>
+  <Tab title="npm (Recommended)">
+```yaml
+# .github/workflows/skill-audit.yml
+name: Skill Security Audit
+on:
+  pull_request:
+    paths:
+      - 'skills/**'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Skill Auditor
+        run: npm install @panguard-ai/panguard-skill-auditor
+
+      - name: Audit all skills
+        run: |
+          node -e "
+            const { auditSkill } = require('@panguard-ai/panguard-skill-auditor');
+            const fs = require('fs');
+            const path = require('path');
+            (async () => {
+              const dirs = fs.readdirSync('skills', { withFileTypes: true })
+                .filter(d => d.isDirectory())
+                .map(d => path.join('skills', d.name));
+              let failed = false;
+              for (const dir of dirs) {
+                const report = await auditSkill(dir);
+                console.log(dir + ': ' + report.riskLevel + ' (' + report.riskScore + '/100)');
+                if (report.riskLevel === 'CRITICAL' || report.riskLevel === 'HIGH') {
+                  report.findings.forEach(f => console.error('  [' + f.severity + '] ' + f.message));
+                  failed = true;
+                }
+              }
+              if (failed) process.exit(1);
+            })();
+          "
+```
+  </Tab>
+  <Tab title="CLI">
 ```yaml
 # .github/workflows/skill-audit.yml
 name: Skill Security Audit
@@ -120,6 +244,8 @@ jobs:
             fi
           done
 ```
+  </Tab>
+</Tabs>
 
 ### 3. Registry-Wide Scanning (Planned)
 

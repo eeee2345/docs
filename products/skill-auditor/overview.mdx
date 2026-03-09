@@ -46,6 +46,35 @@ Manual review catches some of these -- but zero-width Unicode is invisible to th
 
 ## Quick Start
 
+### Option A: npm Package (Recommended for Developers)
+
+Install the standalone npm package and integrate directly into your TypeScript/JavaScript project:
+
+```bash
+npm install @panguard-ai/panguard-skill-auditor
+```
+
+```typescript
+import { auditSkill } from '@panguard-ai/panguard-skill-auditor';
+
+const report = await auditSkill('./skills/some-community-skill');
+
+console.log(report.riskScore);   // 0-100
+console.log(report.riskLevel);   // "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"
+console.log(report.findings);    // Array of security findings with severity + line numbers
+
+if (report.riskLevel === 'CRITICAL' || report.riskLevel === 'HIGH') {
+  console.error('Blocked: skill failed security audit');
+  process.exit(1);
+}
+```
+
+<Info>
+  The npm package includes Layer 1 (regex) and Layer 2 (AI semantic) checks. Layer 3 (Threat Cloud) requires a Panguard account.
+</Info>
+
+### Option B: CLI
+
 ```bash
 # Install Panguard
 curl -fsSL https://panguard.ai/api/install | bash
