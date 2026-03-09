@@ -116,22 +116,20 @@ Identifies dangerous shell commands and system access patterns.
   </Accordion>
 </AccordionGroup>
 
-## 6. Code Security (SAST + Secrets)
+## 6. Code Security (Secrets + Optional SAST)
 
-Scans all files in the skill directory with static analysis.
+Scans all files in the skill directory for hardcoded secrets. If [Semgrep](https://semgrep.dev) is installed, also runs full SAST analysis.
 
-**SAST checks:**
-- Common vulnerability patterns per language
-- Unsafe function usage (`eval`, `exec`, `system`)
-- SQL injection patterns
-- Path traversal attempts
-
-**Secrets scanning:**
+**Secrets scanning (built-in):**
 - Hardcoded API keys (AWS, GCP, Azure, OpenAI, Anthropic)
 - Private keys (RSA, EC, Ed25519)
 - Passwords in source code
 - Connection strings with credentials
 - JWT tokens
+
+**SAST (requires Semgrep):**
+- Full static analysis via Semgrep rulesets (`p/security-audit`, `p/secrets`)
+- Install: `pip install semgrep`
 
 **Example finding:**
 ```
@@ -213,6 +211,6 @@ Every scan contributes anonymized threat indicators (skill hash + risk score + f
 | Base64 payloads | Requires manual decode | Auto-decode and analyze |
 | Social engineering | Depends on reviewer | AI semantic analysis |
 | Known malicious skills | Requires prior knowledge | Community threat intelligence |
-| SAST scanning | Not practical manually | Integrated scanner |
+| SAST scanning | Not practical manually | Via Semgrep (optional) |
 | Secrets detection | Manual grep | Pattern-based detection |
 | Risk score | Subjective opinion | Quantitative 0-100 |

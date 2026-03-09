@@ -29,18 +29,23 @@ Checks the system's operating system and installed packages against known CVE da
 | **Severity mapping** | CVSS score mapped to CRITICAL / HIGH / MEDIUM / LOW |
 | **Output** | List of matched CVEs with remediation advice |
 
-### 3. SAST (Static Application Security Testing)
+### 3. SAST via Semgrep (Optional Integration)
 
-Scans source code directories for security vulnerabilities.
+Runs [Semgrep](https://semgrep.dev) against source code directories when installed. Panguard does not include a built-in SAST engine -- it delegates to Semgrep for real static analysis coverage.
 
 | Field | Details |
 |-------|---------|
-| **Availability** | Via `panguard scan code` subcommand |
-| **Languages** | JavaScript, TypeScript, Python, PHP, Ruby, Java, Go |
-| **Detections** | SQL injection, XSS, command injection, path traversal, insecure deserialization |
+| **Availability** | Via `panguard scan code` subcommand (requires Semgrep installed) |
+| **Prerequisite** | Install Semgrep: `pip install semgrep` or see https://semgrep.dev |
+| **Rulesets used** | `p/security-audit`, `p/secrets` |
 | **Output** | Findings with file path, line number, and remediation |
+| **Without Semgrep** | Returns empty SAST results; secrets scanning still runs via the built-in Secrets Checker |
 
 ```bash
+# Install Semgrep first
+pip install semgrep
+
+# Then run code scanning
 panguard scan code --dir ./my-project
 ```
 

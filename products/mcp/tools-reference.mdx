@@ -28,7 +28,7 @@ Run a security health check scan on the local system. Returns risk score (0--100
 
 ## panguard_scan_code
 
-Scan a source code directory for security vulnerabilities (SAST). Detects SQL injection, XSS, hardcoded secrets, command injection, and more.
+Scan a source code directory for hardcoded secrets. If Semgrep is installed, also runs SAST analysis. Install Semgrep for full coverage: https://semgrep.dev
 
 <ParamField path="dir" type="string" required>
   Source code directory to scan. Absolute or relative path.

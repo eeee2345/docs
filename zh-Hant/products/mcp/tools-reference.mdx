@@ -28,7 +28,7 @@ icon: "wrench"
 
 ## panguard_scan_code
 
-掃描原始碼目錄以尋找安全漏洞（SAST）。偵測 SQL 注入、XSS、硬編碼密鑰、命令注入等。
+掃描原始碼目錄以尋找硬編碼密鑰。若已安裝 Semgrep，亦執行 SAST 分析。安裝 Semgrep 以取得完整覆蓋：https://semgrep.dev
 
 <ParamField path="dir" type="string" required>
   要掃描的原始碼目錄。絕對或相對路徑。
